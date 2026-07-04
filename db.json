@@ -1,0 +1,751 @@
+{
+  "users": [
+    {
+      "id": "u1",
+      "username": "admin",
+      "email": "admin@university.edu.tr",
+      "password": "password123",
+      "name": "Ahmet Yılmaz",
+      "role": "admin",
+      "phone": "+90 555 111 2233",
+      "address": "İstanbul, Türkiye"
+    },
+    {
+      "id": "u2",
+      "username": "dean.mehmet",
+      "email": "m.kaya@university.edu.tr",
+      "password": "password123",
+      "name": "Prof. Dr. Mehmet Kaya",
+      "role": "dean",
+      "facultyId": "f1",
+      "phone": "+90 555 222 3344",
+      "address": "Kadıköy, İstanbul"
+    },
+    {
+      "id": "u3",
+      "username": "teacher.ahmet",
+      "email": "a.yilmaz@university.edu.tr",
+      "password": "password123",
+      "name": "Dr. Ahmet Yılmaz",
+      "role": "teacher",
+      "departmentId": "d1",
+      "phone": "+90 555 333 4455",
+      "address": "Beşiktaş, İstanbul"
+    },
+    {
+      "id": "u4",
+      "username": "teacher.elif",
+      "email": "e.soylu@university.edu.tr",
+      "password": "password123",
+      "name": "Dr. Elif Soylu",
+      "role": "teacher",
+      "departmentId": "d1",
+      "phone": "+90 555 444 5566",
+      "address": "Şişli, İstanbul"
+    },
+    {
+      "id": "u5",
+      "username": "teacher.mert",
+      "email": "m.akin@university.edu.tr",
+      "password": "password123",
+      "name": "Doç. Dr. Mert Akın",
+      "role": "teacher",
+      "departmentId": "d1",
+      "phone": "+90 555 555 6677",
+      "address": "Üsküdar, İstanbul"
+    },
+    {
+      "id": "u6",
+      "username": "teacher.cem",
+      "email": "c.kaya@university.edu.tr",
+      "password": "password123",
+      "name": "Dr. Cem Kaya",
+      "role": "teacher",
+      "departmentId": "d1",
+      "phone": "+90 555 666 7788",
+      "address": "Ataşehir, İstanbul"
+    },
+    {
+      "id": "u7",
+      "username": "student.ahmet",
+      "email": "ahmet.yilmaz@std.university.edu.tr",
+      "password": "password123",
+      "name": "Ahmet Yılmaz",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024100",
+      "classLevel": 3,
+      "gpa": 3.52,
+      "completedEcts": 180,
+      "totalEcts": 240,
+      "attendanceRate": 92,
+      "advisor": "Prof. Dr. Selçuk Yılmaz",
+      "phone": "+90 555 777 8899",
+      "address": "Sarıyer, İstanbul"
+    },
+    {
+      "id": "u10",
+      "username": "student.can",
+      "email": "can.demir@std.university.edu.tr",
+      "password": "password123",
+      "name": "Can Demir",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024001",
+      "classLevel": 3,
+      "gpa": 3.12,
+      "phone": "+90 555 888 9900",
+      "address": "Maltepe, İstanbul"
+    },
+    {
+      "id": "u11",
+      "username": "student.seda",
+      "email": "seda.kaya@std.university.edu.tr",
+      "password": "password123",
+      "name": "Seda Kaya",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024002",
+      "classLevel": 3,
+      "gpa": 2.95,
+      "phone": "+90 555 999 0011",
+      "address": "Fatih, İstanbul"
+    },
+    {
+      "id": "u12",
+      "username": "student.bora",
+      "email": "bora.ak@std.university.edu.tr",
+      "password": "password123",
+      "name": "Bora Ak",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024003",
+      "classLevel": 3,
+      "gpa": 2.78,
+      "phone": "+90 555 111 4455",
+      "address": "Kartal, İstanbul"
+    },
+    {
+      "id": "u13",
+      "username": "student.elif",
+      "email": "elif.sahin@std.university.edu.tr",
+      "password": "password123",
+      "name": "Elif Şahin",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024004",
+      "classLevel": 3,
+      "gpa": 3.85,
+      "phone": "+90 555 222 5566",
+      "address": "Pendik, İstanbul"
+    },
+    {
+      "id": "u14",
+      "username": "student.murat",
+      "email": "murat.yildiz@std.university.edu.tr",
+      "password": "password123",
+      "name": "Murat Yıldız",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024005",
+      "classLevel": 3,
+      "gpa": 2.64,
+      "phone": "+90 555 333 6677",
+      "address": "Bakırköy, İstanbul"
+    },
+    {
+      "id": "u15",
+      "username": "student.ayse",
+      "email": "ayse.toprak@std.university.edu.tr",
+      "password": "password123",
+      "name": "Ayşe Toprak",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024006",
+      "classLevel": 3,
+      "gpa": 3.20,
+      "phone": "+90 555 444 7788",
+      "address": "Avcılar, İstanbul"
+    },
+    {
+      "id": "u16",
+      "username": "student.kemal",
+      "email": "kemal.arslan@std.university.edu.tr",
+      "password": "password123",
+      "name": "Kemal Arslan",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024007",
+      "classLevel": 3,
+      "gpa": 2.45,
+      "phone": "+90 555 555 8899",
+      "address": "Beylikdüzü, İstanbul"
+    }
+  ],
+  "faculties": [
+    {
+      "id": "f1",
+      "name": "Mühendislik Fakültesi",
+      "code": "ENG"
+    },
+    {
+      "id": "f2",
+      "name": "İktisadi ve İdari Bilimler Fakültesi",
+      "code": "FEAS"
+    }
+  ],
+  "departments": [
+    {
+      "id": "d1",
+      "name": "Bilgisayar Mühendisliği",
+      "code": "CENG",
+      "facultyId": "f1"
+    },
+    {
+      "id": "d2",
+      "name": "Endüstri Mühendisliği",
+      "code": "IE",
+      "facultyId": "f1"
+    }
+  ],
+  "courses": [
+    {
+      "id": "c1",
+      "code": "MOB401",
+      "name": "Mobil Geliştirme (Flutter)",
+      "credits": 4,
+      "ects": 6,
+      "departmentId": "d1",
+      "semester": 4,
+      "status": "Aktif",
+      "instructor": "Dr. Cem Kaya",
+      "capacity": "24/30",
+      "tag": "Yazılım"
+    },
+    {
+      "id": "c2",
+      "code": "CYB302",
+      "name": "Cyber Security 101",
+      "credits": 3,
+      "ects": 4,
+      "departmentId": "d1",
+      "semester": 3,
+      "status": "Taslak",
+      "instructor": "Dr. Elif Demir",
+      "capacity": "15/25",
+      "tag": "Güvenlik"
+    },
+    {
+      "id": "c3",
+      "code": "AI501",
+      "name": "Python & Machine Learning",
+      "credits": 4,
+      "ects": 7,
+      "departmentId": "d1",
+      "semester": 5,
+      "status": "Aktif",
+      "instructor": "Prof. Mert Can",
+      "capacity": "10/20",
+      "tag": "AI"
+    },
+    {
+      "id": "c4",
+      "code": "UX201",
+      "name": "UI/UX Tasarım Temelleri",
+      "credits": 3,
+      "ects": 3,
+      "departmentId": "d1",
+      "semester": 2,
+      "status": "Pasif",
+      "instructor": "Uzm. Seda Ak",
+      "capacity": "28/30",
+      "tag": "Tasarım"
+    },
+    {
+      "id": "c5",
+      "code": "BLK601",
+      "name": "Blockchain & Web3",
+      "credits": 3,
+      "ects": 5,
+      "departmentId": "d1",
+      "semester": 6,
+      "status": "Taslak",
+      "instructor": "Belirtilmemiş",
+      "capacity": "0/30",
+      "tag": "Yazılım"
+    }
+  ],
+  "curriculum": [
+    {
+      "id": "c1",
+      "code": "MOB401",
+      "name": "Mobil Geliştirme (Flutter)",
+      "ects": 6,
+      "semester": 4,
+      "status": "Aktif"
+    },
+    {
+      "id": "c2",
+      "code": "CYB302",
+      "name": "Cyber Security 101",
+      "ects": 4,
+      "semester": 3,
+      "status": "Taslak"
+    },
+    {
+      "id": "c3",
+      "code": "AI501",
+      "name": "Python & Machine Learning",
+      "ects": 7,
+      "semester": 5,
+      "status": "Aktif"
+    },
+    {
+      "id": "c4",
+      "code": "UX201",
+      "name": "UI/UX Tasarım Temelleri",
+      "ects": 3,
+      "semester": 2,
+      "status": "Pasif"
+    },
+    {
+      "id": "c5",
+      "code": "BLK601",
+      "name": "Blockchain & Web3",
+      "ects": 5,
+      "semester": 6,
+      "status": "Taslak"
+    }
+  ],
+  "documents": [
+    {
+      "id": "doc-req-1",
+      "studentId": "u7",
+      "title": "Öğrenci Belgesi",
+      "desc": "E-imzalı resmi öğrenci belgesi",
+      "requestDate": "02.07.2024",
+      "status": "ready",
+      "verificationCode": "QR-942851"
+    },
+    {
+      "id": "doc-req-2",
+      "studentId": "u7",
+      "title": "Transkript",
+      "desc": "Güncel dönem transkripti",
+      "requestDate": "28.06.2024",
+      "status": "pending",
+      "verificationCode": "QR-710385"
+    },
+    {
+      "id": "doc-req-3",
+      "studentId": "u7",
+      "title": "Staj Belgesi",
+      "desc": "Yaz stajı onay belgesi",
+      "requestDate": "15.06.2024",
+      "status": "ready",
+      "verificationCode": "QR-638210"
+    },
+    {
+      "id": "doc-req-4",
+      "studentId": "u7",
+      "title": "Askerlik Tecil Belgesi",
+      "desc": "Askerlik tecil işlemleri için belge",
+      "requestDate": "10.06.2024",
+      "status": "pending",
+      "verificationCode": "QR-104958"
+    }
+  ],
+  "facultyWorkloads": [
+    {
+      "id": "fw-1",
+      "avatar": "S",
+      "name": "Dr. Elif Soylu",
+      "dept": "Yazılım Mühendisliği",
+      "coursesCount": 3,
+      "studentCount": 96,
+      "rating": 4.9,
+      "workload": 85
+    },
+    {
+      "id": "fw-2",
+      "avatar": "A",
+      "name": "Doç. Dr. Mert Akın",
+      "dept": "Veri Bilimi",
+      "coursesCount": 2,
+      "studentCount": 64,
+      "rating": 4.7,
+      "workload": 65
+    },
+    {
+      "id": "fw-3",
+      "avatar": "K",
+      "name": "Dr. Cem Kaya",
+      "dept": "Mobil Geliştirme",
+      "coursesCount": 2,
+      "studentCount": 48,
+      "rating": 4.6,
+      "workload": 55
+    },
+    {
+      "id": "fw-4",
+      "avatar": "D",
+      "name": "Prof. Seda Demir",
+      "dept": "Siber Güvenlik",
+      "coursesCount": 1,
+      "studentCount": 32,
+      "rating": 4.5,
+      "workload": 40
+    }
+  ],
+  "bulletins": [
+    {
+      "id": "b-1",
+      "priority": "ACİL",
+      "title": "Kampüs Giriş Güvenlik Güncellemesi",
+      "content": "Yeni kartlı geçiş sistemi yarından itibaren devreye alınacaktır.",
+      "target": "Sistem",
+      "date": "12.10.2023"
+    },
+    {
+      "id": "b-2",
+      "priority": "Normal",
+      "title": "Güz Dönemi Akademik Takvim Revizyonu",
+      "content": "Final sınav tarihleri 1 hafta öne çekilmiştir, detaylı takvim ekte yer almaktadır.",
+      "target": "Öğrenci, Eğitmen",
+      "date": "08.10.2023"
+    }
+  ],
+  "announcements": [
+    {
+      "id": "ann-1",
+      "pinned": true,
+      "title": "Vize Sınavı Tarihleri Açıklandı",
+      "body": "Vize sınavları 15-22 Kasım tarihleri arasında yapılacaktır. Öğrencilerin derse devamını kontrol ediniz.",
+      "date": "01.07.2024",
+      "target": "global"
+    },
+    {
+      "id": "ann-2",
+      "pinned": false,
+      "title": "Ödev 4 Teslim Tarihi Uzatıldı",
+      "body": "React Redux ödevinin teslim tarihi 10 Temmuz olarak güncellenmiştir.",
+      "date": "30.06.2024",
+      "target": "class",
+      "courseId": "c1"
+    },
+    {
+      "id": "ann-3",
+      "pinned": false,
+      "title": "Staj Başvuruları Başladı",
+      "body": "Yaz stajı başvuruları için kariyer portalını ziyaret ediniz.",
+      "date": "25.06.2024",
+      "target": "global"
+    }
+  ],
+  "studentGrades": [
+    {
+      "id": "g1",
+      "studentId": "u7",
+      "courseCode": "MAT101",
+      "courseName": "Kalkülüs I",
+      "instructor": "Prof. Dr. Ahmet Yılmaz",
+      "midterm": 85,
+      "final": 90,
+      "project": null,
+      "letterGrade": "AA",
+      "ects": 6
+    },
+    {
+      "id": "g2",
+      "studentId": "u7",
+      "courseCode": "BIL203",
+      "courseName": "Veri Yapıları",
+      "instructor": "Doç. Dr. Elif Soylu",
+      "midterm": 72,
+      "final": 68,
+      "project": 80,
+      "letterGrade": "BA",
+      "ects": 7
+    },
+    {
+      "id": "g3",
+      "studentId": "u7",
+      "courseCode": "FIZ102",
+      "courseName": "Genel Fizik II",
+      "instructor": "Dr. Öğr. Üyesi Cem Akın",
+      "midterm": 55,
+      "final": 60,
+      "project": null,
+      "letterGrade": "CB",
+      "ects": 5
+    },
+    {
+      "id": "g4",
+      "studentId": "u7",
+      "courseCode": "ING101",
+      "courseName": "Akademik İngilizce",
+      "instructor": "Lektör Canan Kaya",
+      "midterm": 95,
+      "final": 100,
+      "project": null,
+      "letterGrade": "AA",
+      "ects": 3
+    },
+    {
+      "id": "g5",
+      "studentId": "u7",
+      "courseCode": "TAR101",
+      "courseName": "Devrim Tarihi",
+      "instructor": "Uzm. Mert Bulut",
+      "midterm": 80,
+      "final": 85,
+      "project": null,
+      "letterGrade": "AA",
+      "ects": 2
+    }
+  ],
+  "studentDashboard": {
+    "registeredCourses": [
+      {
+        "id": "rc1",
+        "name": "Full-Stack .NET & React",
+        "instructor": "Dr. Elif Soylu",
+        "category": "Mühendislik",
+        "progress": 75,
+        "styleClass": "dotnet"
+      },
+      {
+        "id": "rc2",
+        "name": "SQL & Database Design",
+        "instructor": "Doç. Dr. Mert Akın",
+        "category": "Veri Bilimi",
+        "progress": 40,
+        "styleClass": "sql"
+      }
+    ],
+    "upcomingLessons": [
+      {
+        "id": "ul1",
+        "time": "Bugün, 14:00",
+        "isLive": true,
+        "name": "React Redux Advanced",
+        "location": "Sınıf: LAB-B3 / Online"
+      },
+      {
+        "id": "ul2",
+        "time": "Yarın, 10:30",
+        "isLive": false,
+        "name": ".NET Microservices",
+        "location": "Sınıf: Amfi-1 / Yüz Yüze"
+      },
+      {
+        "id": "ul3",
+        "time": "Perşembe, 09:00",
+        "isLive": false,
+        "name": "System Architecture",
+        "location": "Sınıf: LAB-C2"
+      }
+    ]
+  },
+  "videoLectures": {
+    "courseName": "Full-Stack .NET & React",
+    "instructor": "Dr. Elif Soylu",
+    "currentLesson": {
+      "title": "Ders 1 — React Hooks Temelleri",
+      "duration": "45:00",
+      "currentTime": "15:42"
+    },
+    "attachments": [
+      { "id": "att1", "name": "Ders Notları — Hafta 3.pdf", "size": "2.4 MB", "type": "pdf" },
+      { "id": "att2", "name": "GitHub Repository", "size": "Repo", "type": "link" },
+      { "id": "att3", "name": "Örnek Kodlar.zip", "size": "1.1 MB", "type": "zip" }
+    ],
+    "playlist": [
+      { "id": "v1", "title": "Ders 1 — React Hooks Temelleri", "duration": "45 dk", "active": true },
+      { "id": "v2", "title": "Ders 2 — useEffect & useContext", "duration": "52 dk", "active": false },
+      { "id": "v3", "title": "Ders 3 — Redux Advanced Patterns", "duration": "60 dk", "active": false },
+      { "id": "v4", "title": "Ders 4 — Testing with Jest", "duration": "38 dk", "active": false }
+    ]
+  },
+  "homeworkSubmissions": [
+    {
+      "id": "hw-sub-1",
+      "studentName": "Can Demir",
+      "studentNumber": "20211024001",
+      "avatar": "C",
+      "homeworkTitle": "Ödev #4 — React Redux",
+      "status": "pending",
+      "githubLink": "https://github.com/candemir/hw4",
+      "submitTime": "03.07.2024 14:22"
+    },
+    {
+      "id": "hw-sub-2",
+      "studentName": "Seda Kaya",
+      "studentNumber": "20211024002",
+      "avatar": "S",
+      "homeworkTitle": "Ödev #4 — React Redux",
+      "status": "reviewed",
+      "githubLink": "https://github.com/sedakaya/hw4",
+      "submitTime": "02.07.2024 23:55"
+    },
+    {
+      "id": "hw-sub-3",
+      "studentName": "Elif Şahin",
+      "studentNumber": "20211024004",
+      "avatar": "E",
+      "homeworkTitle": "Ödev #4 — React Redux",
+      "status": "approved",
+      "githubLink": "https://github.com/elifsahin/hw4",
+      "submitTime": "01.07.2024 10:10"
+    }
+  ],
+  "teacherDashboard": {
+    "liveClassesCount": 2,
+    "totalStudents": 128,
+    "unreadHomeworksCount": 14,
+    "attendanceAverage": 8,
+    "completedLiveHours": 45,
+    "schedule": [
+      {
+        "id": "ts1",
+        "day": "BUGÜN",
+        "hour": "14:00",
+        "title": "Advanced React Context API",
+        "duration": 90,
+        "group": "Grup A",
+        "active": true
+      },
+      {
+        "id": "ts2",
+        "day": "BUGÜN",
+        "hour": "16:30",
+        "title": "Node.js Express Middleware",
+        "duration": 60,
+        "group": "Grup B",
+        "active": false
+      },
+      {
+        "id": "ts3",
+        "day": "YARIN",
+        "hour": "10:00",
+        "title": "Database Schema Design",
+        "duration": 120,
+        "group": "Tüm Gruplar",
+        "active": false
+      }
+    ],
+    "activities": [
+      { "id": "act-1", "type": "upload", "student": "Can Demir", "text": "ödevini teslim etti.", "time": "10 Dakika Önce", "meta": "Ödev #4" },
+      { "id": "act-2", "type": "question", "student": "Seda Kaya", "text": "bir soru sordu.", "time": "45 Dakika Önce", "meta": "React Hooks" },
+      { "id": "act-3", "type": "register", "student": "Bora Ak", "text": "derse kayıt oldu.", "time": "2 Saat Önce", "meta": "Grup A" },
+      { "id": "act-4", "type": "warning", "student": "Sistem Uyarısı", "text": "Düşük katılım.", "time": "Bugün 09:30", "meta": "Sınıf C" }
+    ],
+    "growthPercent": 75,
+    "growthText": "Bu ay genel sınıf başarısı %12 arttı."
+  },
+  "attendanceRecords": [
+    { "id": "att-r-1", "studentName": "Can Demir", "studentId": "20211024001", "avatar": "C", "status": "present" },
+    { "id": "att-r-2", "studentName": "Seda Kaya", "studentId": "20211024002", "avatar": "S", "status": "absent" },
+    { "id": "att-r-3", "studentName": "Bora Ak", "studentId": "20211024003", "avatar": "B", "status": "present" },
+    { "id": "att-r-4", "studentName": "Elif Şahin", "studentId": "20211024004", "avatar": "E", "status": "present" },
+    { "id": "att-r-5", "studentName": "Murat Yıldız", "studentId": "20211024005", "avatar": "M", "status": "absent" },
+    { "id": "att-r-6", "studentName": "Ayşe Toprak", "studentId": "20211024006", "avatar": "A", "status": "present" },
+    { "id": "att-r-7", "studentName": "Kemal Arslan", "studentId": "20211024007", "avatar": "K", "status": "indeterminate" }
+  ],
+  "gradeEntries": [
+    { "id": "ge1", "studentName": "Can Demir", "studentNumber": "20211024001", "avatar": "C", "midterm": 85, "final": 90, "project": 88, "letterGrade": "AA" },
+    { "id": "ge2", "studentName": "Seda Kaya", "studentNumber": "20211024002", "avatar": "S", "midterm": 72, "final": 68, "project": 80, "letterGrade": "BA" },
+    { "id": "ge3", "studentName": "Bora Ak", "studentNumber": "20211024003", "avatar": "B", "midterm": 55, "final": null, "project": null, "letterGrade": null },
+    { "id": "ge4", "studentName": "Elif Şahin", "studentNumber": "20211024004", "avatar": "E", "midterm": 95, "final": 100, "project": null, "letterGrade": "AA" },
+    { "id": "ge5", "studentName": "Murat Yıldız", "studentNumber": "20211024005", "avatar": "M", "midterm": 60, "final": 75, "project": 65, "letterGrade": "CB" }
+  ],
+  "deanData": {
+    "pendingApprovals": [
+      {
+        "id": "app-101",
+        "courseName": "CS402 - Algoritma Tasarımı",
+        "instructor": "Doç. Dr. Selin Erten",
+        "studentCount": 64,
+        "distribution": { "aa": 15, "ba": 22, "cb": 20, "ff": 7 }
+      },
+      {
+        "id": "app-102",
+        "courseName": "EE201 - Devre Teorisi I",
+        "instructor": "Dr. Öğr. Üyesi Kerem Ak",
+        "studentCount": 42,
+        "distribution": { "aa": 8, "ba": 14, "cb": 15, "ff": 5 }
+      },
+      {
+        "id": "app-103",
+        "courseName": "ARC101 - Mimari Çizim",
+        "instructor": "Öğr. Gör. Meltem Şen",
+        "studentCount": 120,
+        "distribution": { "aa": 25, "ba": 35, "cb": 40, "ff": 20 }
+      }
+    ],
+    "curriculumTracks": [
+      {
+        "id": "track-web",
+        "name": "Full-Stack Web Geliştirme",
+        "ects": 45,
+        "courses": [
+          { "id": "web-1", "name": "React & State Management", "instructor": "Dr. Arda Yılmaz", "hours": 42, "ects": 6, "status": "Aktif" },
+          { "id": "web-2", "name": "Node.js Enterprise Architecture", "instructor": "Doç. Dr. Selin Ekin", "hours": 36, "ects": 8, "status": "Aktif" },
+          { "id": "web-3", "name": "PostgreSQL Database Optimization", "instructor": "Dr. Burak Can", "hours": 24, "ects": 4, "status": "Pasif" }
+        ]
+      },
+      {
+        "id": "track-ai",
+        "name": "Yapay Zeka ve Veri Bilimi",
+        "ects": 60,
+        "courses": [
+          { "id": "ai-1", "name": "Neural Networks Fundamentals", "instructor": "Prof. Dr. Kerem Soylu", "hours": 48, "ects": 10, "status": "Aktif" }
+        ]
+      }
+    ],
+    "instructors": [
+      { "id": "inst-1", "name": "Dr. Selin Yılmaz", "track": ".NET Core, Microservices", "rating": 4.9, "reviewCount": 128, "attendance": 98, "status": "Aktif" },
+      { "id": "inst-2", "name": "Ahmet Demir", "track": "Frontend, React.js", "rating": 4.7, "reviewCount": 95, "attendance": 89, "status": "Aktif" },
+      { "id": "inst-3", "name": "Canan Kaya", "track": "Figma, Design Systems", "rating": 4.8, "reviewCount": 210, "attendance": 92, "status": "İzinli" }
+    ]
+  },
+  "studentAnalytics": {
+    "successDistribution": [
+      { "label": "Onur Öğrencisi (3.50+)", "count": 148, "color": "green" },
+      { "label": "Yüksek Başarı (3.00-3.49)", "count": 89, "color": "blue" },
+      { "label": "Orta Başarı (2.00-2.99)", "count": 63, "color": "orange" }
+    ],
+    "sectors": [
+      { "name": "Yazılım Geliştirme", "percent": 48, "color": "navy" },
+      { "name": "Veri / AI", "percent": 22, "color": "blue" },
+      { "name": "Siber Güvenlik", "percent": 14, "color": "green" },
+      { "name": "Mobil / Oyun", "percent": 10, "color": "orange" },
+      { "name": "Diğer", "percent": 6, "color": "gray" }
+    ],
+    "companies": ["Microsoft", "Google", "Amazon", "Trendyol", "Getir", "Logo Software", "Aselsan", "Netaş"]
+  },
+  "deanOverview": {
+    "metrics": {
+      "activeStudents": 1250,
+      "employmentRate": 94,
+      "teacherPerformanceAverage": 4.8
+    },
+    "branchPopularity": [
+      { "label": "React / Frontend", "count": 482, "percentage": 85 },
+      { "label": ".NET / Backend", "count": 394, "percentage": 70 },
+      { "label": "SQL / Database", "count": 286, "percentage": 55 },
+      { "label": "Python / AI", "count": 185, "percentage": 40 }
+    ],
+    "curriculum": [
+      { "id": "c-o-1", "name": "Mobil Geliştirme (Flutter)", "ects": 6 },
+      { "id": "c-o-2", "name": "Cyber Security 101", "ects": 4 },
+      { "id": "c-o-3", "name": "Full-Stack .NET & React", "ects": 8 }
+    ],
+    "employmentFunnel": [
+      { "stageNumber": 1, "name": "Staj", "count": 340, "percentage": 90, "color": "blue" },
+      { "stageNumber": 2, "name": "Mülakat", "count": 210, "percentage": 60, "color": "navy" },
+      { "stageNumber": 3, "name": "Yerleşti", "count": 185, "percentage": 48, "color": "green" }
+    ],
+    "generalEmploymentSuccess": 94
+  }
+}
