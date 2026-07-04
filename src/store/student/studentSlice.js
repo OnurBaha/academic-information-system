@@ -23,6 +23,17 @@ export const fetchStudentDocumentsAsync = createAsyncThunk(
     }
 );
 
+export const fetchStudentDashboardAsync = createAsyncThunk(
+    'student/fetchStudentDashboardAsync',
+    async (_, { rejectWithValue }) => {
+        try {
+            return await apiFetch('/studentDashboard');
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 export const submitStudentHomeworkAsync = createAsyncThunk(
     'student/submitHomeworkAsync',
     async ({ gradeId, homeworkPayload }, { rejectWithValue }) => {
@@ -68,6 +79,7 @@ const studentSlice = createSlice({
     initialState: {
         grades: [],
         documents: [],
+        dashboardData: null,
         status: 'idle',
         actionStatus: 'idle',
         error: null,
@@ -76,6 +88,7 @@ const studentSlice = createSlice({
         clearStudentState: (state) => {
             state.grades = [];
             state.documents = [];
+            state.dashboardData = null;
             state.status = 'idle';
             state.actionStatus = 'idle';
             state.error = null;
@@ -83,6 +96,7 @@ const studentSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            // Fetch Grades
             .addCase(fetchStudentGradesAsync.pending, (state) => {
                 state.status = 'loading';
                 state.error = null;
@@ -95,8 +109,7 @@ const studentSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.payload;
             })
-
-
+            // Fetch Documents
             .addCase(fetchStudentDocumentsAsync.pending, (state) => {
                 state.status = 'loading';
                 state.error = null;
@@ -109,8 +122,20 @@ const studentSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.payload;
             })
-
-
+            // Fetch Dashboard
+            .addCase(fetchStudentDashboardAsync.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(fetchStudentDashboardAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.dashboardData = action.payload;
+            })
+            .addCase(fetchStudentDashboardAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload;
+            })
+            // Submit Homework
             .addCase(submitStudentHomeworkAsync.pending, (state) => {
                 state.actionStatus = 'loading';
                 state.error = null;
@@ -126,8 +151,7 @@ const studentSlice = createSlice({
                 state.actionStatus = 'failed';
                 state.error = action.payload;
             })
-
-
+            // Request Document
             .addCase(requestOfficialDocumentAsync.pending, (state) => {
                 state.actionStatus = 'loading';
                 state.error = null;

@@ -8,7 +8,7 @@ export const loginUserAsync = createAsyncThunk(
             const users = await apiFetch('/users');
 
             const matchedUser = users.find(
-                (u) => u.username === username && u.password === password
+                (u) => (u.username === username || u.studentNumber === username || u.email === username) && u.password === password
             );
 
             if (!matchedUser) throw new Error('Geçersiz kullanıcı adı veya şifre.');
@@ -47,7 +47,7 @@ const authSlice = createSlice({
         actionStatus: 'idle',
     },
     reducers: {
-        logoutUser: (state) => {
+        logout: (state) => {
             state.currentUser = null;
             state.status = 'idle';
             state.error = null;
@@ -87,5 +87,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { logoutUser } = authSlice.actions;
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

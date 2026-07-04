@@ -1051,5 +1051,112 @@
       }
     ],
     "generalEmploymentSuccess": 94
+  },
+  "academicEvents": [
+    {
+      "id": 1,
+      "title": "Güz Dönemi Ders Kayıtları",
+      "date": "15.09.2025",
+      "semester": "guz"
+    },
+    {
+      "id": 2,
+      "title": "Güz Dönemi Derslerinin Başlaması",
+      "date": "22.09.2025",
+      "semester": "guz"
+    },
+    {
+      "id": 3,
+      "title": "Güz Dönemi Ara Sınav (Vize) Haftası",
+      "date": "10.11.2025",
+      "semester": "guz"
+    },
+    {
+      "id": 4,
+      "title": "Yılbaşı Resmi Tatili",
+      "date": "01.01.2026",
+      "semester": "guz"
+    },
+    {
+      "id": 5,
+      "title": "Güz Dönemi Dönem Sonu (Final) Sınavları",
+      "date": "05.01.2026",
+      "semester": "guz"
+    },
+    {
+      "id": 6,
+      "title": "Bahar Dönemi Ders Kayıtları",
+      "date": "09.02.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": 7,
+      "title": "Bahar Dönemi Derslerinin Başlaması",
+      "date": "16.02.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": 8,
+      "title": "Bahar Dönemi Ara Sınav (Vize) Haftası",
+      "date": "13.04.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": 9,
+      "title": "Bahar Dönemi Dönem Sonu (Final) Sınavları",
+      "date": "08.06.2026",
+      "semester": "bahar"
+    }
+  ],
+  "studentExams": {
+    "guz": [
+      {
+        "id": 101,
+        "date": "15.11.2025",
+        "time": "10:00",
+        "code": "MAT101",
+        "name": "Kalkülüs I",
+        "room": "LAB-B1",
+        "instructor": "Prof. Dr. Ahmet Yılmaz"
+      },
+      {
+        "id": 102,
+        "date": "17.11.2025",
+        "time": "13:30",
+        "code": "BIL203",
+        "name": "Veri Yapıları",
+        "room": "Amfi-1",
+        "instructor": "Doç. Dr. Elif Soylu"
+      },
+      {
+        "id": 103,
+        "date": "20.11.2025",
+        "time": "11:00",
+        "code": "FIZ102",
+        "name": "Genel Fizik II",
+        "room": "LAB-C2",
+        "instructor": "Dr. Öğr. Üyesi Cem Akın"
+      }
+    ],
+    "bahar": [
+      {
+        "id": 201,
+        "date": "18.04.2026",
+        "time": "10:00",
+        "code": "MAT102",
+        "name": "Kalkülüs II",
+        "room": "LAB-B1",
+        "instructor": "Prof. Dr. Ahmet Yılmaz"
+      },
+      {
+        "id": 202,
+        "date": "22.04.2026",
+        "time": "14:00",
+        "code": "BIL204",
+        "name": "Algoritmalar",
+        "room": "Amfi-2",
+        "instructor": "Doç. Dr. Elif Soylu"
+      }
+    ]
   }
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchCertificates } from '../../store/student/studentSlice'
+import { fetchStudentDocumentsAsync } from '../../store/student/studentSlice'
 import { toast } from 'react-hot-toast'
 
 // Statik Rozetler
@@ -58,16 +58,18 @@ const fallbackCertificates = [
 
 export default function Profile() {
   const dispatch = useDispatch()
-  const { user } = useSelector((state) => state.auth)
-  const { certificates } = useSelector((state) => state.student)
+  const { currentUser } = useSelector((state) => state.auth || {})
+  const { documents } = useSelector((state) => state.student || {})
+
+  const certificates = (documents || []).filter(d => d.type === 'certificate')
 
   // İletişim Bilgileri Durumu (E-posta Kilitli)
-  const [email] = useState(user?.email || 'ahmet.yilmaz@softito.edu.tr')
-  const [phone, setPhone] = useState(user?.phone || '+90 (555) 000 00 00')
+  const [email] = useState(currentUser?.email || 'ahmet.yilmaz@softito.edu.tr')
+  const [phone, setPhone] = useState(currentUser?.phone || '+90 (555) 000 00 00')
   const [city, setCity] = useState('İstanbul')
 
   // Adres Bilgileri Durumu (Ayrı Kutu)
-  const [address, setAddress] = useState(user?.address || 'Kadıköy, İstanbul')
+  const [address, setAddress] = useState(currentUser?.address || 'Kadıköy, İstanbul')
 
   // Sertifika Listesi Durumu (Silme/Güncelleme için dinamik state)
   const [certificatesList, setCertificatesList] = useState([])
@@ -81,10 +83,10 @@ export default function Profile() {
   const [saveStatus, setSaveStatus] = useState('idle') // 'idle' | 'saving' | 'success'
 
   useEffect(() => {
-    if (user?.id) {
-      dispatch(fetchCertificates(user.id))
+    if (currentUser?.id) {
+      dispatch(fetchStudentDocumentsAsync(currentUser.id))
     }
-  }, [dispatch, user])
+  }, [dispatch, currentUser])
 
   // Redux sertifikalarını state'e eşitle
   useEffect(() => {
@@ -93,7 +95,7 @@ export default function Profile() {
     } else {
       setCertificatesList(fallbackCertificates)
     }
-  }, [certificates])
+  }, [documents])
 
   // İletişim bilgilerini güncelle
   const handleUpdateInfo = (e) => {
@@ -214,7 +216,7 @@ export default function Profile() {
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-base font-extrabold text-slate-800 dark:text-white">
-                    {user?.name || 'Ahmet Yılmaz'}
+                    {currentUser?.name || 'Ahmet Yılmaz'}
                   </h3>
                   <span className="px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-extrabold text-[8px] rounded-full border border-blue-100 dark:border-blue-900/30 uppercase tracking-wider">
                     Öğrenci
@@ -244,7 +246,7 @@ export default function Profile() {
 
           </div>
 
-          {/* İletişim Bilgilerini Güncelleme Kartı (E-posta Değişmez) */}
+          {/* İletişim Bilgilerini Güncelleme Kartı */}
           <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6 space-y-5">
             <h4 className="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2 border-b border-slate-50 dark:border-slate-800/40 pb-3">
               <span className="material-symbols-outlined text-lg">contact_emergency</span>
@@ -302,7 +304,7 @@ export default function Profile() {
             </form>
           </div>
 
-          {/* Adres Bilgilerim Kartı (Ayrı Kutu) */}
+          {/* Adres Bilgilerim Kartı */}
           <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6 space-y-5">
             <h4 className="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2 border-b border-slate-50 dark:border-slate-800/40 pb-3">
               <span className="material-symbols-outlined text-lg">home</span>
@@ -333,13 +335,12 @@ export default function Profile() {
 
         </div>
 
-        {/* Sağ Kolon (8 Kolon Genişliği): Sertifikalar ve Akademik Rozetler */}
+        {/* Sağ Kolon (8 Kolon Genişliği) */}
         <div className="col-span-12 lg:col-span-8 space-y-6">
           
           {/* Sertifikalar Bölümü */}
           <div className="space-y-4">
             
-            {/* Üst Bar */}
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
               <h3 className="text-base font-extrabold text-blue-900 dark:text-blue-400">Kazanılan Sertifikalar</h3>
               
@@ -352,7 +353,6 @@ export default function Profile() {
               </button>
             </div>
 
-            {/* Sertifika Kartları Izgarası (Grid: 2 kolon) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
               {certificatesList.map((cert) => (
@@ -361,7 +361,6 @@ export default function Profile() {
                   className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between p-6 bento-card group"
                 >
                   <div>
-                    {/* Kart Üst İkon & Paylaş Barı */}
                     <div className="flex justify-between items-start mb-5">
                       <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${cert.bgColor || 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'}`}>
                         <span className="material-symbols-outlined text-2xl font-bold">
@@ -394,7 +393,6 @@ export default function Profile() {
                       </div>
                     </div>
 
-                    {/* Sertifika Detayları */}
                     <h4 className="text-xs font-extrabold text-slate-800 dark:text-white leading-relaxed">
                       {cert.name}
                     </h4>
@@ -403,7 +401,6 @@ export default function Profile() {
                     </p>
                   </div>
 
-                  {/* Alt Lisans & Doğrulandı kapsülü */}
                   <div className="pt-4 mt-6 border-t border-slate-50 dark:border-slate-800/40 flex items-center justify-between">
                     <div>
                       <p className="text-[8px] text-slate-400 uppercase tracking-widest font-bold">Lisans ID</p>
@@ -417,9 +414,7 @@ export default function Profile() {
                 </div>
               ))}
 
-              {/* Harici Sertifika Yükleme Dropzone Kartı (Tıklanınca belgeler açılır) */}
               {selectedCertFile ? (
-                /* Dosya seçildiğinde adının ve kaydetme alanının gösterilmesi */
                 <div className="border-2 border-blue-500/30 bg-blue-50/10 rounded-3xl p-6 flex flex-col justify-between min-h-[190px]">
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400 font-bold truncate">
@@ -454,7 +449,6 @@ export default function Profile() {
                   </div>
                 </div>
               ) : (
-                /* Varsayılan Harici Sertifika Yükleme Kutusu */
                 <div
                   onClick={() => document.getElementById('cert-upload-input').click()}
                   className="group border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center p-8 hover:border-blue-500/50 hover:bg-blue-50/20 dark:hover:bg-blue-950/10 transition-all cursor-pointer min-h-[190px]"
@@ -478,7 +472,6 @@ export default function Profile() {
               Akademik Rozetler
             </h4>
 
-            {/* Rozetler Kapsül Grubu */}
             <div className="flex flex-wrap gap-4">
               {academicBadges.map((badge, idx) => (
                 <div

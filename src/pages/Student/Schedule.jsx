@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchStudentGrades, fetchAttendance } from '../../store/student/studentSlice'
+import { fetchStudentGradesAsync } from '../../store/student/studentSlice'
 import { calculateScore, getLetterGrade, simulateGano, calculateAttendancePercent } from '../../utils/studentCalc'
 import { toast } from 'react-hot-toast'
 
@@ -13,8 +13,8 @@ const absenceDetails = [
 
 export default function StudentGrades() {
   const dispatch = useDispatch()
-  const { user } = useSelector((state) => state.auth)
-  const { studentGrades, attendance, status, searchQuery } = useSelector((state) => state.student)
+  const { currentUser } = useSelector((state) => state.auth || {})
+  const { grades, status } = useSelector((state) => state.student || {})
   
   const [selectedSemester, setSelectedSemester] = useState('current')
   
@@ -24,12 +24,13 @@ export default function StudentGrades() {
   const [simTargetAkts, setSimTargetAkts] = useState('')
   const [estimatedGano, setEstimatedGano] = useState(3.42)
 
+  const studentGrades = grades || []
+
   useEffect(() => {
-    if (user?.id) {
-      dispatch(fetchStudentGrades(user.id))
-      dispatch(fetchAttendance(user.id))
+    if (currentUser?.id) {
+      dispatch(fetchStudentGradesAsync(currentUser.id))
     }
-  }, [dispatch, user])
+  }, [dispatch, currentUser])
 
   // Notlar yüklendiğinde simülatör ilk değerlerini ata
   useEffect(() => {
@@ -77,13 +78,8 @@ export default function StudentGrades() {
     if (selectedSemester === 'current') matchesSemester = g.semester === '2025-2026 Güz'
     else if (selectedSemester === 'spring') matchesSemester = g.semester === '2024-2025 Bahar'
     else if (selectedSemester === 'fall') matchesSemester = g.semester === '2024-2025 Güz'
-
-    const query = searchQuery ? searchQuery.trim().toLowerCase() : ''
-    const matchesSearch = query === '' || 
-      g.courseCode.toLowerCase().includes(query) || 
-      g.instructor.toLowerCase().includes(query)
       
-    return matchesSemester && matchesSearch
+    return matchesSemester
   })
 
   // Mevcut kümülatif GANO hesabı
@@ -91,15 +87,17 @@ export default function StudentGrades() {
     ? simulateGano(studentGrades, null, 0)
     : 0
 
-  // Devamsızlık hesabı (Mock detaya uygun olarak güncellenmiştir)
-  const attendancePercent = attendance 
-    ? calculateAttendancePercent(attendance.attendedHours, attendance.totalHours)
-    : 90
-  const absentHours = attendance ? attendance.absentHours : 18
+  // Devamsızlık hesabı
+  const attendancePercent = currentUser?.attendanceRate || 92
+  const totalHours = 180
+  const attendedHours = Math.round((totalHours * attendancePercent) / 100)
+  const absentHours = totalHours - attendedHours
   
   // Daire grafiği için çizgi hesabı (Çevre = 2 * PI * r = 2 * 3.14 * 58 = 364.24)
   const strokeCircumference = 364
   const strokeOffset = strokeCircumference - (strokeCircumference * attendancePercent) / 100
+
+  const isLoading = status === 'loading'
 
   return (
     <section className="grades-page-canvas text-slate-850 dark:text-white">
@@ -137,7 +135,7 @@ export default function StudentGrades() {
           </div>
           <div className="grades-card-body">
             <p className="grades-card-label">Genel Not Ortalaması</p>
-            <h3 className="grades-card-value">{status.studentGrades === 'loading' ? '...' : currentGano.toFixed(2)}</h3>
+            <h3 className="grades-card-value">{isLoading ? '...' : currentGano.toFixed(2)}</h3>
           </div>
         </div>
 
@@ -206,7 +204,7 @@ export default function StudentGrades() {
                   </tr>
                 </thead>
                 <tbody>
-                  {status.studentGrades === 'loading' ? (
+                  {isLoading ? (
                     <tr>
                       <td colSpan="6" className="grades-td-course" style={{ textAlign: 'center', padding: '30px 0' }}>
                         Yükleniyor...
@@ -247,7 +245,6 @@ export default function StudentGrades() {
                               {letter === 'Açıklanmadı' ? 'Sınav Yapılmadı' : letter}
                             </span>
                           </td>
-                          {/* Light modda koyu olması istenen AKTS */}
                           <td className="grades-td-score akts-light-dark text-sm">{g.akts}</td>
                         </tr>
                       )
@@ -258,11 +255,10 @@ export default function StudentGrades() {
             </div>
           </div>
 
-          {/* Devamsızlık ve Katılım Analizi (Daha düzgün grafik çemberi ve alt geçmiş detayları) */}
+          {/* Devamsızlık ve Katılım Analizi */}
           <div className="grades-attendance-card flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row items-center gap-6">
               
-              {/* Devamsızlık Dairesi (Premium Tasarım) */}
               <div className="grades-attendance-visual relative select-none filter drop-shadow-md">
                 <svg className="grades-attendance-svg w-32 h-32 transform -rotate-90">
                   <defs>
@@ -271,7 +267,6 @@ export default function StudentGrades() {
                       <stop offset="100%" stopColor="#10b981" />
                     </linearGradient>
                   </defs>
-                  {/* Arka plan çemberi */}
                   <circle
                     cx="64"
                     cy="64"
@@ -279,7 +274,6 @@ export default function StudentGrades() {
                     strokeWidth="8"
                     className="grades-circle-bg stroke-slate-100 dark:stroke-slate-700/60 fill-none"
                   />
-                  {/* Katılım oranı çemberi */}
                   <circle 
                     cx="64" 
                     cy="64" 
@@ -295,11 +289,10 @@ export default function StudentGrades() {
                 </div>
               </div>
 
-              {/* Açıklama Detayları */}
               <div className="grades-attendance-details flex-1">
                 <h5 className="grades-details-title text-sm font-extrabold text-blue-900 dark:text-blue-400">Devamsızlık ve Katılım Analizi</h5>
                 <p className="grades-details-desc text-xs text-slate-500 mt-1 leading-relaxed">
-                  Bu dönem toplam {attendance?.totalHours || 180} ders saatinin {attendance?.attendedHours || 162} saatine katılım sağladınız. Kalan hakkınızı takip edebilirsiniz.
+                  Bu dönem toplam {totalHours} ders saatinin {attendedHours} saatine katılım sağladınız. Kalan hakkınızı takip edebilirsiniz.
                 </p>
                 <div className="grades-details-chips flex gap-2 mt-3 text-[10px] font-bold">
                   <span className="grades-chip-green bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-100 dark:border-emerald-900/30 flex items-center gap-1">
@@ -314,7 +307,6 @@ export default function StudentGrades() {
               </div>
             </div>
 
-            {/* Geçmiş Devamsızlık Detayları Listesi */}
             <div className="border-t border-slate-50 dark:border-slate-800/60 pt-4 space-y-3">
               <h6 className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                 Geçmiş Devamsızlık Detayları
@@ -327,7 +319,7 @@ export default function StudentGrades() {
                       <p className="text-slate-800 dark:text-white font-bold">{detail.courseName}</p>
                       <p className="text-[9px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5">Tarih: {detail.date}</p>
                     </div>
-                    <span className="bg-red-50 dark:bg-red-950/30 text-red-650 dark:text-red-400 text-red-500 px-2.5 py-0.5 rounded font-extrabold text-[9px]">
+                    <span className="bg-red-50 dark:bg-red-950/30 text-red-500 px-2.5 py-0.5 rounded font-extrabold text-[9px]">
                       {detail.hours} Saat Devamsızlık
                     </span>
                   </div>
@@ -339,7 +331,6 @@ export default function StudentGrades() {
 
         </div>
 
-        {/* Sağ Kolon: GANO Robotu ve Hızlı Aksiyonlar */}
         <div className="grades-right-column">
           <div className="grades-robot-card">
             <div className="grades-robot-header">

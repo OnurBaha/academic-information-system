@@ -1,50 +1,62 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { loginStudent, loginDemoStudent } from '../../store/auth/authSlice'
+import { loginUserAsync } from '../../store/auth/authSlice'
 import { toast } from 'react-hot-toast'
 
 export default function Login() {
-  const [role, setRole] = useState('student')
-  const [idNumber, setIdNumber] = useState('')
+  const [usernameInput, setUsernameInput] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { status } = useSelector((state) => state.auth)
+  const { status } = useSelector((state) => state.auth || {})
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    if (role === 'student') {
-      if (!idNumber || !password) {
-        toast.error('Lütfen öğrenci numarası ve şifrenizi girin')
-        return
-      }
+    if (!usernameInput || !password) {
+      toast.error('Lütfen kullanıcı adı ve şifrenizi girin')
+      return
+    }
+    
+    const resultAction = await dispatch(loginUserAsync({ username: usernameInput, password }))
+    if (loginUserAsync.fulfilled.match(resultAction)) {
+      const loggedUser = resultAction.payload
+      toast.success(`Hoş geldin, ${loggedUser.name}!`)
       
-      const resultAction = await dispatch(loginStudent({ ogrenciNo: idNumber, password }))
-      if (loginStudent.fulfilled.match(resultAction)) {
-        toast.success(`Hoş geldin, ${resultAction.payload.name}!`)
+      // Kullanıcı rolüne göre yönlendir
+      if (loggedUser.role === 'student') {
         navigate('/student/dashboard')
+      } else if (loggedUser.role === 'teacher') {
+        navigate('/teacher/dashboard')
+      } else if (loggedUser.role === 'dean') {
+        navigate('/dean/overview')
       } else {
-        toast.error(resultAction.payload || 'Giriş başarısız')
+        navigate('/')
       }
     } else {
-      // Akademisyen ve dekan için doğrudan demo yönlendirmesi
-      toast.success(`${role === 'teacher' ? 'Akademisyen' : 'Dekan'} girişi (Demo)`)
-      navigate(role === 'teacher' ? '/teacher/dashboard' : '/dean/overview')
+      toast.error(resultAction.payload || 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.')
     }
   }
 
-  const handleDemoStudentLogin = async (e) => {
+  // Demo giriş yardımcı fonksiyonu
+  const handleDemoLogin = async (e, demoUsername) => {
     e.preventDefault()
-    const resultAction = await dispatch(loginDemoStudent())
-    if (loginDemoStudent.fulfilled.match(resultAction)) {
-      toast.success(`Hoş geldin, ${resultAction.payload.name}! (Demo Öğrenci)`)
-      navigate('/student/dashboard')
+    const resultAction = await dispatch(loginUserAsync({ username: demoUsername, password: 'password123' }))
+    if (loginUserAsync.fulfilled.match(resultAction)) {
+      const loggedUser = resultAction.payload
+      toast.success(`Hoş geldin, ${loggedUser.name}! (Demo)`)
+      if (loggedUser.role === 'student') {
+        navigate('/student/dashboard')
+      } else if (loggedUser.role === 'teacher') {
+        navigate('/teacher/dashboard')
+      } else if (loggedUser.role === 'dean') {
+        navigate('/dean/overview')
+      }
     } else {
-      toast.error(resultAction.payload || 'Demo girişi başarısız')
+      toast.error('Demo girişi başarısız')
     }
   }
 
@@ -90,35 +102,16 @@ export default function Login() {
 
             <form className="login-form-body" onSubmit={handleSubmit}>
               <div className="login-form-group">
-                <label className="login-input-label" htmlFor="role">Giriş Rolü Seçin</label>
-                <div className="login-select-wrapper">
-                  <select 
-                    className="login-form-select" 
-                    id="role" 
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                  >
-                    <option value="student">Öğrenci</option>
-                    <option value="teacher">Akademisyen</option>
-                    <option value="dean">Dekan</option>
-                  </select>
-                  <span className="material-symbols-outlined">expand_more</span>
-                </div>
-              </div>
-
-              <div className="login-form-group">
-                <label className="login-input-label" htmlFor="id_number">
-                  {role === 'student' ? 'Öğrenci No' : 'T.C. Kimlik No'}
-                </label>
+                <label className="login-input-label" htmlFor="username">Kullanıcı Adı</label>
                 <div className="login-input-wrapper">
                   <span className="material-symbols-outlined">person</span>
                   <input 
                     className="login-form-input" 
-                    id="id_number" 
+                    id="username" 
                     type="text" 
-                    placeholder="Örn: 20211024032" 
-                    value={idNumber}
-                    onChange={(e) => setIdNumber(e.target.value)}
+                    placeholder="Örn: student.ahmet" 
+                    value={usernameInput}
+                    onChange={(e) => setUsernameInput(e.target.value)}
                   />
                 </div>
               </div>
@@ -170,9 +163,9 @@ export default function Login() {
           <div className="login-demo-panel">
             <p className="login-demo-title">Demo Giriş Linkleri</p>
             <div className="login-demo-links">
-              <button onClick={handleDemoStudentLogin} className="login-demo-btn" style={{ cursor: 'pointer' }}>Öğrenci</button>
-              <Link to="/teacher/dashboard" className="login-demo-btn">Akademisyen</Link>
-              <Link to="/dean/overview" className="login-demo-btn">Dekan</Link>
+              <button onClick={(e) => handleDemoLogin(e, 'student.ahmet')} className="login-demo-btn" style={{ cursor: 'pointer' }}>Öğrenci</button>
+              <button onClick={(e) => handleDemoLogin(e, 'teacher.ahmet')} className="login-demo-btn" style={{ cursor: 'pointer' }}>Akademisyen</button>
+              <button onClick={(e) => handleDemoLogin(e, 'dean.mehmet')} className="login-demo-btn" style={{ cursor: 'pointer' }}>Dekan</button>
             </div>
           </div>
         </div>
@@ -180,4 +173,3 @@ export default function Login() {
     </main>
   )
 }
-

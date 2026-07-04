@@ -5,24 +5,28 @@ import TopAppBar from '../components/UI/TopAppBar'
 
 export default function MainLayout() {
   const location = useLocation()
-  const { user: authUser, isAuthenticated } = useSelector((state) => state.auth)
+  const { currentUser } = useSelector((state) => state.auth || {})
   
   const isTeacher = location.pathname.startsWith('/teacher')
   const isDean = location.pathname.startsWith('/dean')
   const role = isTeacher ? 'teacher' : isDean ? 'dean' : 'student'
 
-  // Öğrenci oturum açmamışsa giriş sayfasına yönlendir
-  if (role === 'student' && !isAuthenticated) {
+  // Oturum açılmamışsa giriş sayfasına yönlendir
+  if (!currentUser) {
     return <Navigate to="/login" replace />
   }
 
-  const user = isTeacher 
-    ? { name: 'Dr. Ahmet Yılmaz', id: 'EGT-2021-0042' }
-    : isDean 
-    ? { name: 'Prof. Dr. Ahmet Yılmaz', id: 'DKN-2018-0001' }
-    : authUser
-    ? { name: authUser.name, id: authUser.ogrenciNo }
-    : { name: 'Ahmet Yılmaz', id: '20211024032' }
+  // Rol yetki kontrolü: Kullanıcı kendi rolü dışındaki sayfalara erişmeye çalışırsa uygun dashboard'a yönlendir
+  if (role !== currentUser.role) {
+    if (currentUser.role === 'student') return <Navigate to="/student/dashboard" replace />
+    if (currentUser.role === 'teacher') return <Navigate to="/teacher/dashboard" replace />
+    if (currentUser.role === 'dean') return <Navigate to="/dean/overview" replace />
+  }
+
+  const user = {
+    name: currentUser?.name || 'Kullanıcı',
+    id: currentUser?.studentNumber || currentUser?.phone || currentUser?.id || '—'
+  }
 
   return (
     <div className="layout-root">

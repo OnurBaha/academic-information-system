@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchStudentCourses } from '../../store/student/studentSlice'
+import { fetchStudentDashboardAsync } from '../../store/student/studentSlice'
 import { toast } from 'react-hot-toast'
 
 // Müfredat Verileri (Ders bazlı dinamik bölümler)
@@ -88,8 +88,10 @@ const defaultForumPosts = [
 
 export default function Courses() {
   const dispatch = useDispatch()
-  const { user } = useSelector((state) => state.auth)
-  const { studentCourses, status: studentCoursesStatus } = useSelector((state) => state.student)
+  const { currentUser } = useSelector((state) => state.auth || {})
+  const { dashboardData, status } = useSelector((state) => state.student || {})
+
+  const studentCourses = dashboardData?.registeredCourses || []
 
   // Sayfa durumları
   const [selectedCourseCode, setSelectedCourseCode] = useState('')
@@ -106,10 +108,10 @@ export default function Courses() {
 
   // Kurs verilerini getirme
   useEffect(() => {
-    if (user?.id) {
-      dispatch(fetchStudentCourses(user.id))
+    if (currentUser?.id) {
+      dispatch(fetchStudentDashboardAsync())
     }
-  }, [dispatch, user])
+  }, [dispatch, currentUser])
 
   // Sadece online dersleri filtrele
   const onlineCourses = studentCourses.filter(course => 
@@ -187,8 +189,8 @@ export default function Courses() {
       if (post.id === postId) {
         const newReply = {
           id: Date.now(),
-          author: user?.name || "Öğrenci",
-          avatar: user?.name ? user.name.split(' ').map(n => n[0]).join('') : "Ö",
+          author: currentUser?.name || "Öğrenci",
+          avatar: currentUser?.name ? currentUser.name.split(' ').map(n => n[0]).join('') : "Ö",
           time: "Şimdi",
           text: replyText
         }
@@ -212,8 +214,8 @@ export default function Courses() {
     }
     const newPost = {
       id: forumPosts.length + 1,
-      author: user?.name || "Öğrenci",
-      avatar: user?.name ? user.name.split(' ').map(n => n[0]).join('') : "Ö",
+      author: currentUser?.name || "Öğrenci",
+      avatar: currentUser?.name ? currentUser.name.split(' ').map(n => n[0]).join('') : "Ö",
       time: "Şimdi",
       text: newQuestion,
       likes: 0,
@@ -252,7 +254,7 @@ const Timer = () => {
     toast.success('Kod panoya kopyalandı!')
   }
 
-  const isLoading = studentCoursesStatus === 'loading'
+  const isLoading = status === 'loading'
 
   if (isLoading) {
     return (
@@ -282,10 +284,10 @@ const Timer = () => {
           <nav className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
             <span>Derslerim</span>
             <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-            <span className="font-bold text-blue-600 dark:text-blue-400">{currentCourse ? `${currentCourse.courseName} (Online Ders)` : ''}</span>
+            <span className="font-bold text-blue-600 dark:text-blue-400">{currentCourse ? `${currentCourse.name || currentCourse.courseName} (Online Ders)` : ''}</span>
           </nav>
           <h1 className="text-xl md:text-2xl font-black tracking-tight mt-1 text-slate-800 dark:text-white">
-            {currentCourse ? `${currentCourse.courseName} (Online Ders)` : ''}
+            {currentCourse ? `${currentCourse.name || currentCourse.courseName} (Online Ders)` : ''}
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">Eğitmen: {currentCourse?.instructor}</p>
         </div>
@@ -302,7 +304,7 @@ const Timer = () => {
           >
             {onlineCourses.map(course => (
               <option key={course.code} value={course.code}>
-                {course.courseName} (Online Ders)
+                {course.name || course.courseName} (Online Ders)
               </option>
             ))}
           </select>
@@ -526,7 +528,7 @@ const Timer = () => {
                     </div>
                   </div>
                   <span className="material-symbols-outlined text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 text-lg">
-                    download
+                     download
                   </span>
                 </div>
 

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { createNotification, fetchAllCourses } from '../../store/student/studentSlice'
+import { fetchCoursesAsync } from '../../store/course/courseSlice'
 import { toast } from 'react-hot-toast'
 
 export default function CourseRegistration() {
   const dispatch = useDispatch()
-  const { user } = useSelector((state) => state.auth)
-  const { courses, status: coursesStatus } = useSelector((state) => state.student)
+  const { currentUser } = useSelector((state) => state.auth || {})
+  const { courses = [], status: coursesStatus } = useSelector((state) => state.course || {})
 
   // State tanımlamaları
   const [selectedCourses, setSelectedCourses] = useState([])
@@ -17,7 +17,7 @@ export default function CourseRegistration() {
   const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   // Harç ödeme durumları
-  const [isTuitionPaid, setIsTuitionPaid] = useState(user?.tuitionPaid || false)
+  const [isTuitionPaid, setIsTuitionPaid] = useState(currentUser?.tuitionPaid || false)
   const [paymentStep, setPaymentStep] = useState('overview') // 'overview' | 'installments' | 'card' | 'sms' | 'success'
   const [selectedInstallment, setSelectedInstallment] = useState(1) // 1, 3, 6, 12
   const [cardName, setCardName] = useState('')
@@ -32,13 +32,13 @@ export default function CourseRegistration() {
 
   // Başlangıçta ders listesini çekme
   useEffect(() => {
-    dispatch(fetchAllCourses())
+    dispatch(fetchCoursesAsync())
   }, [dispatch])
 
   // Başlangıçta localStorage'dan yükleme
   useEffect(() => {
-    if (user?.id) {
-      const savedState = localStorage.getItem(`course_reg_${user.id}`)
+    if (currentUser?.id) {
+      const savedState = localStorage.getItem(`course_reg_${currentUser.id}`)
       if (savedState) {
         try {
           const parsed = JSON.parse(savedState)
@@ -50,12 +50,12 @@ export default function CourseRegistration() {
       }
 
       // Harç ödeme durumu kontrolü
-      const savedTuition = localStorage.getItem(`tuition_paid_2026_2027_${user.id}`)
-      if (savedTuition === 'true' || user?.tuitionPaid) {
+      const savedTuition = localStorage.getItem(`tuition_paid_2026_2027_${currentUser.id}`)
+      if (savedTuition === 'true' || currentUser?.tuitionPaid) {
         setIsTuitionPaid(true)
       }
     }
-  }, [user])
+  }, [currentUser])
 
   // SMS kodu için zamanlayıcı efekti
   useEffect(() => {
@@ -79,9 +79,9 @@ export default function CourseRegistration() {
 
   // Kaydetme yardımcısı
   const saveState = (newSelected, newStatus) => {
-    if (user?.id) {
+    if (currentUser?.id) {
       localStorage.setItem(
-        `course_reg_${user.id}`,
+        `course_reg_${currentUser.id}`,
         JSON.stringify({ selectedCourses: newSelected, status: newStatus })
       )
     }
@@ -187,24 +187,6 @@ export default function CourseRegistration() {
       saveState(selectedCourses, 'Onay Bekliyor')
       setIsSubmitting(false)
       setShowSuccessModal(true) // Show success overlay modal
-
-      // Öğrenci bildirimi oluşturma
-      if (user?.id) {
-        const today = new Date()
-        const formattedDate = `${String(today.getDate()).padStart(2, '0')}.${String(
-          today.getMonth() + 1
-        ).padStart(2, '0')}.${today.getFullYear()}`
-
-        dispatch(
-          createNotification({
-            studentId: user.id,
-            title: 'Ders Kaydı Gönderildi',
-            content: `2026-2027 Güz Dönemi ders kayıt talebiniz danışman onayına sunulmuştur. Durum: Danışman Onayı Bekleniyor`,
-            date: formattedDate,
-            read: false,
-          })
-        )
-      }
     }, 1500)
   }
 
@@ -253,8 +235,8 @@ export default function CourseRegistration() {
 
   const handleUnlockRegistration = () => {
     setIsTuitionPaid(true)
-    if (user?.id) {
-      localStorage.setItem(`tuition_paid_2026_2027_${user.id}`, 'true')
+    if (currentUser?.id) {
+      localStorage.setItem(`tuition_paid_2026_2027_${currentUser.id}`, 'true')
     }
     toast.success('Ders kayıt ekranı başarıyla aktif hale getirildi!')
   }
@@ -307,7 +289,7 @@ export default function CourseRegistration() {
   return (
     <section className="flex-1 p-4 md:p-6 bg-[#f6f9ff] dark:bg-slate-900 transition-colors duration-200 overflow-y-auto pb-36 relative min-h-screen">
       
-      {/* Harç ödeme katmanı (Kenar çubuğu ve üst bar görünür kalır) */}
+      {/* Harç ödeme katmanı */}
       {!isTuitionPaid && (
         <div className="absolute inset-0 bg-[#f6f9ff] dark:bg-slate-900 z-50 overflow-y-auto flex flex-col justify-start p-4 md:p-8">
           <div className="max-w-4xl w-full mx-auto my-auto flex flex-col justify-center min-h-full">
@@ -371,7 +353,6 @@ export default function CourseRegistration() {
                   <span className="text-xs font-bold text-slate-400 uppercase">Aşama 2 / 5</span>
                 </div>
 
-                {/* Taksit Listesi - Alt Alta */}
                 <div className="flex flex-col space-y-3">
                   {[1, 3, 6, 12].map((inst) => (
                     <label
@@ -422,7 +403,7 @@ export default function CourseRegistration() {
               </div>
             )}
 
-            {/* Aşama 3: 3D Kart Döndürmeli Ödeme Detayları */}
+            {/* Aşama 3: Kart Ödeme Detayları */}
             {paymentStep === 'card' && (
               <form onSubmit={handleSendSms} className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
@@ -430,21 +411,17 @@ export default function CourseRegistration() {
                   <span className="text-xs font-bold text-slate-400 uppercase">Aşama 3 / 5</span>
                 </div>
 
-                {/* Izgara düzeni */}
                 <div className="grid grid-cols-12 gap-6">
                   
-                  {/* Sol Sütun: 3D Kredi Kartı Simülasyonu */}
+                  {/* Sol Sütun: Kredi Kartı Simülasyonu */}
                   <div className="col-span-12 md:col-span-5 flex flex-col justify-between space-y-6">
                     
-                    {/* 3D Kart Kapsayıcı */}
                     <div className="w-full h-48 [perspective:1000px] shrink-0">
                       <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${isCvvFocused ? '[transform:rotateY(180deg)]' : ''}`}>
                         
                         {/* Ön Yüz */}
                         <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-indigo-950 via-blue-900 to-slate-900 rounded-2xl p-5 text-white shadow-2xl flex flex-col justify-between overflow-hidden border border-white/10 [backface-visibility:hidden]">
-                          {/* Kart çipi ve temassız simgesi */}
                           <div className="flex justify-between items-center">
-                            {/* Gerçekçi Altın Çip */}
                             <div className="w-11 h-8 bg-gradient-to-r from-yellow-400 via-amber-200 to-yellow-500 rounded-md relative border border-yellow-600/30 overflow-hidden shadow-[inset_0_1px_3px_rgba(255,255,255,0.4)] shrink-0">
                               <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-0 opacity-40">
                                 <div className="border-r border-b border-yellow-800/40"></div>
@@ -461,12 +438,10 @@ export default function CourseRegistration() {
                             <div className="text-xl font-bold tracking-tight text-white/80 font-mono">VISA</div>
                           </div>
                           
-                          {/* Kart numarası alanı */}
                           <div className="text-lg font-mono tracking-widest my-4 text-center">
                             {formatCardNumberDisplay(cardNumber)}
                           </div>
                           
-                          {/* Kart sahibi ve S.K.T alanı */}
                           <div className="flex justify-between items-end">
                             <div className="min-w-0 flex-1 mr-2">
                               <p className="text-[8px] text-white/40 uppercase tracking-widest mb-0.5">KART SAHİBİ</p>
@@ -483,12 +458,10 @@ export default function CourseRegistration() {
                           </div>
                         </div>
 
-                        {/* Arka Yüz (CVV odaklandığında gösterilir) */}
+                        {/* Arka Yüz */}
                         <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-indigo-950 via-blue-900 to-slate-900 rounded-2xl text-white shadow-2xl flex flex-col justify-between overflow-hidden border border-white/10 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                          {/* Manyetik Şerit */}
                           <div className="w-full h-10 bg-slate-950 mt-4"></div>
                           
-                          {/* İmza çizgisi ve CVV alanı */}
                           <div className="px-5 flex items-center justify-between">
                             <div className="flex-1 h-8 bg-slate-200/20 rounded-md mr-3 flex items-center px-2 text-white/40 text-[9px] italic font-semibold">
                               Yetkili İmza
@@ -507,7 +480,6 @@ export default function CourseRegistration() {
                       </div>
                     </div>
 
-                    {/* Özet Kutusu */}
                     <div className="bg-slate-50 dark:bg-slate-900/40 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50 space-y-2.5">
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Ödeme Özeti</p>
                       <div className="flex justify-between text-xs font-semibold text-slate-500">
@@ -557,10 +529,7 @@ export default function CourseRegistration() {
                       />
                     </div>
 
-                    {/* Son Kullanma Tarihi ve CVV satırı */}
                     <div className="grid grid-cols-12 gap-4">
-                      
-                      {/* Son Kullanma Ayı */}
                       <div className="col-span-4 space-y-1">
                         <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Ay (AA)</label>
                         <input
@@ -574,7 +543,6 @@ export default function CourseRegistration() {
                         />
                       </div>
 
-                      {/* Son Kullanma Yılı */}
                       <div className="col-span-4 space-y-1">
                         <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Yıl (YY)</label>
                         <input
@@ -588,7 +556,6 @@ export default function CourseRegistration() {
                         />
                       </div>
 
-                      {/* CVV (Kart döndürme ile bağlantılı) */}
                       <div className="col-span-4 space-y-1">
                         <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">CVC/CVV</label>
                         <input
@@ -626,7 +593,7 @@ export default function CourseRegistration() {
               </form>
             )}
 
-            {/* Aşama 4: SMS Doğrulama Kodu */}
+            {/* Aşama 4: SMS Doğrulama */}
             {paymentStep === 'sms' && (
               <form onSubmit={handleVerifySms} className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
@@ -638,7 +605,6 @@ export default function CourseRegistration() {
                   Telefonunuza gönderilen 3D Secure doğrulama kodunu giriniz. (Onay kodu alanına rastgele bir şeyler girmeniz yeterlidir)
                 </div>
 
-                {/* Geri Sayım Zamanlayıcısı */}
                 <div className="flex flex-col items-center justify-center space-y-1">
                   <span className="text-2xl font-black text-blue-600 dark:text-blue-400 tracking-wider font-mono">
                     {formatTimer(timerSeconds)}
@@ -696,7 +662,6 @@ export default function CourseRegistration() {
             {/* Aşama 5: Ödeme Başarılı */}
             {paymentStep === 'success' && (
               <div className="flex flex-col items-center text-center space-y-6 py-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
-                {/* Animasyonlu onay işareti */}
                 <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-950/40 rounded-full flex items-center justify-center text-emerald-500 animate-success-bounce shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                   <svg className="w-12 h-12 stroke-emerald-500 fill-none" viewBox="0 0 52 52">
                     <circle className="animate-draw-circle" cx="26" cy="26" r="25" strokeWidth="3" />
@@ -730,7 +695,6 @@ export default function CourseRegistration() {
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-md flex items-center justify-center z-[100] p-4 transition-opacity duration-300">
           <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-700/50 flex flex-col items-center text-center space-y-6 transform scale-100 animate-fade-in-up">
             
-            {/* Çizim animasyonlu onay işareti SVG */}
             <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-950/40 rounded-full flex items-center justify-center text-emerald-500 animate-success-bounce shadow-[0_0_20px_rgba(16,185,129,0.2)]">
               <svg className="w-12 h-12 stroke-emerald-500 fill-none" viewBox="0 0 52 52">
                 <circle className="animate-draw-circle" cx="26" cy="26" r="25" strokeWidth="3" />
@@ -743,7 +707,7 @@ export default function CourseRegistration() {
                 Ders Seçiminiz Alınmıştır!
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                Talebiniz başarıyla danışmanınız <strong>{user?.advisor || 'Prof. Dr. Selçuk Yılmaz'}</strong> onayına gönderilmiştir.
+                Talebiniz başarıyla danışmanınız <strong>{currentUser?.advisor || 'Prof. Dr. Selçuk Yılmaz'}</strong> onayına gönderilmiştir.
               </p>
             </div>
 
@@ -758,7 +722,7 @@ export default function CourseRegistration() {
         </div>
       )}
 
-      {/* Ana kayıt içeriği alanı (Ödenmediğinde bulanık, ödendiğinde 1 saniyelik geçişle açılır) */}
+      {/* Ana kayıt içeriği alanı */}
       <div className={`max-w-7xl mx-auto space-y-5 transition-all duration-1000 ease-in-out ${isTuitionPaid ? 'blur-none' : 'blur-[6px] pointer-events-none select-none'}`}>
         
         {/* Başlık Bölümü */}
@@ -771,31 +735,6 @@ export default function CourseRegistration() {
               2026-2027 Güz Dönemi Kayıtları
             </p>
           </div>
-
-          {/* Demo Kontrol Paneli - KODDA TUT AMA ARAYÜZDE GİZLE */}
-          {false && (
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200/60 dark:border-slate-700/60 self-start sm:self-auto z-10">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 px-2 uppercase">Demo:</span>
-              <button 
-                onClick={() => handleDemoSetStatus('Taslak')}
-                className={`px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all ${status === 'Taslak' ? 'bg-blue-600 text-white shadow' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
-              >
-                Taslak
-              </button>
-              <button 
-                onClick={() => handleDemoSetStatus('Onay Bekliyor')}
-                className={`px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all ${status === 'Onay Bekliyor' ? 'bg-amber-500 text-white shadow' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
-              >
-                Bekliyor
-              </button>
-              <button 
-                onClick={() => handleDemoSetStatus('Onaylandı')}
-                className={`px-2.5 py-1 text-[10px] font-bold rounded-lg transition-all ${status === 'Onaylandı' ? 'bg-emerald-600 text-white shadow' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
-              >
-                Onaylandı
-              </button>
-            </div>
-          )}
         </div>
 
         {/* Durum Bandı */}
@@ -844,7 +783,7 @@ export default function CourseRegistration() {
           </div>
         </div>
 
-        {/* Uyarı Bantları (AKTS ve Seçmeli ders kuralı) */}
+        {/* Uyarı Bantları */}
         <div className="flex flex-col gap-2">
           {isLimitExceeded && (
             <div className="p-3 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 rounded-xl border border-red-200 dark:border-red-900/40 flex items-center gap-3 animate-bounce">
@@ -870,7 +809,7 @@ export default function CourseRegistration() {
           )}
         </div>
 
-        {/* Ana Izgara - Doğal kaydırma için otomatik yükseklik */}
+        {/* Ana Izgara */}
         <div className="grid grid-cols-12 gap-5 h-auto">
 
           {/* Sol Sütun: Açılan Dersler */}
@@ -883,9 +822,7 @@ export default function CourseRegistration() {
                 Açılan Dersler
               </h3>
               
-              {/* Arama/Filtreleme alanı */}
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                {/* Arama girişi ve arama ikonu */}
                 <div className="relative flex-grow sm:flex-none sm:w-48">
                   <input
                     type="text"
@@ -1099,7 +1036,6 @@ export default function CourseRegistration() {
           {/* İstatistik Bilgileri (Sol) */}
           <div className="flex flex-wrap items-center justify-between sm:justify-start gap-4 sm:gap-5 w-full sm:w-auto">
             
-            {/* AKTS Gösterimi */}
             <div className="shrink-0">
               <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-0.5">
                 Toplam Seçilen AKTS
@@ -1179,13 +1115,11 @@ export default function CourseRegistration() {
           {/* Butonlar (Sağ) */}
           <div className="flex items-center gap-2 shrink-0 justify-end w-full sm:w-auto mt-2 sm:mt-0">
             {status === 'Onaylandı' ? (
-              // Durum: Ders Kaydı Onaylandı
               <div className="w-full sm:w-auto px-5 py-2 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 border border-emerald-200 dark:border-emerald-900/30">
                 <span className="material-symbols-outlined text-sm">check_circle</span>
                 Kayıt Tamamlandı
               </div>
             ) : status === 'Onay Bekliyor' ? (
-              // Durum: Danışman Onayı Bekleniyor -> Seçimi İptal Et göster
               <button
                 onClick={handleCancelSubmission}
                 className="w-full sm:w-auto px-5 py-2 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-red-500/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
@@ -1194,7 +1128,6 @@ export default function CourseRegistration() {
                 Seçimi İptal Et
               </button>
             ) : (
-              // Durum: Taslak modu -> Taslağı Kaydet ve Danışmana Gönder
               <>
                 <button
                   onClick={handleSaveDraft}

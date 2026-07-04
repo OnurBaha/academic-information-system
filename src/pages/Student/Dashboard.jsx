@@ -2,12 +2,9 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  fetchStudentCourses,
-  fetchStudentGrades,
-  fetchAttendance,
-  fetchUpcomingClasses
+  fetchStudentGradesAsync,
+  fetchStudentDashboardAsync
 } from '../../store/student/studentSlice'
-import { simulateGano, calculateAttendancePercent } from '../../utils/studentCalc'
 import { toast } from 'react-hot-toast'
 
 const absenceDetails = [
@@ -18,47 +15,48 @@ const absenceDetails = [
 
 export default function StudentDashboard() {
   const dispatch = useDispatch()
-  const { user } = useSelector((state) => state.auth)
-  const { studentCourses, studentGrades, attendance, upcomingClasses, status } = useSelector((state) => state.student)
+  const { currentUser } = useSelector((state) => state.auth || {})
+  const { grades, dashboardData, status } = useSelector((state) => state.student || {})
   
   const [localSearch, setLocalSearch] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [showAllCourses, setShowAllCourses] = useState(false)
 
   useEffect(() => {
-    if (user?.id) {
-      dispatch(fetchStudentCourses(user.id))
-      dispatch(fetchStudentGrades(user.id))
-      dispatch(fetchAttendance(user.id))
-      dispatch(fetchUpcomingClasses())
+    if (currentUser?.id) {
+      dispatch(fetchStudentGradesAsync(currentUser.id))
+      dispatch(fetchStudentDashboardAsync())
     }
-  }, [dispatch, user])
+  }, [dispatch, currentUser])
 
-  // GANO hesaplama
-  const currentGano = studentGrades.length > 0 
-    ? simulateGano(studentGrades, null, 0)
-    : 0
+  // Kullanıcı bilgileri
+  const currentGano = currentUser?.gpa || 0
+  const completedEcts = currentUser?.completedEcts || 0
+  const totalEcts = currentUser?.totalEcts || 240
+  const absentPercent = 100 - (currentUser?.attendanceRate || 92)
+
+  // Kayıtlı Dersler & Yaklaşan Dersler
+  const studentCourses = dashboardData?.registeredCourses || []
+  const upcomingClasses = dashboardData?.upcomingLessons || []
 
   // Ders arama filtresi
   const filteredStudentCourses = studentCourses.filter(course => {
+    const name = course.name || course.courseName || ''
+    const instructor = course.instructor || ''
+    const category = course.category || ''
+    
     return localSearch.trim() === '' || 
-      course.courseName.toLowerCase().includes(localSearch.toLowerCase()) || 
-      course.instructor.toLowerCase().includes(localSearch.toLowerCase()) ||
-      (course.category && course.category.toLowerCase().includes(localSearch.toLowerCase()))
+      name.toLowerCase().includes(localSearch.toLowerCase()) || 
+      instructor.toLowerCase().includes(localSearch.toLowerCase()) ||
+      category.toLowerCase().includes(localSearch.toLowerCase())
   })
 
-  // Devamsızlık hesabı
-  const absentPercent = attendance 
-    ? (100 - calculateAttendancePercent(attendance.attendedHours, attendance.totalHours))
-    : 0
+  const isLoading = status === 'loading'
 
-  const isLoading = status.studentCourses === 'loading' || status.studentGrades === 'loading'
-
-  // Sayfa başına 5 ders gösterimi ve sayfa sayısı hesabı
+  // Sayfa başına 5 ders gösterimi
   const itemsPerPage = 5
   const totalPages = Math.ceil(filteredStudentCourses.length / itemsPerPage)
   
-  // Tümünü gör aktifse hepsi, yoksa sayfa dilimi gösterilir
   const displayedCourses = showAllCourses 
     ? filteredStudentCourses 
     : filteredStudentCourses.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
@@ -69,7 +67,7 @@ export default function StudentDashboard() {
         <section className="student-page-canvas">
           <div className="student-greeting-banner">
             <div className="student-greeting-text">
-              <h2 className="student-greeting-title">Hoş geldin, {user?.name || 'Öğrenci'}</h2>
+              <h2 className="student-greeting-title">Hoş geldin, {currentUser?.name || 'Öğrenci'} 👋</h2>
               <p className="student-greeting-sub">Derslerindeki başarını takip etmeye devam et. Bu dönem hedefine ulaşmana çok az kaldı!</p>
             </div>
             <div className="student-greeting-deco">
@@ -93,7 +91,7 @@ export default function StudentDashboard() {
               </div>
               <div className="student-stat-info">
                 <p className="student-stat-label">Tamamlanan AKTS</p>
-                <h3 className="student-stat-value">180 / 240</h3>
+                <h3 className="student-stat-value">{completedEcts} / {totalEcts}</h3>
               </div>
             </div>
             <div className="student-stat-card">
@@ -128,7 +126,6 @@ export default function StudentDashboard() {
                       className="pl-8 pr-3 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none w-36 sm:w-48"
                     />
                   </div>
-                  {/* Tümünü gör butonu: sayfa yönlendirmek yerine dashboard üzerinde listeyi açar */}
                   <button 
                     onClick={() => {
                       setShowAllCourses(prev => !prev)
@@ -141,15 +138,14 @@ export default function StudentDashboard() {
                 </div>
               </div>
               
-              {/* Tümünü Gör aktifse dikey liste, normalde grid */}
               <div className={showAllCourses ? "flex flex-col gap-6" : "student-courses-grid"}>
                 {displayedCourses.length === 0 ? (
                   <p className="student-card-instructor" style={{ gridColumn: '1 / -1', padding: '20px 0' }}>
-                    {studentCourses.length === 0 ? 'Henüz kayıtlı dersiniz bulunmamaktadır.' : 'Arama kriterlerine uygun ders bulunamadı.'}
+                    {isLoading ? 'Yükleniyor...' : 'Kayıtlı dersiniz bulunmamaktadır.'}
                   </p>
                 ) : (
                   displayedCourses.map((course) => {
-                    const isDotNet = course.code?.toLowerCase().includes('net') || course.courseName.includes('.NET')
+                    const isDotNet = course.styleClass === 'dotnet'
                     const thumbClass = isDotNet ? 'student-card-thumb-dotnet' : 'student-card-thumb-sql'
                     const badgeClass = course.category === 'Mühendislik' ? 'student-card-badge-blue' : 'student-card-badge-amber'
                     
@@ -159,7 +155,7 @@ export default function StudentDashboard() {
                           <span className={badgeClass}>{course.category}</span>
                         </div>
                         <div className="student-card-body">
-                          <h4 className="student-card-title">{course.courseName}</h4>
+                          <h4 className="student-card-title">{course.name || course.courseName}</h4>
                           <p className="student-card-instructor">{course.instructor}</p>
                           <div className="student-card-progress">
                             <div className="student-progress-labels">
@@ -174,7 +170,7 @@ export default function StudentDashboard() {
                                 <span className="material-symbols-outlined">play_circle</span>
                                 <span>VOD Tekrarı</span>
                               </Link>
-                              <button className="student-btn-doc" onClick={() => toast.success(`${course.courseName} ders dökümanları hazır.`)}>
+                              <button className="student-btn-doc" onClick={() => toast.success(`${course.name || course.courseName} ders dökümanları hazır.`)}>
                                 <span className="material-symbols-outlined">description</span>
                               </button>
                             </div>
@@ -186,7 +182,6 @@ export default function StudentDashboard() {
                 )}
               </div>
 
-              {/* Sayfalama Kontrolleri (Tümünü Göster modunda gizlenir) */}
               {!showAllCourses && totalPages > 1 && (
                 <div className="flex justify-center items-center gap-2 mt-6">
                   <div className="flex gap-1.5">
@@ -276,10 +271,10 @@ export default function StudentDashboard() {
 
               <div className="student-advisor-card">
                 <div className="student-advisor-info">
-                  <div className="student-advisor-avatar">{user?.advisorInitial || 'S'}</div>
+                  <div className="student-advisor-avatar">{currentUser?.advisor?.charAt(0) || 'S'}</div>
                   <div className="student-advisor-details">
                     <p className="student-advisor-title">Akademik Danışman</p>
-                    <p className="student-advisor-name">{user?.advisor || 'Danışman Belirtilmedi'}</p>
+                    <p className="student-advisor-name">{currentUser?.advisor || 'Danışman Belirtilmedi'}</p>
                   </div>
                 </div>
                 <button className="student-btn-appt" onClick={() => toast.success('Danışman randevu talebiniz oluşturuldu.')}>

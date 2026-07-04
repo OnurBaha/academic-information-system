@@ -1,27 +1,25 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  fetchDocumentRequests,
-  fetchCertificates,
-  createDocumentRequest
+  fetchStudentDocumentsAsync,
+  requestOfficialDocumentAsync
 } from '../../store/student/studentSlice'
 import { toast } from 'react-hot-toast'
 
 export default function Documents() {
   const dispatch = useDispatch()
-  const { user } = useSelector((state) => state.auth)
-  const { documentRequests, certificates, status, searchQuery } = useSelector((state) => state.student)
+  const { currentUser } = useSelector((state) => state.auth || {})
+  const { documents, status } = useSelector((state) => state.student || {})
   
   const [docSearchQuery, setDocSearchQuery] = useState('')
   const [showOtherForm, setShowOtherForm] = useState(false)
   const [otherDocType, setOtherDocType] = useState('Staj Belgesi')
 
   useEffect(() => {
-    if (user?.id) {
-      dispatch(fetchDocumentRequests(user.id))
-      dispatch(fetchCertificates(user.id))
+    if (currentUser?.id) {
+      dispatch(fetchStudentDocumentsAsync(currentUser.id))
     }
-  }, [dispatch, user])
+  }, [dispatch, currentUser])
 
   // PDF İndirme Fonksiyonu (Gerçek indirme simülasyonu)
   const handleDownloadPdf = (title) => {
@@ -40,11 +38,8 @@ export default function Documents() {
     toast.success(`${title} belgesi başarıyla indirildi!`)
   }
 
-  // Talep Gönderimi Fonksiyonu (Durum anında 'Hazır' olur)
+  // Talep Gönderimi Fonksiyonu
   const handleRequestSubmit = async (type) => {
-    const today = new Date()
-    const formattedDate = `${String(today.getDate()).padStart(2, '0')}.${String(today.getMonth() + 1).padStart(2, '0')}.${today.getFullYear()}`
-    
     let description = ''
     if (type === 'Öğrenci Belgesi') {
       description = 'Türkçe, Dijital'
@@ -54,14 +49,14 @@ export default function Documents() {
       description = 'Resmi Onaylı, Türkçe'
     }
 
-    const resultAction = await dispatch(createDocumentRequest({
-      studentId: user.id,
+    const resultAction = await dispatch(requestOfficialDocumentAsync({
+      studentId: currentUser.id,
       title: type,
       description: description,
-      requestDate: formattedDate
+      type: 'document'
     }))
 
-    if (createDocumentRequest.fulfilled.match(resultAction)) {
+    if (requestOfficialDocumentAsync.fulfilled.match(resultAction)) {
       toast.success(`${type} talebiniz oluşturuldu ve anında indirilebilir duruma getirildi!`)
       setShowOtherForm(false)
     } else {
@@ -69,20 +64,21 @@ export default function Documents() {
     }
   }
 
+  const documentRequests = (documents || []).filter(d => d.type === 'document' || !d.type)
+  
+  const defaultCertificates = [
+    { id: 'cert-1', name: 'React Developer Certificate', issuer: 'Softito Academy', date: '15.01.2026' },
+    { id: 'cert-2', name: 'Full-Stack Web Development', issuer: 'AIS Certification', date: '10.03.2026' }
+  ]
+  const certificatesList = (documents || []).filter(d => d.type === 'certificate')
+  const certificates = certificatesList.length > 0 ? certificatesList : defaultCertificates
+
   // Arama filtreleme mantığı (Geçmiş Talepler için)
   const filteredRequests = documentRequests.filter((req) => {
     const queryDoc = docSearchQuery.trim().toLowerCase()
-    const queryGeneral = searchQuery ? searchQuery.trim().toLowerCase() : ''
-    
-    const matchesDoc = queryDoc === '' || 
+    return queryDoc === '' || 
       req.title.toLowerCase().includes(queryDoc) || 
       (req.description && req.description.toLowerCase().includes(queryDoc))
-      
-    const matchesGeneral = queryGeneral === '' || 
-      req.title.toLowerCase().includes(queryGeneral) || 
-      (req.description && req.description.toLowerCase().includes(queryGeneral))
-      
-    return matchesDoc && matchesGeneral
   })
 
   // En fazla 5 belgenin listelenmesi sınırı
@@ -91,18 +87,12 @@ export default function Documents() {
   // Sertifika arama filtreleme mantığı
   const filteredCertificates = certificates.filter((cert) => {
     const queryDoc = docSearchQuery.trim().toLowerCase()
-    const queryGeneral = searchQuery ? searchQuery.trim().toLowerCase() : ''
-    
-    const matchesDoc = queryDoc === '' || 
+    return queryDoc === '' || 
       cert.name.toLowerCase().includes(queryDoc) || 
       cert.issuer.toLowerCase().includes(queryDoc)
-      
-    const matchesGeneral = queryGeneral === '' || 
-      cert.name.toLowerCase().includes(queryGeneral) || 
-      cert.issuer.toLowerCase().includes(queryGeneral)
-      
-    return matchesDoc && matchesGeneral
   })
+
+  const isLoading = status === 'loading'
 
   return (
     <section className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 text-slate-800 dark:text-white">
@@ -247,7 +237,7 @@ export default function Documents() {
                 </button>
                 <button
                   onClick={() => setShowOtherForm(false)}
-                  className="px-2 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold cursor-pointer"
+                  className="px-2 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-650 rounded-xl text-xs font-bold cursor-pointer"
                 >
                   İptal
                 </button>
@@ -256,9 +246,9 @@ export default function Documents() {
           </div>
         </div>
 
-        {/* Tablo İçeriği (Durum kolonu kaldırılmıştır) */}
+        {/* Tablo İçeriği */}
         <div className="overflow-x-auto">
-          {status.documentRequests === 'loading' ? (
+          {isLoading ? (
             <div className="text-center py-10 text-slate-400 dark:text-slate-500">
               <span className="animate-spin material-symbols-outlined mr-2">sync</span>
               <span>Yükleniyor...</span>
@@ -279,11 +269,11 @@ export default function Documents() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/40 text-xs">
-                {displayedRequests.map((req) => {
+                {displayedRequests.map((req, idx) => {
                   return (
                     <tr key={req.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors group">
                       <td className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400">
-                        #BEL-2026-{String(req.id).padStart(3, '0')}
+                        #BEL-2026-{String(idx + 1).padStart(3, '0')}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
@@ -358,7 +348,7 @@ export default function Documents() {
           </div>
         </div>
 
-        {/* Kart 3: Sertifikalarım Listesi (Veri kaybı olmadan) */}
+        {/* Kart 3: Sertifikalarım Listesi */}
         <div className="flex flex-col p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800/60 shadow-sm">
           <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/60 pb-2.5 mb-3 shrink-0">
             <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl font-bold">workspace_premium</span>
@@ -366,12 +356,12 @@ export default function Documents() {
           </div>
 
           <div className="space-y-2 overflow-y-auto max-h-40 pr-1 flex-1">
-            {status.certificates === 'loading' ? (
+            {isLoading ? (
               <p className="text-[10px] text-slate-400">Yükleniyor...</p>
-            ) : filteredCertificates.length === 0 ? (
+            ) : certificates.length === 0 ? (
               <p className="text-[10px] text-slate-400 dark:text-slate-500 italic">Gösterilecek sertifika bulunamadı.</p>
             ) : (
-              filteredCertificates.map((cert) => (
+              certificates.map((cert) => (
                 <div key={cert.id} className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-800/50">
                   <div className="min-w-0 mr-2">
                     <p className="text-[11px] font-bold text-slate-800 dark:text-white truncate">{cert.name}</p>

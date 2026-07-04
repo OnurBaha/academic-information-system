@@ -111,12 +111,12 @@ export default function AcademicCalendar() {
   }
 
   // ── Filtreleme ve Sayfalama ─────────────────────────────────────────────
-  const filteredAcademicEvents = academicEvents.filter(event => {
+  const filteredAcademicEvents = Array.isArray(academicEvents) ? academicEvents.filter(event => {
     const q = searchTerm.toLowerCase()
     const matchesSearch = event.title.toLowerCase().includes(q) || event.date.toLowerCase().includes(q)
     const matchesTab = academicSemesterFilter === 'all' || event.semester === academicSemesterFilter
     return matchesSearch && matchesTab
-  })
+  }) : []
 
   const totalPages = Math.ceil(filteredAcademicEvents.length / ITEMS_PER_PAGE)
   const pagedEvents = filteredAcademicEvents.slice(
