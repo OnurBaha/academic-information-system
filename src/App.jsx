@@ -8,8 +8,13 @@ import Login from './pages/Auth/Login'
 import StudentDashboard from './pages/Student/Dashboard'
 import CourseReg        from './pages/Student/Courses'
 import StudentGrades    from './pages/Student/Schedule'
-import VideoPlayer      from './pages/Student/HomeworkSubmit'
+import HomeworkSubmit    from './pages/Student/HomeworkSubmit'
 import Documents        from './pages/Student/Documents'
+import Profile          from './pages/Student/Profile'
+import Calendar         from './pages/Student/Calendar'
+import AcademicCalendar from './pages/Student/AcademicCalendar'
+import ExamCalendar     from './pages/Student/ExamCalendar'
+import CourseRegistration from './pages/Student/CourseRegistration'
 
 import TeacherDashboard  from './pages/Teacher/Dashboard'
 import GradeEntry        from './pages/Teacher/GradeEntry'
@@ -37,8 +42,13 @@ export default function App() {
           <Route path="/student/courses"   element={<CourseReg />} />
           <Route path="/student/grades"    element={<StudentGrades />} />
           <Route path="/student/schedule"  element={<StudentGrades />} />
-          <Route path="/student/video"     element={<VideoPlayer />} />
+          <Route path="/student/homework"  element={<HomeworkSubmit />} />
           <Route path="/student/documents" element={<Documents />} />
+          <Route path="/student/profile"   element={<Profile />} />
+          <Route path="/student/calendar"  element={<Calendar />} />
+          <Route path="/student/academic-calendar" element={<AcademicCalendar />} />
+          <Route path="/student/exams"     element={<ExamCalendar />} />
+          <Route path="/student/course-registration" element={<CourseRegistration />} />
 
           <Route path="/teacher/dashboard"     element={<TeacherDashboard />} />
           <Route path="/teacher/grades"        element={<GradeEntry />} />

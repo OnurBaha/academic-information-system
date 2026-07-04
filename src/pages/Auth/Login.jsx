@@ -1,6 +1,53 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { loginStudent, loginDemoStudent } from '../../store/auth/authSlice'
+import { toast } from 'react-hot-toast'
 
 export default function Login() {
+  const [role, setRole] = useState('student')
+  const [idNumber, setIdNumber] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const { status } = useSelector((state) => state.auth)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    
+    if (role === 'student') {
+      if (!idNumber || !password) {
+        toast.error('Lütfen öğrenci numarası ve şifrenizi girin')
+        return
+      }
+      
+      const resultAction = await dispatch(loginStudent({ ogrenciNo: idNumber, password }))
+      if (loginStudent.fulfilled.match(resultAction)) {
+        toast.success(`Hoş geldin, ${resultAction.payload.name}!`)
+        navigate('/student/dashboard')
+      } else {
+        toast.error(resultAction.payload || 'Giriş başarısız')
+      }
+    } else {
+      // Akademisyen ve dekan için doğrudan demo yönlendirmesi
+      toast.success(`${role === 'teacher' ? 'Akademisyen' : 'Dekan'} girişi (Demo)`)
+      navigate(role === 'teacher' ? '/teacher/dashboard' : '/dean/overview')
+    }
+  }
+
+  const handleDemoStudentLogin = async (e) => {
+    e.preventDefault()
+    const resultAction = await dispatch(loginDemoStudent())
+    if (loginDemoStudent.fulfilled.match(resultAction)) {
+      toast.success(`Hoş geldin, ${resultAction.payload.name}! (Demo Öğrenci)`)
+      navigate('/student/dashboard')
+    } else {
+      toast.error(resultAction.payload || 'Demo girişi başarısız')
+    }
+  }
+
   return (
     <main className="login-wrapper">
       <section className="login-side-brand">
@@ -41,11 +88,16 @@ export default function Login() {
               <p className="login-header-subtitle">Lütfen hesabınıza giriş yapın</p>
             </div>
 
-            <form className="login-form-body">
+            <form className="login-form-body" onSubmit={handleSubmit}>
               <div className="login-form-group">
                 <label className="login-input-label" htmlFor="role">Giriş Rolü Seçin</label>
                 <div className="login-select-wrapper">
-                  <select className="login-form-select" id="role" defaultValue="student">
+                  <select 
+                    className="login-form-select" 
+                    id="role" 
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                  >
                     <option value="student">Öğrenci</option>
                     <option value="teacher">Akademisyen</option>
                     <option value="dean">Dekan</option>
@@ -55,31 +107,51 @@ export default function Login() {
               </div>
 
               <div className="login-form-group">
-                <label className="login-input-label" htmlFor="id_number">T.C. Kimlik / Öğrenci No</label>
+                <label className="login-input-label" htmlFor="id_number">
+                  {role === 'student' ? 'Öğrenci No' : 'T.C. Kimlik No'}
+                </label>
                 <div className="login-input-wrapper">
                   <span className="material-symbols-outlined">person</span>
-                  <input className="login-form-input" id="id_number" type="text" placeholder="Örn: 12345678901" />
+                  <input 
+                    className="login-form-input" 
+                    id="id_number" 
+                    type="text" 
+                    placeholder="Örn: 20211024032" 
+                    value={idNumber}
+                    onChange={(e) => setIdNumber(e.target.value)}
+                  />
                 </div>
               </div>
 
               <div className="login-form-group">
                 <div className="login-pass-row">
                   <label className="login-input-label" htmlFor="password">Şifre</label>
-                  <a href="#" className="login-link-forgot">Şifremi Unuttum</a>
+                  <a href="#" className="login-link-forgot" onClick={(e) => { e.preventDefault(); toast.error('Lütfen sistem yöneticisiyle iletişime geçin.'); }}>Şifremi Unuttum</a>
                 </div>
                 <div className="login-input-wrapper">
                   <span className="material-symbols-outlined">lock</span>
-                  <input className="login-form-input" id="password" type="password" placeholder="••••••••" />
-                  <button type="button" className="login-btn-visibility">
-                    <span className="material-symbols-outlined">visibility</span>
+                  <input 
+                    className="login-form-input" 
+                    id="password" 
+                    type={showPassword ? "text" : "password"} 
+                    placeholder="••••••••" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button 
+                    type="button" 
+                    className="login-btn-visibility"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <span className="material-symbols-outlined">{showPassword ? "visibility_off" : "visibility"}</span>
                   </button>
                 </div>
               </div>
 
-              <Link to="/student/dashboard" className="login-btn-submit">
-                <span>Giriş Yap</span>
+              <button type="submit" className="login-btn-submit" disabled={status === 'loading'}>
+                <span>{status === 'loading' ? 'Giriş Yapılıyor...' : 'Giriş Yap'}</span>
                 <span className="material-symbols-outlined">login</span>
-              </Link>
+              </button>
             </form>
 
             <div className="login-trust-bar">
@@ -93,16 +165,12 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="login-form-footer">
-              <span>Sistem erişimi ile ilgili sorun mu yaşıyorsunuz?</span>
-              <a href="#" className="login-link-support">Destek Talebi Oluşturun</a>
-            </div>
           </div>
 
           <div className="login-demo-panel">
             <p className="login-demo-title">Demo Giriş Linkleri</p>
             <div className="login-demo-links">
-              <Link to="/student/dashboard" className="login-demo-btn">Öğrenci</Link>
+              <button onClick={handleDemoStudentLogin} className="login-demo-btn" style={{ cursor: 'pointer' }}>Öğrenci</button>
               <Link to="/teacher/dashboard" className="login-demo-btn">Akademisyen</Link>
               <Link to="/dean/overview" className="login-demo-btn">Dekan</Link>
             </div>
@@ -112,3 +180,4 @@ export default function Login() {
     </main>
   )
 }
+

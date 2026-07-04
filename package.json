@@ -4,15 +4,23 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run server\"",
+    "dev:frontend": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "json-server --watch db.json --port 3001"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.12.0",
     "@tailwindcss/vite": "^4.3.2",
+    "axios": "^1.18.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-hot-toast": "^2.6.0",
+    "react-redux": "^9.3.0",
     "react-router-dom": "^7.18.1",
     "tailwindcss": "^4.3.2"
   },
@@ -21,10 +29,12 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
+    "concurrently": "^10.0.3",
     "eslint": "^10.6.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
     "globals": "^17.7.0",
+    "json-server": "^1.0.0-beta.15",
     "vite": "^8.1.1"
   }
 }

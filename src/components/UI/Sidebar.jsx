@@ -1,7 +1,15 @@
 import { Link, useLocation } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { logout } from '../../store/auth/authSlice'
 
 export default function Sidebar({ role = 'student' }) {
   const location = useLocation()
+  const dispatch = useDispatch()
+
+  const handleLogout = () => {
+    dispatch(logout())
+  }
+
 
   return (
     <aside className="sidebar-container">
@@ -18,6 +26,10 @@ export default function Sidebar({ role = 'student' }) {
       <nav className="sidebar-nav">
         {role === 'student' && (
           <>
+            <Link to="/student/profile" className={location.pathname === '/student/profile' ? 'sidebar-item-active' : 'sidebar-item'}>
+              <span className="material-symbols-outlined">person</span>
+              <span>Profil</span>
+            </Link>
             <Link to="/student/dashboard" className={location.pathname === '/student/dashboard' ? 'sidebar-item-active' : 'sidebar-item'}>
               <span className="material-symbols-outlined">dashboard</span>
               <span>Panel</span>
@@ -30,12 +42,28 @@ export default function Sidebar({ role = 'student' }) {
               <span className="material-symbols-outlined">grade</span>
               <span>Notlarım</span>
             </Link>
+            <Link to="/student/homework" className={location.pathname === '/student/homework' ? 'sidebar-item-active' : 'sidebar-item'}>
+              <span className="material-symbols-outlined">assignment</span>
+              <span>Ödevler</span>
+            </Link>
             <Link to="/student/schedule" className={location.pathname === '/student/schedule' ? 'sidebar-item-active' : 'sidebar-item'}>
               <span className="material-symbols-outlined">event_available</span>
               <span>Devamsızlık</span>
             </Link>
-            <Link to="/student/documents" className={location.pathname === '/student/documents' ? 'sidebar-item-active' : 'sidebar-item'}>
+            <Link to="/student/calendar" className={location.pathname === '/student/calendar' ? 'sidebar-item-active' : 'sidebar-item'}>
+              <span className="material-symbols-outlined">view_week</span>
+              <span>Ders Programı</span>
+            </Link>
+            <Link to="/student/academic-calendar" className={location.pathname === '/student/academic-calendar' ? 'sidebar-item-active' : 'sidebar-item'}>
               <span className="material-symbols-outlined">calendar_month</span>
+              <span>Takvim</span>
+            </Link>
+            <Link to="/student/course-registration" className={location.pathname === '/student/course-registration' ? 'sidebar-item-active' : 'sidebar-item'}>
+              <span className="material-symbols-outlined">how_to_reg</span>
+              <span>Ders Kayıt</span>
+            </Link>
+            <Link to="/student/documents" className={location.pathname === '/student/documents' ? 'sidebar-item-active' : 'sidebar-item'}>
+              <span className="material-symbols-outlined">description</span>
               <span>Belgeler</span>
             </Link>
           </>
@@ -93,16 +121,10 @@ export default function Sidebar({ role = 'student' }) {
       </nav>
 
       <div className="sidebar-footer">
-        <button className="sidebar-btn-support">
-          <span className="material-symbols-outlined">support_agent</span>
-          <span>Destek Talebi</span>
-        </button>
-        <div className="sidebar-btn-divider">
-          <Link to="/login" className="sidebar-btn-logout">
-            <span className="material-symbols-outlined">logout</span>
-            <span>Çıkış Yap</span>
-          </Link>
-        </div>
+        <Link to="/login" className="sidebar-btn-logout" onClick={handleLogout}>
+          <span className="material-symbols-outlined">logout</span>
+          <span>Çıkış Yap</span>
+        </Link>
       </div>
     </aside>
   )

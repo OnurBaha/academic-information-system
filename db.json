@@ -1,0 +1,837 @@
+{
+  "students": [
+    {
+      "id": "1",
+      "ogrenciNo": "20211024032",
+      "password": "123",
+      "name": "Ahmet Yılmaz",
+      "advisor": "Prof. Dr. Selçuk Yılmaz",
+      "advisorInitial": "S",
+      "tuitionPaid": true,
+      "semester": "2023-2024 Güz"
+    }
+  ],
+  "courses": [
+    {
+      "id": "SOFT-302",
+      "name": "React Redux Advanced",
+      "category": "Yazılım",
+      "instructor": "Dr. Elif Soylu",
+      "akts": 5,
+      "capacity": 40,
+      "enrolled": 24,
+      "type": "Zorunlu",
+      "isFailed": false
+    },
+    {
+      "id": "SOFT-304",
+      "name": "Web Frameworks & APIs",
+      "category": "Yazılım",
+      "instructor": "Dr. Elif Soylu",
+      "akts": 4,
+      "capacity": 30,
+      "enrolled": 15,
+      "type": "Zorunlu",
+      "isFailed": false
+    },
+    {
+      "id": "DATA-204",
+      "name": "Big Data Analytics",
+      "category": "Veri Bilimi",
+      "instructor": "Doç. Dr. Mert Akın",
+      "akts": 4,
+      "capacity": 35,
+      "enrolled": 12,
+      "type": "Zorunlu",
+      "isFailed": false
+    },
+    {
+      "id": "ENG-401",
+      "name": "Academic English III",
+      "category": "Dil",
+      "instructor": "Lektör Canan Kaya",
+      "akts": 2,
+      "capacity": 50,
+      "enrolled": 41,
+      "type": "Zorunlu",
+      "isFailed": false
+    },
+    {
+      "id": "MATH-102",
+      "name": "Discrete Mathematics",
+      "category": "Matematik",
+      "instructor": "Prof. Mert Can",
+      "akts": 4,
+      "capacity": 45,
+      "enrolled": 39,
+      "type": "Zorunlu",
+      "isFailed": true
+    },
+    {
+      "id": "PHY-102",
+      "name": "General Physics II",
+      "category": "Mühendislik",
+      "instructor": "Dr. Öğr. Üyesi Cem Akın",
+      "akts": 4,
+      "capacity": 40,
+      "enrolled": 36,
+      "type": "Zorunlu",
+      "isFailed": true
+    },
+    {
+      "id": "SEC-101",
+      "name": "Fotoğrafçılık",
+      "category": "Sosyal",
+      "instructor": "Uzm. Can Yılmaz",
+      "akts": 2,
+      "capacity": 30,
+      "enrolled": 13,
+      "type": "Seçmeli",
+      "isFailed": false
+    },
+    {
+      "id": "SEC-102",
+      "name": "Satranç",
+      "category": "Sosyal",
+      "instructor": "Doç. Hakan Demir",
+      "akts": 2,
+      "capacity": 20,
+      "enrolled": 9,
+      "type": "Seçmeli",
+      "isFailed": false
+    },
+    {
+      "id": "SEC-103",
+      "name": "Diksiyon ve Hitabet",
+      "category": "Sosyal",
+      "instructor": "Öğr. Gör. Meltem Aydın",
+      "akts": 2,
+      "capacity": 25,
+      "enrolled": 15,
+      "type": "Seçmeli",
+      "isFailed": false
+    },
+    {
+      "id": "SEC-104",
+      "name": "Yaratıcı Yazarlık",
+      "category": "Sosyal",
+      "instructor": "Uzm. Deniz Aslan",
+      "akts": 2,
+      "capacity": 20,
+      "enrolled": 6,
+      "type": "Seçmeli",
+      "isFailed": false
+    },
+    {
+      "id": "SEC-105",
+      "name": "Sunum Teknikleri",
+      "category": "Sosyal",
+      "instructor": "Öğr. Gör. Canan Bulut",
+      "akts": 2,
+      "capacity": 30,
+      "enrolled": 14,
+      "type": "Seçmeli",
+      "isFailed": false
+    }
+  ],
+  "studentCourses": [
+    {
+      "id": "1",
+      "studentId": "1",
+      "courseName": "Full-Stack .NET & React",
+      "instructor": "Dr. Elif Soylu",
+      "category": "Mühendislik",
+      "akts": 6,
+      "progress": 75,
+      "code": "NET401"
+    },
+    {
+      "id": "2",
+      "studentId": "1",
+      "courseName": "SQL & Database Design",
+      "instructor": "Doç. Dr. Mert Akın",
+      "category": "Veri Bilimi",
+      "akts": 5,
+      "progress": 40,
+      "code": "SQL301"
+    },
+    {
+      "studentId": "1",
+      "courseName": "Cyber Security 101",
+      "instructor": "Dr. Elif Demir",
+      "category": "Güvenlik",
+      "akts": 4,
+      "progress": 0,
+      "code": "CYB302",
+      "id": "Z4jQQEOmPCA"
+    },
+    {
+      "studentId": "1",
+      "courseName": "Mobil Geliştirme (Flutter)",
+      "instructor": "Dr. Cem Kaya",
+      "category": "Yazılım",
+      "akts": 6,
+      "progress": 0,
+      "code": "MOB401",
+      "id": "SOBHawmmZMw"
+    },
+    {
+      "studentId": "1",
+      "courseName": "Python & Machine Learning",
+      "instructor": "Prof. Mert Can",
+      "category": "AI",
+      "akts": 7,
+      "progress": 0,
+      "code": "AI501",
+      "id": "fhuwgvqqKO4"
+    },
+    {
+      "studentId": "1",
+      "courseName": "UI/UX Tasarım Temelleri",
+      "instructor": "Uzm. Seda Ak",
+      "category": "Tasarım",
+      "akts": 3,
+      "progress": 0,
+      "code": "UX201",
+      "id": "vVvS7ySXShc"
+    },
+    {
+      "studentId": "1",
+      "courseName": "Cyber Security 101",
+      "instructor": "Dr. Elif Demir",
+      "category": "Güvenlik",
+      "akts": 4,
+      "progress": 0,
+      "code": "CYB302",
+      "id": "5UbT6ExXwwY"
+    },
+    {
+      "studentId": "1",
+      "courseName": "Cyber Security 101",
+      "instructor": "Dr. Elif Demir",
+      "category": "Güvenlik",
+      "akts": 4,
+      "progress": 0,
+      "code": "CYB302",
+      "id": "BKN8ClH0sMc"
+    },
+    {
+      "studentId": "1",
+      "courseName": "Python & Machine Learning",
+      "instructor": "Prof. Mert Can",
+      "category": "AI",
+      "akts": 7,
+      "progress": 0,
+      "code": "AI501",
+      "id": "UUCycIYhnQw"
+    },
+    {
+      "studentId": "1",
+      "courseName": "UI/UX Tasarım Temelleri",
+      "instructor": "Uzm. Seda Ak",
+      "category": "Tasarım",
+      "akts": 3,
+      "progress": 0,
+      "code": "UX201",
+      "id": "nqGONWzPywc"
+    },
+    {
+      "studentId": "1",
+      "courseName": "Python & Machine Learning",
+      "instructor": "Prof. Mert Can",
+      "category": "AI",
+      "akts": 7,
+      "progress": 0,
+      "code": "AI501",
+      "id": "v4ySzDNlVbQ"
+    },
+    {
+      "studentId": "1",
+      "courseName": "Cyber Security 101",
+      "instructor": "Dr. Elif Demir",
+      "category": "Güvenlik",
+      "akts": 4,
+      "progress": 0,
+      "code": "CYB302",
+      "id": "epBT1t61gOA"
+    },
+    {
+      "studentId": "1",
+      "courseName": "Mobil Geliştirme (Flutter)",
+      "instructor": "Dr. Cem Kaya",
+      "category": "Yazılım",
+      "akts": 6,
+      "progress": 0,
+      "code": "MOB401",
+      "id": "84WUGpO5HU4"
+    },
+    {
+      "studentId": "1",
+      "courseName": "General Physics II",
+      "instructor": "Dr. Öğr. Üyesi Cem Akın",
+      "category": "Mühendislik",
+      "akts": 4,
+      "progress": 0,
+      "code": "PHY-102",
+      "id": "6dvRik84CIk"
+    },
+    {
+      "studentId": "1",
+      "courseName": "Fotoğrafçılık",
+      "instructor": "Uzm. Can Yılmaz",
+      "category": "Sosyal",
+      "akts": 2,
+      "progress": 0,
+      "code": "SEC-101",
+      "id": "5t4WhR58JAk"
+    },
+    {
+      "studentId": "1",
+      "courseName": "Satranç",
+      "instructor": "Doç. Hakan Demir",
+      "category": "Sosyal",
+      "akts": 2,
+      "progress": 0,
+      "code": "SEC-102",
+      "id": "PLbW6i5NrkU"
+    }
+  ],
+  "studentGrades": [
+    {
+      "id": "1",
+      "studentId": "1",
+      "courseCode": "MAT101 - Kalkülüs I",
+      "instructor": "Prof. Dr. Ahmet Yılmaz",
+      "vize": 85,
+      "final": null,
+      "proje": 90,
+      "akts": 6,
+      "semester": "2025-2026 Güz"
+    },
+    {
+      "id": "2",
+      "studentId": "1",
+      "courseCode": "BIL203 - Veri Yapıları",
+      "instructor": "Doç. Dr. Elif Soylu",
+      "vize": 72,
+      "final": 68,
+      "proje": null,
+      "akts": 7,
+      "semester": "2025-2026 Güz"
+    },
+    {
+      "id": "3",
+      "studentId": "1",
+      "courseCode": "FIZ102 - Genel Fizik II",
+      "instructor": "Dr. Öğr. Üyesi Cem Akın",
+      "vize": 55,
+      "final": null,
+      "proje": null,
+      "akts": 5,
+      "semester": "2025-2026 Güz"
+    },
+    {
+      "id": "4",
+      "studentId": "1",
+      "courseCode": "ING101 - Akademik İngilizce",
+      "instructor": "Lektör Canan Kaya",
+      "vize": 95,
+      "final": 100,
+      "proje": null,
+      "akts": 3,
+      "semester": "2025-2026 Güz"
+    },
+    {
+      "id": "5",
+      "studentId": "1",
+      "courseCode": "TAR101 - Devrim Tarihi",
+      "instructor": "Uzm. Mert Bulut",
+      "vize": 80,
+      "final": 85,
+      "proje": 95,
+      "akts": 2,
+      "semester": "2025-2026 Güz"
+    }
+  ],
+  "attendance": {
+    "studentId": "1",
+    "totalHours": 180,
+    "attendedHours": 162,
+    "limitBreached": false,
+    "absentHours": 18
+  },
+  "upcomingClasses": [
+    {
+      "id": "1",
+      "time": "Bugün, 14:00",
+      "name": "React Redux Advanced",
+      "location": "Sınıf: LAB-B3 / Online",
+      "isLive": true
+    },
+    {
+      "id": "2",
+      "time": "Yarın, 10:30",
+      "name": ".NET Microservices",
+      "location": "Sınıf: Amfi-1 / Yüz Yüze",
+      "isLive": false
+    },
+    {
+      "id": "3",
+      "time": "Perşembe, 09:00",
+      "name": "System Architecture",
+      "location": "Sınıf: LAB-C2",
+      "isLive": false
+    }
+  ],
+  "lectures": [
+    {
+      "id": "1",
+      "title": "Ders 1 — React Hooks Temelleri",
+      "courseName": "Full-Stack .NET & React",
+      "instructor": "Dr. Elif Soylu",
+      "duration": "45 dk",
+      "url": "https://www.w3schools.com/html/mov_bbb.mp4",
+      "materials": [
+        {
+          "name": "Ders Notları — Hafta 3.pdf",
+          "size": "2.4 MB"
+        },
+        {
+          "name": "GitHub Repository",
+          "size": "Repo"
+        },
+        {
+          "name": "Örnek Kodlar.zip",
+          "size": "1.1 MB"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "title": "Ders 2 — useEffect & useContext",
+      "courseName": "Full-Stack .NET & React",
+      "instructor": "Dr. Elif Soylu",
+      "duration": "52 dk",
+      "url": "https://www.w3schools.com/html/mov_bbb.mp4",
+      "materials": []
+    },
+    {
+      "id": "3",
+      "title": "Ders 3 — Redux Advanced Patterns",
+      "courseName": "Full-Stack .NET & React",
+      "instructor": "Dr. Elif Soylu",
+      "duration": "60 dk",
+      "url": "https://www.w3schools.com/html/mov_bbb.mp4",
+      "materials": []
+    },
+    {
+      "id": "4",
+      "title": "Ders 4 — Testing with Jest",
+      "courseName": "Full-Stack .NET & React",
+      "instructor": "Dr. Elif Soylu",
+      "duration": "38 dk",
+      "url": "https://www.w3schools.com/html/mov_bbb.mp4",
+      "materials": []
+    }
+  ],
+  "documentRequests": [
+    {
+      "id": "1",
+      "studentId": "1",
+      "title": "Öğrenci Belgesi",
+      "description": "E-imzalı resmi öğrenci belgesi",
+      "requestDate": "02.07.2024",
+      "status": "Hazır"
+    },
+    {
+      "id": "2",
+      "studentId": "1",
+      "title": "Transkript",
+      "description": "Güncel dönem transkripti",
+      "requestDate": "28.06.2024",
+      "status": "Hazırlanıyor"
+    },
+    {
+      "id": "3",
+      "studentId": "1",
+      "title": "Staj Belgesi",
+      "description": "Yaz stajı onay belgesi",
+      "requestDate": "15.06.2024",
+      "status": "Hazır"
+    },
+    {
+      "id": "4",
+      "studentId": "1",
+      "title": "Askerlik Tecil Belgesi",
+      "description": "Askerlik tecil işlemleri için belge",
+      "requestDate": "10.06.2024",
+      "status": "Hazırlanıyor"
+    },
+    {
+      "studentId": "1",
+      "title": "Staj Belgesi",
+      "description": "Resmi onaylı staj belgesi",
+      "requestDate": "03.07.2026",
+      "status": "Hazırlanıyor",
+      "id": "I25FnDv6-8k"
+    },
+    {
+      "studentId": "1",
+      "title": "Öğrenci Belgesi",
+      "description": "Türkçe, Dijital",
+      "requestDate": "04.07.2026",
+      "status": "Hazırlanıyor",
+      "id": "_eL-90x47Dw"
+    }
+  ],
+  "certificates": [
+    {
+      "id": "1",
+      "studentId": "1",
+      "name": "React Developer",
+      "issuer": "SoftIto",
+      "date": "Mar 2024"
+    },
+    {
+      "id": "2",
+      "studentId": "1",
+      "name": ".NET Foundations",
+      "issuer": "SoftIto",
+      "date": "Jan 2024"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "1",
+      "studentId": "1",
+      "title": "Vize Sınavı Tarihleri Açıklandı",
+      "content": "NET401 Full-Stack .NET & React vize sınavı akademik takvime göre 15 Kasım'da gerçekleştirilecektir.",
+      "date": "01.07.2024",
+      "read": true
+    },
+    {
+      "id": "2",
+      "studentId": "1",
+      "title": "Ödev 4 Teslim Tarihi Uzatıldı",
+      "content": "SQL301 SQL & Database Design dersi Ödev 4 teslim süresi 10 Temmuz tarihine kadar uzatılmıştır.",
+      "date": "30.06.2024",
+      "read": true
+    },
+    {
+      "id": "3",
+      "studentId": "1",
+      "title": "Staj Başvuruları Başladı",
+      "content": "Mühendislik Fakültesi yaz stajı başvuru tarihleri ve kılavuzu yayınlanmıştır.",
+      "date": "25.06.2024",
+      "read": true
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "03.07.2026",
+      "read": true,
+      "id": "adya0iILhMc"
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "03.07.2026",
+      "read": true,
+      "id": "FqpiaI5jMms"
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "04.07.2026",
+      "read": true,
+      "id": "q4V98h6NyQU"
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "04.07.2026",
+      "read": true,
+      "id": "3CVQ4S8QwTo"
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "04.07.2026",
+      "read": true,
+      "id": "M6YXbu_3YN0"
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "04.07.2026",
+      "read": true,
+      "id": "plNZhQcVq8E"
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "04.07.2026",
+      "read": true,
+      "id": "WOyYx13VxO0"
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "04.07.2026",
+      "read": true,
+      "id": "RSGvf_KKjtA"
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "04.07.2026",
+      "read": true,
+      "id": "SVbyQndHob0"
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "04.07.2026",
+      "read": true,
+      "id": "ugPy_xuxTsk"
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "04.07.2026",
+      "read": false,
+      "id": "82S6D7I6PRo"
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "04.07.2026",
+      "read": false,
+      "id": "xHPyKK83dJ0"
+    },
+    {
+      "studentId": "1",
+      "title": "Ders Kaydı Gönderildi",
+      "content": "2026-2027 Güz Dönemi ders kayıt talebiniz danışman onayına sunulmuştur. Durum: Danışman Onayı Bekleniyor",
+      "date": "04.07.2026",
+      "read": false,
+      "id": "Jwhq7po8pkw"
+    },
+    {
+      "studentId": "1",
+      "title": "Ders Kaydı Gönderildi",
+      "content": "2026-2027 Güz Dönemi ders kayıt talebiniz danışman onayına sunulmuştur. Durum: Danışman Onayı Bekleniyor",
+      "date": "04.07.2026",
+      "read": false,
+      "id": "rUfilWV6L7g"
+    },
+    {
+      "studentId": "1",
+      "title": "Sınav Sonucu Açıklandı",
+      "content": "NET401 Full-Stack .NET & React sınavınız açıklandı.",
+      "date": "04.07.2026",
+      "read": false,
+      "id": "OhbSBmu91ww"
+    },
+    {
+      "studentId": "1",
+      "title": "Yeni Bir Ödeviniz Var!",
+      "content": "Yeni bir ödeviniz var. NET401 - Full-Stack .NET & React dersi için yeni ödev sisteme yüklendi. Son teslim tarihi: 11.07.2026",
+      "date": "04.07.2026",
+      "read": false,
+      "id": "RSXUGkB0onw"
+    },
+    {
+      "studentId": "1",
+      "title": "Yeni Bir Ödeviniz Var!",
+      "content": "Yeni bir ödeviniz var. NET401 - Full-Stack .NET & React dersi için yeni ödev sisteme yüklendi. Son teslim tarihi: 11.07.2026",
+      "date": "04.07.2026",
+      "read": false,
+      "id": "MJ9zcMLQgdw"
+    },
+    {
+      "studentId": "1",
+      "title": "Yeni Bir Ödeviniz Var!",
+      "content": "Yeni bir ödeviniz var. NET401 - Full-Stack .NET & React dersi için yeni ödev sisteme yüklendi. Son teslim tarihi: 11.07.2026",
+      "date": "04.07.2026",
+      "read": false,
+      "id": "fTm_6O6txjY"
+    },
+    {
+      "studentId": "1",
+      "title": "Yeni Bir Ödeviniz Var!",
+      "content": "Yeni bir ödeviniz var. NET401 - Full-Stack .NET & React dersi için yeni ödev sisteme yüklendi. Son teslim tarihi: 11.07.2026",
+      "date": "04.07.2026",
+      "read": false,
+      "id": "Irt6jui-mJk"
+    },
+    {
+      "studentId": "1",
+      "title": "Yeni Bir Ödeviniz Var!",
+      "content": "Yeni bir ödeviniz var. NET401 - Full-Stack .NET & React dersi için yeni ödev sisteme yüklendi. Son teslim tarihi: 11.07.2026",
+      "date": "04.07.2026",
+      "read": false,
+      "id": "g57D1YDBcL0"
+    },
+    {
+      "studentId": "1",
+      "title": "Yeni Bir Ödeviniz Var!",
+      "content": "Yeni bir ödeviniz var. NET401 - Full-Stack .NET & React dersi için yeni ödev sisteme yüklendi. Son teslim tarihi: 11.07.2026",
+      "date": "04.07.2026",
+      "read": false,
+      "id": "CcxAqfejeA4"
+    }
+  ],
+  "weeklyLessonsByWeek": {
+    "1": {
+      "wednesday": [{"time": "13:00 - 16:00", "code": "SEC302", "name": "Siber Güvenlik Temelleri", "instructor": "Murat Erden", "room": "Lab 102 (Blok A)", "type": "LAB", "color": "error", "top": 320, "height": 240}],
+      "thursday": [{"time": "09:00 - 11:00", "code": "UX101", "name": "UI/UX Tasarım İlkeleri", "instructor": "Selin Kılıç", "room": "Stüdyo A (Blok C)", "type": "TEORİK", "color": "primary", "top": 0, "height": 160}],
+      "friday": [{"time": "11:00 - 13:00", "code": "ENT201", "name": "Girişimcilik ve İnovasyon", "instructor": "Dr. Kenan Doğan", "room": "Amfi 3 (Blok A)", "type": "TEORİK", "color": "primary", "top": 160, "height": 160}]
+    },
+    "2": {
+      "monday": [
+        {"time": "09:00 - 12:00", "code": "NODE301", "name": "Node.js Backend Geliştirme", "instructor": "Dr. Kenan Şahin", "room": "Lab 202 (Blok B)", "type": "TEORİK", "color": "primary", "top": 0, "height": 240},
+        {"time": "14:00 - 17:00", "code": "FLT202", "name": "Flutter ile Mobil Uygulamalar", "instructor": "Zeynep Aksoy", "room": "Online (Teams)", "type": "UYGULAMA", "color": "success-emerald", "top": 400, "height": 240}
+      ],
+      "tuesday": [{"time": "10:00 - 13:00", "code": "NOSQL201", "name": "NoSQL Veritabanı Sistemleri", "instructor": "Prof. Caner Bulut", "room": "Derslik 204 (Blok B)", "type": "TEORİK", "color": "warning-amber", "top": 80, "height": 240}],
+      "wednesday": [{"time": "13:00 - 16:00", "code": "CLOUD301", "name": "Bulut Bilişim ve AWS", "instructor": "Murat Erden", "room": "Lab 102 (Blok A)", "type": "LAB", "color": "error", "top": 320, "height": 240}],
+      "thursday": [{"time": "09:00 - 11:00", "code": "UX101", "name": "Kullanıcı Deneyimi (UX) Analizi", "instructor": "Selin Kılıç", "room": "Stüdyo A (Blok C)", "type": "TEORİK", "color": "primary", "top": 0, "height": 160}],
+      "friday": [{"time": "11:00 - 13:00", "code": "ENT201", "name": "Girişimcilik İş Planı Hazırlama", "instructor": "Dr. Kenan Doğan", "room": "Amfi 3 (Blok A)", "type": "TEORİK", "color": "primary", "top": 160, "height": 160}]
+    },
+    "3": {
+      "monday": [
+        {"time": "09:00 - 12:00", "code": "NET401", "name": ".NET Web API Geliştirme", "instructor": "Dr. Ahmet Yılmaz", "room": "Lab 204 (Blok A)", "type": "TEORİK", "color": "secondary", "top": 0, "height": 240},
+        {"time": "14:00 - 17:00", "code": "MOB301", "name": "React Native Mobile", "instructor": "Zeynep Aksoy", "room": "Online (Teams)", "type": "UYGULAMA", "color": "success-emerald", "top": 400, "height": 240}
+      ],
+      "tuesday": [{"time": "10:00 - 13:00", "code": "DB201", "name": "Veritabanı Yönetimi (SQL)", "instructor": "Prof. Caner Bulut", "room": "Derslik 101 (Blok B)", "type": "TEORİK", "color": "warning-amber", "top": 80, "height": 240}],
+      "wednesday": [{"time": "13:00 - 16:00", "code": "SEC302", "name": "Siber Güvenlik Temelleri", "instructor": "Murat Erden", "room": "Lab 102 (Blok A)", "type": "LAB", "color": "error", "top": 320, "height": 240}],
+      "thursday": [{"time": "09:00 - 11:00", "code": "UX101", "name": "UI/UX Tasarım İlkeleri", "instructor": "Selin Kılıç", "room": "Stüdyo A (Blok C)", "type": "TEORİK", "color": "primary", "top": 0, "height": 160}],
+      "friday": [{"time": "11:00 - 13:00", "code": "ENT201", "name": "Girişimcilik ve İnovasyon", "instructor": "Dr. Kenan Doğan", "room": "Amfi 3 (Blok A)", "type": "TEORİK", "color": "primary", "top": 160, "height": 160}]
+    },
+    "4": {
+      "monday": [{"time": "09:30 - 11:30", "code": "NET401-EX", "name": ".NET Web API Vize Sınavı", "instructor": "Dr. Ahmet Yılmaz", "room": "Amfi 1 (Blok A)", "type": "SINAV", "color": "error", "top": 40, "height": 160}],
+      "tuesday": [{"time": "13:00 - 15:00", "code": "DB201-EX", "name": "Veritabanı Yönetimi Vize Sınavı", "instructor": "Prof. Caner Bulut", "room": "Derslik 101 (Blok B)", "type": "SINAV", "color": "error", "top": 320, "height": 160}],
+      "wednesday": [{"time": "10:00 - 12:00", "code": "SEC302-EX", "name": "Siber Güvenlik Vize Sınavı", "instructor": "Murat Erden", "room": "Lab 102 (Blok A)", "type": "SINAV", "color": "error", "top": 80, "height": 160}],
+      "thursday": [{"time": "14:00 - 16:00", "code": "UX101-EX", "name": "UI/UX Tasarım Vize Sınavı", "instructor": "Selin Kılıç", "room": "Stüdyo A (Blok C)", "type": "SINAV", "color": "error", "top": 400, "height": 160}],
+      "friday": [{"time": "11:00 - 13:00", "code": "ENT201-EX", "name": "Girişimcilik Vize Sınavı", "instructor": "Dr. Kenan Doğan", "room": "Amfi 3 (Blok A)", "type": "SINAV", "color": "error", "top": 160, "height": 160}]
+    },
+    "5": {
+      "monday": [
+        {"time": "10:00 - 12:00", "code": "NET401", "name": ".NET Web API Proje Sunumları", "instructor": "Dr. Ahmet Yılmaz", "room": "Lab 204 (Blok A)", "type": "SUNUM", "color": "primary", "top": 80, "height": 160},
+        {"time": "13:00 - 15:00", "code": "MOB301", "name": "React Native Proje Sunumları", "instructor": "Zeynep Aksoy", "room": "Online", "type": "SUNUM", "color": "success-emerald", "top": 320, "height": 160}
+      ],
+      "tuesday": [{"time": "11:00 - 13:00", "code": "DB201", "name": "Veritabanı SQL Semineri", "instructor": "Prof. Caner Bulut", "room": "Derslik 201 (Blok B)", "type": "SEMİNER", "color": "warning-amber", "top": 160, "height": 160}],
+      "wednesday": [{"time": "14:00 - 17:00", "code": "SEC302", "name": "Siber Güvenlik Sızma Testi", "instructor": "Murat Erden", "room": "Lab 102 (Blok A)", "type": "UYGULAMA", "color": "error", "top": 400, "height": 240}],
+      "thursday": [{"time": "09:00 - 11:00", "code": "UX101", "name": "UI/UX Portfolyo İncelemesi", "instructor": "Selin Kılıç", "room": "Stüdyo A (Blok C)", "type": "TEORİK", "color": "primary", "top": 0, "height": 160}],
+      "friday": [{"time": "14:00 - 16:00", "code": "ENT201", "name": "Girişimcilik Yatırımcı Sunumu", "instructor": "Dr. Kenan Doğan", "room": "Amfi 1 (Blok A)", "type": "SUNUM", "color": "primary", "top": 400, "height": 160}]
+    }
+  },
+  "studentExams": {
+    "guz": [
+      { "date": "17 Kasim 2025", "time": "09:30 - 11:30", "code": "NET401-EX", "name": ".NET Web API Guz Vize Sinavi", "room": "Amfi 1 (Blok A)", "instructor": "Dr. Ahmet Yilmaz" },
+      { "date": "19 Kasim 2025", "time": "13:00 - 15:00", "code": "SQL301-EX", "name": "SQL & Database Design Guz Vize Sinavi", "room": "Derslik 101 (Blok B)", "instructor": "Prof. Caner Bulut" },
+      { "date": "21 Kasim 2025", "time": "10:00 - 12:00", "code": "CYB302-EX", "name": "Cyber Security 101 Guz Vize Sinavi", "room": "Lab 102 (Blok A)", "instructor": "Murat Erden" },
+      { "date": "7 Ocak 2026", "time": "09:30 - 11:30", "code": "NET401-EX", "name": ".NET Web API Guz Final Sinavi", "room": "Amfi 1 (Blok A)", "instructor": "Dr. Ahmet Yilmaz" },
+      { "date": "9 Ocak 2026", "time": "13:00 - 15:00", "code": "SQL301-EX", "name": "SQL & Database Design Guz Final Sinavi", "room": "Derslik 101 (Blok B)", "instructor": "Prof. Caner Bulut" },
+      { "date": "12 Ocak 2026", "time": "10:00 - 12:00", "code": "CYB302-EX", "name": "Cyber Security 101 Guz Final Sinavi", "room": "Lab 102 (Blok A)", "instructor": "Murat Erden" }
+    ],
+    "bahar": [
+      { "date": "30 Mart 2026", "time": "11:00 - 13:00", "code": "MOB401-EX", "name": "Mobil Gelistirme (Flutter) Bahar Vize Sinavi", "room": "Amfi 2 (Blok A)", "instructor": "Dr. Cem Kaya" },
+      { "date": "1 Nisan 2026", "time": "14:00 - 16:00", "code": "AI501-EX", "name": "Python & Machine Learning Bahar Vize Sinavi", "room": "Lab 103 (Blok B)", "instructor": "Prof. Mert Can" },
+      { "date": "3 Nisan 2026", "time": "10:00 - 12:00", "code": "UX201-EX", "name": "UI/UX Tasarim Temelleri Bahar Vize Sinavi", "room": "Studio B (Blok C)", "instructor": "Uzm. Seda Ak" },
+      { "date": "2 Haziran 2026", "time": "11:00 - 13:00", "code": "MOB401-EX", "name": "Mobil Gelistirme (Flutter) Bahar Final Sinavi", "room": "Amfi 2 (Blok A)", "instructor": "Dr. Cem Kaya" },
+      { "date": "4 Haziran 2026", "time": "14:00 - 16:00", "code": "AI501-EX", "name": "Python & Machine Learning Bahar Final Sinavi", "room": "Lab 103 (Blok B)", "instructor": "Prof. Mert Can" },
+      { "date": "8 Haziran 2026", "time": "10:00 - 12:00", "code": "UX201-EX", "name": "UI/UX Tasarim Temelleri Bahar Final Sinavi", "room": "Studio B (Blok C)", "instructor": "Uzm. Seda Ak" }
+    ],
+    "yaz": [
+      { "date": "28 Temmuz 2026", "time": "10:00 - 12:00", "code": "TEK22-EX", "name": "Tek Ders Mezuniyet Sinavi (Yaz)", "room": "Derslik 204 (Blok A)", "instructor": "Dr. Ahmet Yilmaz" },
+      { "date": "25 Agustos 2026", "time": "10:00 - 12:00", "code": "NOT-YK-EX", "name": "Not Yukseltme Mezuniyet Sinavi (Yaz)", "room": "Derslik 204 (Blok A)", "instructor": "Dr. Ahmet Yilmaz" }
+    ]
+  },
+  "academicEvents": [
+    { "date": "01.08.2025 - 15.08.2025", "semester": "guz", "title": "Yatay Geçiş Başvuru Tarihleri (EK 1 Madde)" },
+    { "date": "20.08.2025", "semester": "guz", "title": "Yatay Geçiş Sonuçlarının İlanı (EK 1 Madde)" },
+    { "date": "21.08.2025 - 23.08.2025", "semester": "guz", "title": "Yatay Geçişi Kabul Edilenlerin Kesin Kayıtları (EK 1 Madde)" },
+    { "date": "25.08.2025 - 26.08.2025", "semester": "guz", "title": "Yatay Geçişi Yedek Kesin Kayıtları (EK 1 Madde)" },
+    { "date": "07.07.2025 - 26.08.2025", "semester": "guz", "title": "Yatay Geçiş Başvuru Tarihleri (EK 1 Madde Hariç)" },
+    { "date": "29.08.2025", "semester": "guz", "title": "Yatay Geçiş Sonuçlarının İlanı (EK 1 Madde Hariç)" },
+    { "date": "01.09.2025 - 03.09.2025", "semester": "guz", "title": "Yatay Geçişi Kabul Edilenlerin Kesin Kayıtları (EK 1 Hariç)" },
+    { "date": "04.09.2025 - 05.09.2025", "semester": "guz", "title": "Yatay Geçişi Yedek Kesin Kayıtları (EK 1 Hariç)" },
+    { "date": "YÖK Takvimine Göre", "semester": "guz", "title": "ÖSYM Yeni Yerleştirilen Öğrencilerin Kesin Kayıtları" },
+    { "date": "YÖK Takvimine Göre", "semester": "guz", "title": "ÖSYM Ek Yerleştirme Yapılan Öğrencilerin Kesin Kayıtları" },
+    { "date": "15.09.2025", "semester": "guz", "title": "Yabancı Dil Yeterlik ve Bütünleme Sınavı (Eski Öğrenciler)" },
+    { "date": "17.09.2025", "semester": "guz", "title": "Çift Anadal / Yandal Başvuruları İçin Son Gün" },
+    { "date": "17.09.2025 - 26.09.2025", "semester": "guz", "title": "Ders Kayıt İşlemleri" },
+    { "date": "22.09.2025 - 26.09.2025", "semester": "guz", "title": "Oryantasyon Programı" },
+    { "date": "22.09.2025", "semester": "guz", "title": "Derslerin Başlaması" },
+    { "date": "22.09.2025", "semester": "guz", "title": "Ders Muafiyet Başvuruları İçin Son Gün" },
+    { "date": "29.09.2025 - 10.10.2025", "semester": "guz", "title": "Ders Ekleme/Bırakma (İAÜ)" },
+    { "date": "07.11.2025", "semester": "guz", "title": "Dersten Çekilmek İçin Son Gün" },
+    { "date": "15.11.2025 - 23.11.2025", "semester": "guz", "title": "Güz Dönemi Ara Sınavlar (Vize Haftası)" },
+    { "date": "22.11.2025 - 23.11.2025", "semester": "guz", "title": "Uzaktan Eğitim Programları Ara Sınavlar" },
+    { "date": "15.12.2025 - 19.12.2025", "semester": "guz", "title": "Ara Sınav Mazeret Sınavları" },
+    { "date": "20.12.2025 - 21.12.2025", "semester": "guz", "title": "Uzaktan Eğitim Programları Ara Sınav Mazeret Sınavları" },
+    { "date": "02.01.2026", "semester": "guz", "title": "Derslerin Son Günü" },
+    { "date": "05.01.2026 - 18.01.2026", "semester": "guz", "title": "Yarıyıl Sonu (Final) Sınavları" },
+    { "date": "24.01.2026 - 25.01.2026", "semester": "guz", "title": "Uzaktan Eğitim Programları Final Sınavları" },
+    { "date": "26.01.2026 - 31.01.2026", "semester": "guz", "title": "Bütünleme Sınavları" },
+    { "date": "07.02.2026 - 08.02.2026", "semester": "guz", "title": "Uzaktan Eğitim Programları Bütünleme Sınavları" },
+    { "date": "03.02.2026 - 08.02.2026", "semester": "guz", "title": "Azami Öğretim Süresini Dolduranların Sınavları I" },
+    { "date": "17.02.2026 - 21.02.2026", "semester": "guz", "title": "Azami Öğretim Süresini Dolduranların Sınavları II" },
+    { "date": "24.02.2026", "semester": "guz", "title": "Not Yükseltme ve Tek Ders Sınavına Başvuru Son Gün" },
+    { "date": "25.02.2026 - 26.02.2026", "semester": "guz", "title": "Mezuniyet İçin Not Yükseltme ve Tek Ders Sınavları" },
+    { "date": "07.01.2026 - 23.01.2026", "semester": "bahar", "title": "Yatay Geçiş Başvuru Tarihleri" },
+    { "date": "27.01.2026", "semester": "bahar", "title": "Yatay Geçiş Sonuçlarının İlanı" },
+    { "date": "28.01.2026 - 30.01.2026", "semester": "bahar", "title": "Yatay Geçiş Kabul Edilenlerin Kesin Kayıtları" },
+    { "date": "02.02.2026 - 04.02.2026", "semester": "bahar", "title": "Yatay Geçişi Yedek Kesin Kayıtları" },
+    { "date": "29.01.2026 - 03.02.2026", "semester": "bahar", "title": "Ders Kayıt İşlemleri" },
+    { "date": "06.02.2026", "semester": "bahar", "title": "Çift Anadal / Yandal Başvuruları İçin Son Gün" },
+    { "date": "02.02.2026", "semester": "bahar", "title": "Derslerin Başlaması" },
+    { "date": "02.02.2026", "semester": "bahar", "title": "Ders Muafiyet Başvuruları İçin Son Gün" },
+    { "date": "03.02.2026", "semester": "bahar", "title": "Ders Muafiyet Sınavı" },
+    { "date": "09.02.2026 - 23.02.2026", "semester": "bahar", "title": "Ders Ekleme Bırakma" },
+    { "date": "19.03.2026", "semester": "bahar", "title": "Dersten Çekilmek İçin Son Gün" },
+    { "date": "30.03.2026 - 05.04.2026", "semester": "bahar", "title": "Bahar Dönemi Ara Sınavlar (Vize Haftası)" },
+    { "date": "04.04.2026 - 05.04.2026", "semester": "bahar", "title": "Uzaktan Eğitim Ara Sınavlar" },
+    { "date": "20.04.2026 - 25.04.2026", "semester": "bahar", "title": "Ara Sınav Mazeret Sınavları" },
+    { "date": "24.04.2026 - 25.04.2026", "semester": "bahar", "title": "Uzaktan Eğitim Ara Sınav Mazeret Sınavları" },
+    { "date": "22.05.2026", "semester": "bahar", "title": "Derslerin Son Günü" },
+    { "date": "01.06.2026 - 14.06.2026", "semester": "bahar", "title": "Yarıyıl Sonu (Final) Sınavları" },
+    { "date": "13.06.2026 - 14.06.2026", "semester": "bahar", "title": "Uzaktan Eğitim Final Sınavları" },
+    { "date": "20.06.2026 - 28.06.2026", "semester": "bahar", "title": "Bütünleme Sınavları" },
+    { "date": "27.06.2026 - 28.06.2026", "semester": "bahar", "title": "Uzaktan Eğitim Programları Bütünleme Sınavları" },
+    { "date": "30.06.2026", "semester": "bahar", "title": "Not Yükseltme ve Tek Ders Sınavına Başvuru Son Gün" },
+    { "date": "01.07.2026 - 02.07.2026", "semester": "bahar", "title": "Mezuniyet İçin Not Yükseltme ve Tek Ders Sınavları" },
+    { "date": "22.06.2026 - 08.07.2026", "semester": "yaz", "title": "Yaz Okulu Başvuru ve Ders Kaydı" },
+    { "date": "06.07.2026", "semester": "yaz", "title": "Yaz Okulu Derslerinin Başlaması" },
+    { "date": "27.07.2026 - 01.08.2026", "semester": "yaz", "title": "Yaz Okulu Ara Sınavları (Derslere ara verilmez)" },
+    { "date": "21.08.2026", "semester": "yaz", "title": "Yaz Okulu Derslerinin Sona Ermesi" },
+    { "date": "24.08.2026 - 29.08.2026", "semester": "yaz", "title": "Yaz Okulu Final Sınavları" },
+    { "date": "07.09.2026 - 12.09.2026", "semester": "yaz", "title": "Azami Süreyi Dolduranların Sınavları-I" },
+    { "date": "21.09.2026 - 26.09.2026", "semester": "yaz", "title": "Azami Süreyi Dolduranların Sınavları-II" },
+    { "date": "29.09.2026", "semester": "yaz", "title": "Not Yükseltme ve Tek Ders Sınavına Başvuru Son Gün" },
+    { "date": "30.09.2026 - 01.10.2026", "semester": "yaz", "title": "Mezuniyet İçin Not Yükseltme ve Tek Ders Sınavları" },
+    { "date": "28.10.2025 (Yarım Gün) - 29.10.2025", "semester": "tatil", "title": "Cumhuriyet Bayramı" },
+    { "date": "01.01.2026 (Perşembe)", "semester": "tatil", "title": "Yılbaşı" },
+    { "date": "19.03.2026 (Arife Yarım Gün) - 22.03.2026", "semester": "tatil", "title": "Ramazan Bayramı" },
+    { "date": "23.04.2026 (Perşembe)", "semester": "tatil", "title": "Ulusal Egemenlik ve Çocuk Bayramı" },
+    { "date": "01.05.2026 (Cuma)", "semester": "tatil", "title": "Emek ve Dayanışma Günü" },
+    { "date": "19.05.2026 (Salı)", "semester": "tatil", "title": "Atatürk'ü Anma, Gençlik ve Spor Bayramı" },
+    { "date": "26.05.2026 (Arife Yarım Gün) - 30.05.2026", "semester": "tatil", "title": "Kurban Bayramı" },
+    { "date": "15.07.2026 (Çarşamba)", "semester": "tatil", "title": "15 Temmuz Demokrasi ve Milli Birlik Günü" },
+    { "date": "30.08.2026 (Pazar)", "semester": "tatil", "title": "30 Ağustos Zafer Bayramı" }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
