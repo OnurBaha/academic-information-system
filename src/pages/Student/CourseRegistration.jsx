@@ -1,23 +1,24 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchCoursesAsync } from '../../store/course/courseSlice'
+import { createNotification, fetchAllCourses } from '../../store/student/studentSlice'
 import { toast } from 'react-hot-toast'
 
 export default function CourseRegistration() {
   const dispatch = useDispatch()
-  const { currentUser } = useSelector((state) => state.auth || {})
-  const { courses = [], status: coursesStatus } = useSelector((state) => state.course || {})
+  const { currentUser: user } = useSelector((state) => state.auth || {})
+  const { courses = [], status } = useSelector((state) => state.student || {})
+  const coursesStatus = status?.courses || 'idle'
 
   // State tanımlamaları
   const [selectedCourses, setSelectedCourses] = useState([])
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All')
-  const [status, setStatus] = useState('Taslak') // 'Taslak' | 'Onay Bekliyor' | 'Onaylandı'
+  const [statusState, setStatusState] = useState('Taslak') // 'Taslak' | 'Onay Bekliyor' | 'Onaylandı'
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   // Harç ödeme durumları
-  const [isTuitionPaid, setIsTuitionPaid] = useState(currentUser?.tuitionPaid || false)
+  const [isTuitionPaid, setIsTuitionPaid] = useState(user?.tuitionPaid || false)
   const [paymentStep, setPaymentStep] = useState('overview') // 'overview' | 'installments' | 'card' | 'sms' | 'success'
   const [selectedInstallment, setSelectedInstallment] = useState(1) // 1, 3, 6, 12
   const [cardName, setCardName] = useState('')
@@ -32,30 +33,30 @@ export default function CourseRegistration() {
 
   // Başlangıçta ders listesini çekme
   useEffect(() => {
-    dispatch(fetchCoursesAsync())
+    dispatch(fetchAllCourses())
   }, [dispatch])
 
   // Başlangıçta localStorage'dan yükleme
   useEffect(() => {
-    if (currentUser?.id) {
-      const savedState = localStorage.getItem(`course_reg_${currentUser.id}`)
+    if (user?.id) {
+      const savedState = localStorage.getItem(`course_reg_${user.id}`)
       if (savedState) {
         try {
           const parsed = JSON.parse(savedState)
           setSelectedCourses(parsed.selectedCourses || [])
-          setStatus(parsed.status || 'Taslak')
+          setStatusState(parsed.status || 'Taslak')
         } catch (e) {
           console.error('Error parsing saved course registration state', e)
         }
       }
 
       // Harç ödeme durumu kontrolü
-      const savedTuition = localStorage.getItem(`tuition_paid_2026_2027_${currentUser.id}`)
-      if (savedTuition === 'true' || currentUser?.tuitionPaid) {
+      const savedTuition = localStorage.getItem(`tuition_paid_2026_2027_${user.id}`)
+      if (savedTuition === 'true' || user?.tuitionPaid) {
         setIsTuitionPaid(true)
       }
     }
-  }, [currentUser])
+  }, [user])
 
   // SMS kodu için zamanlayıcı efekti
   useEffect(() => {
@@ -79,9 +80,9 @@ export default function CourseRegistration() {
 
   // Kaydetme yardımcısı
   const saveState = (newSelected, newStatus) => {
-    if (currentUser?.id) {
+    if (user?.id) {
       localStorage.setItem(
-        `course_reg_${currentUser.id}`,
+        `course_reg_${user.id}`,
         JSON.stringify({ selectedCourses: newSelected, status: newStatus })
       )
     }
@@ -101,7 +102,7 @@ export default function CourseRegistration() {
       return
     }
 
-    if (status !== 'Taslak') {
+    if (statusState !== 'Taslak') {
       toast.error('Ders seçiminiz onayda veya onaylanmış olduğu için değişiklik yapamazsınız.')
       return
     }
@@ -119,29 +120,29 @@ export default function CourseRegistration() {
 
     const updated = [...selectedCourses, course]
     setSelectedCourses(updated)
-    saveState(updated, status)
+    saveState(updated, statusState)
     toast.success(`${course.id} ders sepetine eklendi.`)
   }
 
   const handleRemoveCourse = (courseId) => {
-    if (status !== 'Taslak') {
+    if (statusState !== 'Taslak') {
       toast.error('Ders seçiminiz onayda veya onaylanmış olduğu için değişiklik yapamazsınız.')
       return
     }
 
     const updated = selectedCourses.filter((c) => c.id !== courseId)
     setSelectedCourses(updated)
-    saveState(updated, status)
+    saveState(updated, statusState)
     toast.success('Ders sepetten çıkarıldı.')
   }
 
   // İşlem: Taslak kaydetme
   const handleSaveDraft = () => {
-    if (status !== 'Taslak') {
+    if (statusState !== 'Taslak') {
       toast.error('Onay bekleyen veya onaylanmış kayıtlar üzerinde taslak kaydedilemez.')
       return
     }
-    setStatus('Taslak')
+    setStatusState('Taslak')
     saveState(selectedCourses, 'Taslak')
     toast.success('Taslak başarıyla kaydedildi.')
   }
@@ -180,26 +181,44 @@ export default function CourseRegistration() {
     }
 
     setIsSubmitting(true)
-    
+
     // API isteği simülasyonu
     setTimeout(() => {
-      setStatus('Onay Bekliyor')
+      setStatusState('Onay Bekliyor')
       saveState(selectedCourses, 'Onay Bekliyor')
       setIsSubmitting(false)
       setShowSuccessModal(true) // Show success overlay modal
+
+      // Öğrenci bildirimi oluşturma
+      if (user?.id) {
+        const today = new Date()
+        const formattedDate = `${String(today.getDate()).padStart(2, '0')}.${String(
+          today.getMonth() + 1
+        ).padStart(2, '0')}.${today.getFullYear()}`
+
+        dispatch(
+          createNotification({
+            studentId: user.id,
+            title: 'Ders Kaydı Gönderildi',
+            content: `2026-2027 Güz Dönemi ders kayıt talebiniz danışman onayına sunulmuştur. Durum: Danışman Onayı Bekleniyor`,
+            date: formattedDate,
+            read: false,
+          })
+        )
+      }
     }, 1500)
   }
 
   // İşlem: Gönderimi iptal et ve taslağa dön
   const handleCancelSubmission = () => {
-    setStatus('Taslak')
+    setStatusState('Taslak')
     saveState(selectedCourses, 'Taslak')
     toast.success('Ders seçimi onay talebi iptal edildi, taslak moduna geri dönüldü.')
   }
 
   // Demo durumu geçişleri
   const handleDemoSetStatus = (newStatus) => {
-    setStatus(newStatus)
+    setStatusState(newStatus)
     saveState(selectedCourses, newStatus)
     toast.success(`Demo: Durum '${newStatus}' olarak güncellendi.`);
   }
@@ -235,8 +254,8 @@ export default function CourseRegistration() {
 
   const handleUnlockRegistration = () => {
     setIsTuitionPaid(true)
-    if (currentUser?.id) {
-      localStorage.setItem(`tuition_paid_2026_2027_${currentUser.id}`, 'true')
+    if (user?.id) {
+      localStorage.setItem(`tuition_paid_2026_2027_${user.id}`, 'true')
     }
     toast.success('Ders kayıt ekranı başarıyla aktif hale getirildi!')
   }
@@ -269,8 +288,8 @@ export default function CourseRegistration() {
   // Arama ve filtreleme mantığı
   const filteredOffered = courses.filter((c) => {
     const matchesSearch =
-      c.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.name.toLowerCase().includes(searchQuery.toLowerCase())
+      (c.id && c.id.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (c.name && c.name.toLowerCase().includes(searchQuery.toLowerCase()))
     const matchesCategory = categoryFilter === 'All' || c.category === categoryFilter
     return matchesSearch && matchesCategory
   })
@@ -287,13 +306,13 @@ export default function CourseRegistration() {
   const isLoading = coursesStatus === 'loading'
 
   return (
-    <section className="flex-1 p-4 md:p-6 bg-[#f6f9ff] dark:bg-slate-900 transition-colors duration-200 overflow-y-auto pb-36 relative min-h-screen">
-      
+    <section className="flex-1 p-4 md:p-6 bg-[#f6f9ff] dark:bg-slate-900 transition-colors duration-200 overflow-y-auto pb-36 relative min-h-screen text-slate-800 dark:text-white">
+
       {/* Harç ödeme katmanı */}
       {!isTuitionPaid && (
         <div className="absolute inset-0 bg-[#f6f9ff] dark:bg-slate-900 z-50 overflow-y-auto flex flex-col justify-start p-4 md:p-8">
           <div className="max-w-4xl w-full mx-auto my-auto flex flex-col justify-center min-h-full">
-            
+
             {/* Aşama 1: Harç Bilgileri */}
             {paymentStep === 'overview' && (
               <div className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
@@ -358,11 +377,10 @@ export default function CourseRegistration() {
                     <label
                       key={inst}
                       onClick={() => setSelectedInstallment(inst)}
-                      className={`flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${
-                        selectedInstallment === inst
-                          ? 'border-blue-600 bg-blue-50/30 dark:bg-blue-950/20 shadow-sm'
-                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
-                      }`}
+                      className={`flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${selectedInstallment === inst
+                        ? 'border-blue-600 bg-blue-50/30 dark:bg-blue-950/20 shadow-sm'
+                        : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                        }`}
                     >
                       <div className="flex items-center gap-3">
                         <input
@@ -403,7 +421,7 @@ export default function CourseRegistration() {
               </div>
             )}
 
-            {/* Aşama 3: Kart Ödeme Detayları */}
+            {/* Aşama 3: Kart Detayları */}
             {paymentStep === 'card' && (
               <form onSubmit={handleSendSms} className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
@@ -412,14 +430,12 @@ export default function CourseRegistration() {
                 </div>
 
                 <div className="grid grid-cols-12 gap-6">
-                  
-                  {/* Sol Sütun: Kredi Kartı Simülasyonu */}
+
+                  {/* Sol Sütun: Simülasyon */}
                   <div className="col-span-12 md:col-span-5 flex flex-col justify-between space-y-6">
-                    
                     <div className="w-full h-48 [perspective:1000px] shrink-0">
                       <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${isCvvFocused ? '[transform:rotateY(180deg)]' : ''}`}>
-                        
-                        {/* Ön Yüz */}
+
                         <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-indigo-950 via-blue-900 to-slate-900 rounded-2xl p-5 text-white shadow-2xl flex flex-col justify-between overflow-hidden border border-white/10 [backface-visibility:hidden]">
                           <div className="flex justify-between items-center">
                             <div className="w-11 h-8 bg-gradient-to-r from-yellow-400 via-amber-200 to-yellow-500 rounded-md relative border border-yellow-600/30 overflow-hidden shadow-[inset_0_1px_3px_rgba(255,255,255,0.4)] shrink-0">
@@ -437,11 +453,11 @@ export default function CourseRegistration() {
                             </div>
                             <div className="text-xl font-bold tracking-tight text-white/80 font-mono">VISA</div>
                           </div>
-                          
+
                           <div className="text-lg font-mono tracking-widest my-4 text-center">
                             {formatCardNumberDisplay(cardNumber)}
                           </div>
-                          
+
                           <div className="flex justify-between items-end">
                             <div className="min-w-0 flex-1 mr-2">
                               <p className="text-[8px] text-white/40 uppercase tracking-widest mb-0.5">KART SAHİBİ</p>
@@ -458,10 +474,9 @@ export default function CourseRegistration() {
                           </div>
                         </div>
 
-                        {/* Arka Yüz */}
                         <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-indigo-950 via-blue-900 to-slate-900 rounded-2xl text-white shadow-2xl flex flex-col justify-between overflow-hidden border border-white/10 [backface-visibility:hidden] [transform:rotateY(180deg)]">
                           <div className="w-full h-10 bg-slate-950 mt-4"></div>
-                          
+
                           <div className="px-5 flex items-center justify-between">
                             <div className="flex-1 h-8 bg-slate-200/20 rounded-md mr-3 flex items-center px-2 text-white/40 text-[9px] italic font-semibold">
                               Yetkili İmza
@@ -470,7 +485,7 @@ export default function CourseRegistration() {
                               {cardCvv || '***'}
                             </div>
                           </div>
-                          
+
                           <div className="px-5 pb-4 flex justify-between items-center text-[8px] text-white/40 font-mono">
                             <span>T.C. AKADEMİK BİLGİ SİSTEMİ</span>
                             <span className="font-bold text-xs">VISA</span>
@@ -502,7 +517,7 @@ export default function CourseRegistration() {
                     </div>
                   </div>
 
-                  {/* Sağ Sütun: Form alanları */}
+                  {/* Sağ Sütun: Form */}
                   <div className="col-span-12 md:col-span-7 space-y-4">
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Kart Sahibi</label>
@@ -593,7 +608,7 @@ export default function CourseRegistration() {
               </form>
             )}
 
-            {/* Aşama 4: SMS Doğrulama */}
+            {/* Aşama 4: SMS */}
             {paymentStep === 'sms' && (
               <form onSubmit={handleVerifySms} className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
@@ -649,9 +664,8 @@ export default function CourseRegistration() {
                   <button
                     type="submit"
                     disabled={timerSeconds === 0}
-                    className={`flex-[2] py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/25 active:scale-95 transition-all text-center cursor-pointer ${
-                      timerSeconds === 0 ? 'bg-slate-300 text-slate-500 cursor-not-allowed pointer-events-none' : ''
-                    }`}
+                    className={`flex-[2] py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/25 active:scale-95 transition-all text-center cursor-pointer ${timerSeconds === 0 ? 'bg-slate-300 text-slate-500 cursor-not-allowed pointer-events-none' : ''
+                      }`}
                   >
                     Doğrula ve Öde
                   </button>
@@ -694,7 +708,7 @@ export default function CourseRegistration() {
       {showSuccessModal && (
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-md flex items-center justify-center z-[100] p-4 transition-opacity duration-300">
           <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-700/50 flex flex-col items-center text-center space-y-6 transform scale-100 animate-fade-in-up">
-            
+
             <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-950/40 rounded-full flex items-center justify-center text-emerald-500 animate-success-bounce shadow-[0_0_20px_rgba(16,185,129,0.2)]">
               <svg className="w-12 h-12 stroke-emerald-500 fill-none" viewBox="0 0 52 52">
                 <circle className="animate-draw-circle" cx="26" cy="26" r="25" strokeWidth="3" />
@@ -707,7 +721,7 @@ export default function CourseRegistration() {
                 Ders Seçiminiz Alınmıştır!
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                Talebiniz başarıyla danışmanınız <strong>{currentUser?.advisor || 'Prof. Dr. Selçuk Yılmaz'}</strong> onayına gönderilmiştir.
+                Talebiniz başarıyla danışmanınız <strong>{user?.advisor || 'Prof. Dr. Selçuk Yılmaz'}</strong> onayına gönderilmiştir.
               </p>
             </div>
 
@@ -722,9 +736,9 @@ export default function CourseRegistration() {
         </div>
       )}
 
-      {/* Ana kayıt içeriği alanı */}
+      {/* Ana içerik */}
       <div className={`max-w-7xl mx-auto space-y-5 transition-all duration-1000 ease-in-out ${isTuitionPaid ? 'blur-none' : 'blur-[6px] pointer-events-none select-none'}`}>
-        
+
         {/* Başlık Bölümü */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
           <div>
@@ -748,22 +762,22 @@ export default function CourseRegistration() {
                 2026-2027 Güz Dönemi Kayıtları
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                {status === 'Onaylandı'
+                {statusState === 'Onaylandı'
                   ? 'Tebrikler! Ders seçiminiz akademik danışmanınız tarafından onaylanmıştır.'
-                  : status === 'Onay Bekliyor' 
-                  ? 'Ders seçiminiz yapılmış olup akademik danışman onayı beklenmektedir.'
-                  : 'Okul ücreti ödemeniz doğrulanmıştır. En az 1 adet Seçmeli ders seçerek onay kutusuna gönderin.'}
+                  : statusState === 'Onay Bekliyor'
+                    ? 'Ders seçiminiz yapılmış olup akademik danışman onayı beklenmektedir.'
+                    : 'Okul ücreti ödemeniz doğrulanmıştır. En az 1 adet Seçmeli ders seçerek onay kutusuna gönderin.'}
               </p>
             </div>
           </div>
-          
+
           <div className="shrink-0">
-            {status === 'Onaylandı' ? (
+            {statusState === 'Onaylandı' ? (
               <span className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 px-3.5 py-1.5 rounded-full text-xs font-bold border border-emerald-200 dark:border-emerald-900/40 flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.15)] animate-success-bounce">
                 <span className="material-symbols-outlined text-sm font-bold text-emerald-500">done_all</span>
                 <span className="font-semibold">Ders Seçiminiz Onaylanmıştır</span>
               </span>
-            ) : status === 'Onay Bekliyor' ? (
+            ) : statusState === 'Onay Bekliyor' ? (
               <span className="bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 px-3.5 py-1.5 rounded-full text-xs font-bold border border-amber-200 dark:border-amber-900/40 flex items-center gap-1.5 shadow-[0_0_12px_rgba(245,158,11,0.15)] animate-pulse">
                 <span className="relative flex h-2 w-2 mr-0.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
@@ -794,7 +808,7 @@ export default function CourseRegistration() {
             </div>
           )}
 
-          {status === 'Taslak' && selectedElectivesCount < 1 && (
+          {statusState === 'Taslak' && selectedElectivesCount < 1 && (
             <div className="p-3 bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-400 rounded-xl border border-blue-100 dark:border-blue-900/30 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-blue-500 shrink-0 text-lg">info</span>
@@ -814,14 +828,14 @@ export default function CourseRegistration() {
 
           {/* Sol Sütun: Açılan Dersler */}
           <div className="col-span-12 lg:col-span-7 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800/60 overflow-hidden flex flex-col h-auto">
-            
+
             {/* Başlık + Arama/Filtreleme */}
             <div className="p-4 border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-800/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <h3 className="font-bold text-sm text-slate-800 dark:white flex items-center gap-2 shrink-0">
                 <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">list_alt</span>
                 Açılan Dersler
               </h3>
-              
+
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                 <div className="relative flex-grow sm:flex-none sm:w-48">
                   <input
@@ -889,11 +903,10 @@ export default function CourseRegistration() {
                                   Alttan
                                 </span>
                               )}
-                              <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${
-                                course.type === 'Zorunlu' 
-                                  ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400' 
-                                  : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400'
-                              }`}>
+                              <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${course.type === 'Zorunlu'
+                                ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400'
+                                : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400'
+                                }`}>
                                 {course.type || 'Zorunlu'}
                               </span>
                             </div>
@@ -909,14 +922,13 @@ export default function CourseRegistration() {
                           <td className="px-4 py-3 text-right">
                             <button
                               onClick={() => handleAddCourse(course)}
-                              disabled={isAdded || status !== 'Taslak'}
-                              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
-                                isAdded
-                                  ? 'bg-slate-100 dark:bg-slate-700/40 text-slate-400 dark:text-slate-500 cursor-not-allowed'
-                                  : status !== 'Taslak'
+                              disabled={isAdded || statusState !== 'Taslak'}
+                              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${isAdded
+                                ? 'bg-slate-100 dark:bg-slate-700/40 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                                : statusState !== 'Taslak'
                                   ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed'
                                   : 'bg-blue-600 hover:bg-blue-700 text-white hover:shadow-md hover:shadow-blue-500/20 active:scale-95'
-                              }`}
+                                }`}
                               title={isAdded ? 'Sepete Eklendi' : 'Ekle'}
                             >
                               <span className="material-symbols-outlined text-base">
@@ -935,12 +947,12 @@ export default function CourseRegistration() {
 
           {/* Sağ Sütun: Seçilen Dersler */}
           <div className="col-span-12 lg:col-span-5 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800/60 overflow-hidden flex flex-col h-auto">
-            
+
             {/* Başlık */}
             <div className="p-4 border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-between">
               <h3 className="font-bold text-sm text-slate-800 dark:text-white flex items-center gap-2">
                 <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">shopping_cart</span>
-                {status === 'Taslak' ? 'Seçilen Dersler' : 'Seçtiğim Dersler'}
+                {statusState === 'Taslak' ? 'Seçilen Dersler' : 'Seçtiğim Dersler'}
               </h3>
               <span className="bg-blue-600 dark:bg-blue-500/20 text-white dark:text-blue-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
                 {selectedCourses.length} Ders
@@ -968,11 +980,10 @@ export default function CourseRegistration() {
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400">{course.id}</span>
-                          <span className={`text-[8px] font-bold px-1 rounded ${
-                            course.type === 'Zorunlu' 
-                              ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400' 
-                              : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400'
-                          }`}>
+                          <span className={`text-[8px] font-bold px-1 rounded ${course.type === 'Zorunlu'
+                            ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400'
+                            : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400'
+                            }`}>
                             {course.type || 'Zorunlu'}
                           </span>
                         </div>
@@ -988,10 +999,9 @@ export default function CourseRegistration() {
                       </span>
                       <button
                         onClick={() => handleRemoveCourse(course.id)}
-                        disabled={status !== 'Taslak'}
-                        className={`text-slate-400 hover:text-red-500 transition-colors ${
-                          status !== 'Taslak' ? 'cursor-not-allowed opacity-10' : ''
-                        }`}
+                        disabled={statusState !== 'Taslak'}
+                        className={`text-slate-400 hover:text-red-500 transition-colors ${statusState !== 'Taslak' ? 'cursor-not-allowed opacity-10' : ''
+                          }`}
                         title="Dersi Çıkar"
                       >
                         <span className="material-symbols-outlined text-base">delete</span>
@@ -1012,9 +1022,8 @@ export default function CourseRegistration() {
               </div>
               <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all duration-300 ${
-                    isLimitExceeded ? 'bg-red-600' : 'bg-blue-600'
-                  }`}
+                  className={`h-full rounded-full transition-all duration-300 ${isLimitExceeded ? 'bg-red-600' : 'bg-blue-600'
+                    }`}
                   style={{ width: `${Math.min((totalAkts / 30) * 100, 100)}%` }}
                 ></div>
               </div>
@@ -1032,10 +1041,11 @@ export default function CourseRegistration() {
       {/* Yapışkan Aksiyon Altlığı */}
       <footer className={`fixed bottom-0 left-0 md:left-[280px] right-0 h-16 md:h-20 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800/80 flex items-center px-4 md:px-6 z-40 transition-all duration-1000 ease-in-out shadow-xl ${isTuitionPaid ? 'blur-none' : 'blur-[6px] pointer-events-none select-none'}`}>
         <div className="max-w-7xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-3">
-          
+
           {/* İstatistik Bilgileri (Sol) */}
           <div className="flex flex-wrap items-center justify-between sm:justify-start gap-4 sm:gap-5 w-full sm:w-auto">
-            
+
+            {/* AKTS Gösterimi */}
             <div className="shrink-0">
               <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-0.5">
                 Toplam Seçilen AKTS
@@ -1047,11 +1057,10 @@ export default function CourseRegistration() {
                 <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">
                   / 30 AKTS
                 </span>
-                <span className={`ml-2 px-1.5 py-0.5 rounded text-[8px] font-extrabold border ${
-                  isLimitExceeded 
-                    ? 'bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/40' 
-                    : 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/30'
-                }`}>
+                <span className={`ml-2 px-1.5 py-0.5 rounded text-[8px] font-extrabold border ${isLimitExceeded
+                  ? 'bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/40'
+                  : 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/30'
+                  }`}>
                   {isLimitExceeded ? 'AŞILDI' : `KALAN: ${30 - totalAkts}`}
                 </span>
               </div>
@@ -1065,14 +1074,14 @@ export default function CourseRegistration() {
                 Kayıt Durumu
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">
-                {status === 'Onaylandı' ? (
+                {statusState === 'Onaylandı' ? (
                   <div className="flex items-center gap-1.5 bg-emerald-500/10 dark:bg-emerald-500/5 px-2.5 py-1 rounded-lg border border-emerald-500/20 shadow-[0_0_8px_rgba(16,185,129,0.15)] animate-success-bounce">
                     <span className="material-symbols-outlined text-sm font-bold text-emerald-500">done_all</span>
                     <span className="text-[11px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
                       Ders Seçiminiz Onaylanmıştır
                     </span>
                   </div>
-                ) : status === 'Onay Bekliyor' ? (
+                ) : statusState === 'Onay Bekliyor' ? (
                   <div className="flex items-center gap-1.5 bg-amber-500/10 dark:bg-amber-500/5 px-2.5 py-1 rounded-lg border border-amber-500/20 shadow-[0_0_8px_rgba(245,158,11,0.15)]">
                     <span className="relative flex h-2 w-2 shrink-0">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
@@ -1112,14 +1121,14 @@ export default function CourseRegistration() {
 
           </div>
 
-          {/* Butonlar (Sağ) */}
+          {/* Butonlar */}
           <div className="flex items-center gap-2 shrink-0 justify-end w-full sm:w-auto mt-2 sm:mt-0">
-            {status === 'Onaylandı' ? (
+            {statusState === 'Onaylandı' ? (
               <div className="w-full sm:w-auto px-5 py-2 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 border border-emerald-200 dark:border-emerald-900/30">
                 <span className="material-symbols-outlined text-sm">check_circle</span>
                 Kayıt Tamamlandı
               </div>
-            ) : status === 'Onay Bekliyor' ? (
+            ) : statusState === 'Onay Bekliyor' ? (
               <button
                 onClick={handleCancelSubmission}
                 className="w-full sm:w-auto px-5 py-2 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md hover:shadow-red-500/20 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
@@ -1141,11 +1150,10 @@ export default function CourseRegistration() {
                 <button
                   onClick={handleSendToAdvisor}
                   disabled={isLimitExceeded || isSubmitting || selectedCourses.length === 0}
-                  className={`px-5 py-2 rounded-xl font-bold text-xs text-white shadow-lg flex items-center justify-center gap-1.5 transition-all duration-300 transform active:scale-95 cursor-pointer animate-shimmer ${
-                    isLimitExceeded || isSubmitting || selectedCourses.length === 0
-                      ? 'bg-slate-300 dark:bg-slate-800 text-slate-400 dark:text-slate-600 shadow-none cursor-not-allowed pointer-events-none'
-                      : 'bg-emerald-600 dark:bg-emerald-50 hover:bg-emerald-700 dark:hover:bg-emerald-600 hover:translate-x-1.5 hover:shadow-[0_0_15px_rgba(16,185,129,0.7)]'
-                  }`}
+                  className={`px-5 py-2 rounded-xl font-bold text-xs text-white shadow-lg flex items-center justify-center gap-1.5 transition-all duration-300 transform active:scale-95 cursor-pointer animate-shimmer ${isLimitExceeded || isSubmitting || selectedCourses.length === 0
+                    ? 'bg-slate-300 dark:bg-slate-800 text-slate-400 dark:text-slate-600 shadow-none cursor-not-allowed pointer-events-none'
+                    : 'bg-emerald-600 dark:bg-emerald-50 hover:bg-emerald-700 dark:hover:bg-emerald-600 hover:translate-x-1.5 hover:shadow-[0_0_15px_rgba(16,185,129,0.7)]'
+                    }`}
                 >
                   {isSubmitting ? (
                     <>

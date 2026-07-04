@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchStudentDashboardAsync } from '../../store/student/studentSlice'
+import { fetchStudentCourses } from '../../store/student/studentSlice'
 import { toast } from 'react-hot-toast'
 
 // Müfredat Verileri (Ders bazlı dinamik bölümler)
@@ -89,15 +89,13 @@ const defaultForumPosts = [
 export default function Courses() {
   const dispatch = useDispatch()
   const { currentUser } = useSelector((state) => state.auth || {})
-  const { dashboardData, status } = useSelector((state) => state.student || {})
-
-  const studentCourses = dashboardData?.registeredCourses || []
+  const { studentCourses = [], status } = useSelector((state) => state.student || {})
 
   // Sayfa durumları
   const [selectedCourseCode, setSelectedCourseCode] = useState('')
   const [activeLecture, setActiveLecture] = useState(null)
   const [activeTab, setActiveTab] = useState('notes') // 'notes' | 'code' | 'forum'
-  
+
   // Etkileşim durumları
   const [likes, setLikes] = useState(148)
   const [hasLiked, setHasLiked] = useState(false)
@@ -109,18 +107,18 @@ export default function Courses() {
   // Kurs verilerini getirme
   useEffect(() => {
     if (currentUser?.id) {
-      dispatch(fetchStudentDashboardAsync())
+      dispatch(fetchStudentCourses(currentUser.id))
     }
   }, [dispatch, currentUser])
 
   // Sadece online dersleri filtrele
-  const onlineCourses = studentCourses.filter(course => 
-    ['MOB401', 'CYB302', 'AI501', 'NET401'].includes(course.code)
+  const onlineCourses = studentCourses.filter(course =>
+    course.code && ['MOB401', 'CYB302', 'AI501', 'NET401', 'SQL301'].includes(course.code.toUpperCase())
   )
 
   // İlk online dersi seçme
   useEffect(() => {
-    if (onlineCourses.length > 0 && (!selectedCourseCode || !['MOB401', 'CYB302', 'AI501', 'NET401'].includes(selectedCourseCode))) {
+    if (onlineCourses.length > 0 && (!selectedCourseCode || !['MOB401', 'CYB302', 'AI501', 'NET401', 'SQL301'].includes(selectedCourseCode.toUpperCase()))) {
       setSelectedCourseCode(onlineCourses[0].code)
     }
   }, [onlineCourses, selectedCourseCode])
@@ -254,7 +252,7 @@ const Timer = () => {
     toast.success('Kod panoya kopyalandı!')
   }
 
-  const isLoading = status === 'loading'
+  const isLoading = status === 'loading' || status?.studentCourses === 'loading'
 
   if (isLoading) {
     return (
@@ -277,7 +275,7 @@ const Timer = () => {
 
   return (
     <section className="flex-grow p-4 md:p-8 max-w-7xl mx-auto space-y-6 text-slate-800 dark:text-white">
-      
+
       {/* Üst Ders Başlığı ve Seçici */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div>
@@ -313,10 +311,10 @@ const Timer = () => {
 
       {/* Ana Arayüz Grid (Video + Sağ Müfredat) */}
       <div className="grid grid-cols-12 gap-6 items-start">
-        
+
         {/* Sol Kolon: Video ve Detaylar */}
         <div className="col-span-12 lg:col-span-8 space-y-4">
-          
+
           {/* Video Player */}
           <div className="relative w-full aspect-video bg-slate-900 rounded-2xl overflow-hidden shadow-lg border border-slate-200/50 dark:border-slate-800">
             {activeLecture ? (
@@ -354,11 +352,10 @@ const Timer = () => {
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={handleLike}
-                className={`flex items-center gap-1.5 px-4 py-2 border rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer ${
-                  hasLiked
-                    ? 'bg-rose-500 border-rose-500 text-white shadow-md shadow-rose-500/20'
-                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900'
-                }`}
+                className={`flex items-center gap-1.5 px-4 py-2 border rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer ${hasLiked
+                  ? 'bg-rose-500 border-rose-500 text-white shadow-md shadow-rose-500/20'
+                  : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900'
+                  }`}
               >
                 <span className="material-symbols-outlined text-base">thumb_up</span>
                 <span>{likes} Beğeni</span>
@@ -378,7 +375,7 @@ const Timer = () => {
         {/* Sağ Kolon: Ders Müfredat Listesi */}
         <aside className="col-span-12 lg:col-span-4">
           <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm overflow-hidden flex flex-col min-h-[400px]">
-            
+
             {/* Müfredat Başlık */}
             <div className="p-5 border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-800/30">
               <h3 className="font-extrabold text-sm text-blue-900 dark:text-blue-400">Ders Müfredat Listesi</h3>
@@ -418,11 +415,10 @@ const Timer = () => {
                             <div
                               key={lecture.id}
                               onClick={() => setActiveLecture(lecture)}
-                              className={`p-3.5 flex items-center gap-3 cursor-pointer transition-colors ${
-                                isActive
-                                  ? 'bg-blue-500/10 dark:bg-blue-500/5 border-l-4 border-blue-600'
-                                  : 'hover:bg-slate-50 dark:hover:bg-slate-700/30'
-                              }`}
+                              className={`p-3.5 flex items-center gap-3 cursor-pointer transition-colors ${isActive
+                                ? 'bg-blue-500/10 dark:bg-blue-500/5 border-l-4 border-blue-600'
+                                : 'hover:bg-slate-50 dark:hover:bg-slate-700/30'
+                                }`}
                             >
                               {isActive ? (
                                 <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-lg shrink-0">
@@ -463,16 +459,15 @@ const Timer = () => {
 
       {/* Alt Bölüm: 3 Sekmeli Ders Materyali & Forum */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm overflow-hidden">
-        
+
         {/* Sekme Butonları */}
         <div className="flex border-b border-slate-200 dark:border-slate-700/60 px-4 overflow-x-auto whitespace-nowrap scrollbar-none bg-slate-50/50 dark:bg-slate-800/40">
           <button
             onClick={() => setActiveTab('notes')}
-            className={`py-4 px-6 text-xs font-bold flex items-center gap-1.5 transition-all border-b-2 cursor-pointer ${
-              activeTab === 'notes'
-                ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-            }`}
+            className={`py-4 px-6 text-xs font-bold flex items-center gap-1.5 transition-all border-b-2 cursor-pointer ${activeTab === 'notes'
+              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+              }`}
           >
             <span className="material-symbols-outlined text-base">description</span>
             <span>Ders Notları &amp; PDF</span>
@@ -480,11 +475,10 @@ const Timer = () => {
 
           <button
             onClick={() => setActiveTab('code')}
-            className={`py-4 px-6 text-xs font-bold flex items-center gap-1.5 transition-all border-b-2 cursor-pointer ${
-              activeTab === 'code'
-                ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-            }`}
+            className={`py-4 px-6 text-xs font-bold flex items-center gap-1.5 transition-all border-b-2 cursor-pointer ${activeTab === 'code'
+              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+              }`}
           >
             <span className="material-symbols-outlined text-base">code</span>
             <span>Derste Yazılan Kodlar (GitHub)</span>
@@ -492,11 +486,10 @@ const Timer = () => {
 
           <button
             onClick={() => setActiveTab('forum')}
-            className={`py-4 px-6 text-xs font-bold flex items-center gap-1.5 transition-all border-b-2 relative cursor-pointer ${
-              activeTab === 'forum'
-                ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-            }`}
+            className={`py-4 px-6 text-xs font-bold flex items-center gap-1.5 transition-all border-b-2 relative cursor-pointer ${activeTab === 'forum'
+              ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+              }`}
           >
             <span className="material-symbols-outlined text-base">forum</span>
             <span>Soru-Cevap / Forum</span>
@@ -506,11 +499,11 @@ const Timer = () => {
 
         {/* Sekme İçerikleri */}
         <div className="p-6">
-          
+
           {/* Sekme 1: Ders Notları & PDF */}
           {activeTab === 'notes' && (
             <div className="space-y-6">
-              
+
               {/* PDF İndirme Kartları */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* PDF Kartı 1 */}
@@ -528,7 +521,7 @@ const Timer = () => {
                     </div>
                   </div>
                   <span className="material-symbols-outlined text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 text-lg">
-                     download
+                    download
                   </span>
                 </div>
 
@@ -573,7 +566,7 @@ const Timer = () => {
           {/* Sekme 2: GitHub / Yazılan Kodlar */}
           {activeTab === 'code' && (
             <div className="space-y-4">
-              
+
               {/* Kod Editörü */}
               <div className="bg-slate-900 text-slate-300 rounded-2xl font-mono text-[11px] overflow-hidden border border-slate-800 shadow-inner">
                 {/* Editör Üst Barı */}
@@ -614,7 +607,7 @@ const Timer = () => {
           {/* Sekme 3: Forum / Soru Cevap */}
           {activeTab === 'forum' && (
             <div className="space-y-6">
-              
+
               {/* Forum Soru Listesi */}
               <div className="space-y-3">
                 {forumPosts.map((post) => (
@@ -655,9 +648,8 @@ const Timer = () => {
                           </button>
                           <button
                             onClick={() => handleLikePost(post.id)}
-                            className={`flex items-center gap-1 cursor-pointer border-none bg-transparent ${
-                              post.hasLiked ? 'text-rose-500 hover:text-rose-600 font-bold' : 'hover:text-rose-500 text-slate-400 dark:text-slate-500 font-bold'
-                            }`}
+                            className={`flex items-center gap-1 cursor-pointer border-none bg-transparent ${post.hasLiked ? 'text-rose-500 hover:text-rose-600 font-bold' : 'hover:text-rose-500 text-slate-400 dark:text-slate-500 font-bold'
+                              }`}
                           >
                             <span className="material-symbols-outlined text-sm">favorite</span>
                             <span>{post.likes} Beğeni</span>
@@ -690,7 +682,7 @@ const Timer = () => {
                             ))}
 
                             {/* Cevap yazma formu */}
-                            <form 
+                            <form
                               onSubmit={(e) => {
                                 e.preventDefault();
                                 const replyText = e.target.replyInput.value;

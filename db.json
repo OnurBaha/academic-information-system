@@ -210,69 +210,125 @@
   ],
   "courses": [
     {
-      "id": "c1",
-      "code": "MOB401",
-      "name": "Mobil Geliştirme (Flutter)",
-      "credits": 4,
-      "ects": 6,
-      "departmentId": "d1",
-      "semester": 4,
-      "status": "Aktif",
-      "instructor": "Dr. Cem Kaya",
-      "capacity": "24/30",
-      "tag": "Yazılım"
+      "id": "SOFT-302",
+      "name": "React Redux Advanced",
+      "category": "Yazılım",
+      "instructor": "Dr. Elif Soylu",
+      "akts": 5,
+      "capacity": 40,
+      "enrolled": 24,
+      "type": "Zorunlu",
+      "isFailed": false
     },
     {
-      "id": "c2",
-      "code": "CYB302",
-      "name": "Cyber Security 101",
-      "credits": 3,
-      "ects": 4,
-      "departmentId": "d1",
-      "semester": 3,
-      "status": "Taslak",
-      "instructor": "Dr. Elif Demir",
-      "capacity": "15/25",
-      "tag": "Güvenlik"
+      "id": "SOFT-304",
+      "name": "Web Frameworks & APIs",
+      "category": "Yazılım",
+      "instructor": "Dr. Elif Soylu",
+      "akts": 4,
+      "capacity": 30,
+      "enrolled": 15,
+      "type": "Zorunlu",
+      "isFailed": false
     },
     {
-      "id": "c3",
-      "code": "AI501",
-      "name": "Python & Machine Learning",
-      "credits": 4,
-      "ects": 7,
-      "departmentId": "d1",
-      "semester": 5,
-      "status": "Aktif",
+      "id": "DATA-204",
+      "name": "Big Data Analytics",
+      "category": "Veri Bilimi",
+      "instructor": "Doç. Dr. Mert Akın",
+      "akts": 4,
+      "capacity": 35,
+      "enrolled": 12,
+      "type": "Zorunlu",
+      "isFailed": false
+    },
+    {
+      "id": "ENG-401",
+      "name": "Academic English III",
+      "category": "Dil",
+      "instructor": "Lektör Canan Kaya",
+      "akts": 2,
+      "capacity": 50,
+      "enrolled": 41,
+      "type": "Zorunlu",
+      "isFailed": false
+    },
+    {
+      "id": "MATH-102",
+      "name": "Discrete Mathematics",
+      "category": "Matematik",
       "instructor": "Prof. Mert Can",
-      "capacity": "10/20",
-      "tag": "AI"
+      "akts": 4,
+      "capacity": 45,
+      "enrolled": 39,
+      "type": "Zorunlu",
+      "isFailed": true
     },
     {
-      "id": "c4",
-      "code": "UX201",
-      "name": "UI/UX Tasarım Temelleri",
-      "credits": 3,
-      "ects": 3,
-      "departmentId": "d1",
-      "semester": 2,
-      "status": "Pasif",
-      "instructor": "Uzm. Seda Ak",
-      "capacity": "28/30",
-      "tag": "Tasarım"
+      "id": "PHY-102",
+      "name": "General Physics II",
+      "category": "Mühendislik",
+      "instructor": "Dr. Öğr. Üyesi Cem Akın",
+      "akts": 4,
+      "capacity": 40,
+      "enrolled": 36,
+      "type": "Zorunlu",
+      "isFailed": true
     },
     {
-      "id": "c5",
-      "code": "BLK601",
-      "name": "Blockchain & Web3",
-      "credits": 3,
-      "ects": 5,
-      "departmentId": "d1",
-      "semester": 6,
-      "status": "Taslak",
-      "instructor": "Belirtilmemiş",
-      "capacity": "0/30",
-      "tag": "Yazılım"
+      "id": "SEC-101",
+      "name": "Fotoğrafçılık",
+      "category": "Sosyal",
+      "instructor": "Uzm. Can Yılmaz",
+      "akts": 2,
+      "capacity": 30,
+      "enrolled": 13,
+      "type": "Seçmeli",
+      "isFailed": false
+    },
+    {
+      "id": "SEC-102",
+      "name": "Satranç",
+      "category": "Sosyal",
+      "instructor": "Doç. Hakan Demir",
+      "akts": 2,
+      "capacity": 20,
+      "enrolled": 9,
+      "type": "Seçmeli",
+      "isFailed": false
+    },
+    {
+      "id": "SEC-103",
+      "name": "Diksiyon ve Hitabet",
+      "category": "Sosyal",
+      "instructor": "Öğr. Gör. Meltem Aydın",
+      "akts": 2,
+      "capacity": 25,
+      "enrolled": 15,
+      "type": "Seçmeli",
+      "isFailed": false
+    },
+    {
+      "id": "SEC-104",
+      "name": "Yaratıcı Yazarlık",
+      "category": "Sosyal",
+      "instructor": "Uzm. Deniz Aslan",
+      "akts": 2,
+      "capacity": 20,
+      "enrolled": 6,
+      "type": "Seçmeli",
+      "isFailed": false
+    },
+    {
+      "id": "SEC-105",
+      "name": "Sunum Teknikleri",
+      "category": "Sosyal",
+      "instructor": "Öğr. Gör. Canan Bulut",
+      "akts": 2,
+      "capacity": 30,
+      "enrolled": 14,
+      "type": "Seçmeli",
+      "isFailed": false
     }
   ],
   "curriculum": [
@@ -1158,5 +1214,112 @@
         "instructor": "Doç. Dr. Elif Soylu"
       }
     ]
-  }
+  },
+  "studentCourses": [
+    {
+      "id": "1",
+      "studentId": "1",
+      "courseName": "Full-Stack .NET & React",
+      "instructor": "Dr. Elif Soylu",
+      "category": "Mühendislik",
+      "akts": 6,
+      "progress": 75,
+      "code": "NET401"
+    },
+    {
+      "id": "2",
+      "studentId": "1",
+      "courseName": "SQL & Database Design",
+      "instructor": "Doç. Dr. Mert Akın",
+      "category": "Veri Bilimi",
+      "akts": 5,
+      "progress": 40,
+      "code": "SQL301"
+    },
+    {
+      "id": "3",
+      "studentId": "u7",
+      "courseName": "Full-Stack .NET & React",
+      "instructor": "Dr. Elif Soylu",
+      "category": "Mühendislik",
+      "akts": 6,
+      "progress": 75,
+      "code": "NET401"
+    },
+    {
+      "id": "4",
+      "studentId": "u7",
+      "courseName": "SQL & Database Design",
+      "instructor": "Doç. Dr. Mert Akın",
+      "category": "Veri Bilimi",
+      "akts": 5,
+      "progress": 40,
+      "code": "SQL301"
+    }
+  ],
+  "attendance": [
+    {
+      "id": "1",
+      "studentId": "1",
+      "totalHours": 180,
+      "attendedHours": 162,
+      "limitBreached": false,
+      "absentHours": 18
+    },
+    {
+      "id": "2",
+      "studentId": "u7",
+      "totalHours": 180,
+      "attendedHours": 162,
+      "limitBreached": false,
+      "absentHours": 18
+    }
+  ],
+  "upcomingClasses": [
+    {
+      "id": "1",
+      "time": "Bugün, 14:00",
+      "name": "React Redux Advanced",
+      "location": "Sınıf: LAB-B3 / Online",
+      "isLive": true
+    },
+    {
+      "id": "2",
+      "time": "Yarın, 10:30",
+      "name": ".NET Microservices",
+      "location": "Sınıf: Amfi-1 / Yüz Yüze",
+      "isLive": false
+    },
+    {
+      "id": "3",
+      "time": "Perşembe, 09:00",
+      "name": "System Architecture",
+      "location": "Sınıf: LAB-C2",
+      "isLive": false
+    }
+  ],
+  "lectures": [
+    {
+      "id": "1",
+      "title": "Ders 1 — React Hooks Temelleri",
+      "courseName": "Full-Stack .NET & React",
+      "instructor": "Dr. Elif Soylu",
+      "duration": "45 dk",
+      "url": "https://www.w3schools.com/html/mov_bbb.mp4",
+      "materials": [
+        {
+          "name": "Ders Notları — Hafta 3.pdf",
+          "size": "2.4 MB"
+        },
+        {
+          "name": "GitHub Repository",
+          "size": "Repo"
+        },
+        {
+          "name": "Örnek Kodlar.zip",
+          "size": "1.1 MB"
+        }
+      ]
+    }
+  ]
 }
