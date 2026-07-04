@@ -4,7 +4,7 @@ export default function DeanOverview() {
       <div className="dean-header-row">
         <div>
           <h2 className="dean-page-title">Akademik Genel Bakış</h2>
-          <p className="dean-page-subtitle">2023-2024 Akademik Yılı Güz Dönemi Verileri</p>
+          <p className="dean-page-subtitle">2025-2026 Akademik Yılı Güz Dönemi Verileri</p>
         </div>
         <div className="dean-header-actions">
           <button className="dean-btn-report">

@@ -556,15 +556,50 @@
       "currentTime": "15:42"
     },
     "attachments": [
-      { "id": "att1", "name": "Ders Notları — Hafta 3.pdf", "size": "2.4 MB", "type": "pdf" },
-      { "id": "att2", "name": "GitHub Repository", "size": "Repo", "type": "link" },
-      { "id": "att3", "name": "Örnek Kodlar.zip", "size": "1.1 MB", "type": "zip" }
+      {
+        "id": "att1",
+        "name": "Ders Notları — Hafta 3.pdf",
+        "size": "2.4 MB",
+        "type": "pdf"
+      },
+      {
+        "id": "att2",
+        "name": "GitHub Repository",
+        "size": "Repo",
+        "type": "link"
+      },
+      {
+        "id": "att3",
+        "name": "Örnek Kodlar.zip",
+        "size": "1.1 MB",
+        "type": "zip"
+      }
     ],
     "playlist": [
-      { "id": "v1", "title": "Ders 1 — React Hooks Temelleri", "duration": "45 dk", "active": true },
-      { "id": "v2", "title": "Ders 2 — useEffect & useContext", "duration": "52 dk", "active": false },
-      { "id": "v3", "title": "Ders 3 — Redux Advanced Patterns", "duration": "60 dk", "active": false },
-      { "id": "v4", "title": "Ders 4 — Testing with Jest", "duration": "38 dk", "active": false }
+      {
+        "id": "v1",
+        "title": "Ders 1 — React Hooks Temelleri",
+        "duration": "45 dk",
+        "active": true
+      },
+      {
+        "id": "v2",
+        "title": "Ders 2 — useEffect & useContext",
+        "duration": "52 dk",
+        "active": false
+      },
+      {
+        "id": "v3",
+        "title": "Ders 3 — Redux Advanced Patterns",
+        "duration": "60 dk",
+        "active": false
+      },
+      {
+        "id": "v4",
+        "title": "Ders 4 — Testing with Jest",
+        "duration": "38 dk",
+        "active": false
+      }
     ]
   },
   "homeworkSubmissions": [
@@ -635,29 +670,144 @@
       }
     ],
     "activities": [
-      { "id": "act-1", "type": "upload", "student": "Can Demir", "text": "ödevini teslim etti.", "time": "10 Dakika Önce", "meta": "Ödev #4" },
-      { "id": "act-2", "type": "question", "student": "Seda Kaya", "text": "bir soru sordu.", "time": "45 Dakika Önce", "meta": "React Hooks" },
-      { "id": "act-3", "type": "register", "student": "Bora Ak", "text": "derse kayıt oldu.", "time": "2 Saat Önce", "meta": "Grup A" },
-      { "id": "act-4", "type": "warning", "student": "Sistem Uyarısı", "text": "Düşük katılım.", "time": "Bugün 09:30", "meta": "Sınıf C" }
+      {
+        "id": "act-1",
+        "type": "upload",
+        "student": "Can Demir",
+        "text": "ödevini teslim etti.",
+        "time": "10 Dakika Önce",
+        "meta": "Ödev #4"
+      },
+      {
+        "id": "act-2",
+        "type": "question",
+        "student": "Seda Kaya",
+        "text": "bir soru sordu.",
+        "time": "45 Dakika Önce",
+        "meta": "React Hooks"
+      },
+      {
+        "id": "act-3",
+        "type": "register",
+        "student": "Bora Ak",
+        "text": "derse kayıt oldu.",
+        "time": "2 Saat Önce",
+        "meta": "Grup A"
+      },
+      {
+        "id": "act-4",
+        "type": "warning",
+        "student": "Sistem Uyarısı",
+        "text": "Düşük katılım.",
+        "time": "Bugün 09:30",
+        "meta": "Sınıf C"
+      }
     ],
     "growthPercent": 75,
     "growthText": "Bu ay genel sınıf başarısı %12 arttı."
   },
   "attendanceRecords": [
-    { "id": "att-r-1", "studentName": "Can Demir", "studentId": "20211024001", "avatar": "C", "status": "present" },
-    { "id": "att-r-2", "studentName": "Seda Kaya", "studentId": "20211024002", "avatar": "S", "status": "absent" },
-    { "id": "att-r-3", "studentName": "Bora Ak", "studentId": "20211024003", "avatar": "B", "status": "present" },
-    { "id": "att-r-4", "studentName": "Elif Şahin", "studentId": "20211024004", "avatar": "E", "status": "present" },
-    { "id": "att-r-5", "studentName": "Murat Yıldız", "studentId": "20211024005", "avatar": "M", "status": "absent" },
-    { "id": "att-r-6", "studentName": "Ayşe Toprak", "studentId": "20211024006", "avatar": "A", "status": "present" },
-    { "id": "att-r-7", "studentName": "Kemal Arslan", "studentId": "20211024007", "avatar": "K", "status": "indeterminate" }
+    {
+      "id": "att-r-1",
+      "studentName": "Can Demir",
+      "studentId": "20211024001",
+      "avatar": "C",
+      "status": "present"
+    },
+    {
+      "id": "att-r-2",
+      "studentName": "Seda Kaya",
+      "studentId": "20211024002",
+      "avatar": "S",
+      "status": "absent"
+    },
+    {
+      "id": "att-r-3",
+      "studentName": "Bora Ak",
+      "studentId": "20211024003",
+      "avatar": "B",
+      "status": "present"
+    },
+    {
+      "id": "att-r-4",
+      "studentName": "Elif Şahin",
+      "studentId": "20211024004",
+      "avatar": "E",
+      "status": "present"
+    },
+    {
+      "id": "att-r-5",
+      "studentName": "Murat Yıldız",
+      "studentId": "20211024005",
+      "avatar": "M",
+      "status": "absent"
+    },
+    {
+      "id": "att-r-6",
+      "studentName": "Ayşe Toprak",
+      "studentId": "20211024006",
+      "avatar": "A",
+      "status": "present"
+    },
+    {
+      "id": "att-r-7",
+      "studentName": "Kemal Arslan",
+      "studentId": "20211024007",
+      "avatar": "K",
+      "status": "indeterminate"
+    }
   ],
   "gradeEntries": [
-    { "id": "ge1", "studentName": "Can Demir", "studentNumber": "20211024001", "avatar": "C", "midterm": 85, "final": 90, "project": 88, "letterGrade": "AA" },
-    { "id": "ge2", "studentName": "Seda Kaya", "studentNumber": "20211024002", "avatar": "S", "midterm": 72, "final": 68, "project": 80, "letterGrade": "BA" },
-    { "id": "ge3", "studentName": "Bora Ak", "studentNumber": "20211024003", "avatar": "B", "midterm": 55, "final": null, "project": null, "letterGrade": null },
-    { "id": "ge4", "studentName": "Elif Şahin", "studentNumber": "20211024004", "avatar": "E", "midterm": 95, "final": 100, "project": null, "letterGrade": "AA" },
-    { "id": "ge5", "studentName": "Murat Yıldız", "studentNumber": "20211024005", "avatar": "M", "midterm": 60, "final": 75, "project": 65, "letterGrade": "CB" }
+    {
+      "id": "ge1",
+      "studentName": "Can Demir",
+      "studentNumber": "20211024001",
+      "avatar": "C",
+      "midterm": 85,
+      "final": 90,
+      "project": 88,
+      "letterGrade": "AA"
+    },
+    {
+      "id": "ge2",
+      "studentName": "Seda Kaya",
+      "studentNumber": "20211024002",
+      "avatar": "S",
+      "midterm": 72,
+      "final": 68,
+      "project": 80,
+      "letterGrade": "BA"
+    },
+    {
+      "id": "ge3",
+      "studentName": "Bora Ak",
+      "studentNumber": "20211024003",
+      "avatar": "B",
+      "midterm": 55,
+      "final": null,
+      "project": null,
+      "letterGrade": null
+    },
+    {
+      "id": "ge4",
+      "studentName": "Elif Şahin",
+      "studentNumber": "20211024004",
+      "avatar": "E",
+      "midterm": 95,
+      "final": 100,
+      "project": null,
+      "letterGrade": "AA"
+    },
+    {
+      "id": "ge5",
+      "studentName": "Murat Yıldız",
+      "studentNumber": "20211024005",
+      "avatar": "M",
+      "midterm": 60,
+      "final": 75,
+      "project": 65,
+      "letterGrade": "CB"
+    }
   ],
   "deanData": {
     "pendingApprovals": [
@@ -666,21 +816,36 @@
         "courseName": "CS402 - Algoritma Tasarımı",
         "instructor": "Doç. Dr. Selin Erten",
         "studentCount": 64,
-        "distribution": { "aa": 15, "ba": 22, "cb": 20, "ff": 7 }
+        "distribution": {
+          "aa": 15,
+          "ba": 22,
+          "cb": 20,
+          "ff": 7
+        }
       },
       {
         "id": "app-102",
         "courseName": "EE201 - Devre Teorisi I",
         "instructor": "Dr. Öğr. Üyesi Kerem Ak",
         "studentCount": 42,
-        "distribution": { "aa": 8, "ba": 14, "cb": 15, "ff": 5 }
+        "distribution": {
+          "aa": 8,
+          "ba": 14,
+          "cb": 15,
+          "ff": 5
+        }
       },
       {
         "id": "app-103",
         "courseName": "ARC101 - Mimari Çizim",
         "instructor": "Öğr. Gör. Meltem Şen",
         "studentCount": 120,
-        "distribution": { "aa": 25, "ba": 35, "cb": 40, "ff": 20 }
+        "distribution": {
+          "aa": 25,
+          "ba": 35,
+          "cb": 40,
+          "ff": 20
+        }
       }
     ],
     "curriculumTracks": [
@@ -689,9 +854,30 @@
         "name": "Full-Stack Web Geliştirme",
         "ects": 45,
         "courses": [
-          { "id": "web-1", "name": "React & State Management", "instructor": "Dr. Arda Yılmaz", "hours": 42, "ects": 6, "status": "Aktif" },
-          { "id": "web-2", "name": "Node.js Enterprise Architecture", "instructor": "Doç. Dr. Selin Ekin", "hours": 36, "ects": 8, "status": "Aktif" },
-          { "id": "web-3", "name": "PostgreSQL Database Optimization", "instructor": "Dr. Burak Can", "hours": 24, "ects": 4, "status": "Pasif" }
+          {
+            "id": "web-1",
+            "name": "React & State Management",
+            "instructor": "Dr. Arda Yılmaz",
+            "hours": 42,
+            "ects": 6,
+            "status": "Aktif"
+          },
+          {
+            "id": "web-2",
+            "name": "Node.js Enterprise Architecture",
+            "instructor": "Doç. Dr. Selin Ekin",
+            "hours": 36,
+            "ects": 8,
+            "status": "Aktif"
+          },
+          {
+            "id": "web-3",
+            "name": "PostgreSQL Database Optimization",
+            "instructor": "Dr. Burak Can",
+            "hours": 24,
+            "ects": 4,
+            "status": "Pasif"
+          }
         ]
       },
       {
@@ -699,30 +885,102 @@
         "name": "Yapay Zeka ve Veri Bilimi",
         "ects": 60,
         "courses": [
-          { "id": "ai-1", "name": "Neural Networks Fundamentals", "instructor": "Prof. Dr. Kerem Soylu", "hours": 48, "ects": 10, "status": "Aktif" }
+          {
+            "id": "ai-1",
+            "name": "Neural Networks Fundamentals",
+            "instructor": "Prof. Dr. Kerem Soylu",
+            "hours": 48,
+            "ects": 10,
+            "status": "Aktif"
+          }
         ]
       }
     ],
     "instructors": [
-      { "id": "inst-1", "name": "Dr. Selin Yılmaz", "track": ".NET Core, Microservices", "rating": 4.9, "reviewCount": 128, "attendance": 98, "status": "Aktif" },
-      { "id": "inst-2", "name": "Ahmet Demir", "track": "Frontend, React.js", "rating": 4.7, "reviewCount": 95, "attendance": 89, "status": "Aktif" },
-      { "id": "inst-3", "name": "Canan Kaya", "track": "Figma, Design Systems", "rating": 4.8, "reviewCount": 210, "attendance": 92, "status": "İzinli" }
+      {
+        "id": "inst-1",
+        "name": "Dr. Selin Yılmaz",
+        "track": ".NET Core, Microservices",
+        "rating": 4.9,
+        "reviewCount": 128,
+        "attendance": 98,
+        "status": "Aktif"
+      },
+      {
+        "id": "inst-2",
+        "name": "Ahmet Demir",
+        "track": "Frontend, React.js",
+        "rating": 4.7,
+        "reviewCount": 95,
+        "attendance": 89,
+        "status": "Aktif"
+      },
+      {
+        "id": "inst-3",
+        "name": "Canan Kaya",
+        "track": "Figma, Design Systems",
+        "rating": 4.8,
+        "reviewCount": 210,
+        "attendance": 92,
+        "status": "İzinli"
+      }
     ]
   },
   "studentAnalytics": {
     "successDistribution": [
-      { "label": "Onur Öğrencisi (3.50+)", "count": 148, "color": "green" },
-      { "label": "Yüksek Başarı (3.00-3.49)", "count": 89, "color": "blue" },
-      { "label": "Orta Başarı (2.00-2.99)", "count": 63, "color": "orange" }
+      {
+        "label": "Onur Öğrencisi (3.50+)",
+        "count": 148,
+        "color": "green"
+      },
+      {
+        "label": "Yüksek Başarı (3.00-3.49)",
+        "count": 89,
+        "color": "blue"
+      },
+      {
+        "label": "Orta Başarı (2.00-2.99)",
+        "count": 63,
+        "color": "orange"
+      }
     ],
     "sectors": [
-      { "name": "Yazılım Geliştirme", "percent": 48, "color": "navy" },
-      { "name": "Veri / AI", "percent": 22, "color": "blue" },
-      { "name": "Siber Güvenlik", "percent": 14, "color": "green" },
-      { "name": "Mobil / Oyun", "percent": 10, "color": "orange" },
-      { "name": "Diğer", "percent": 6, "color": "gray" }
+      {
+        "name": "Yazılım Geliştirme",
+        "percent": 48,
+        "color": "navy"
+      },
+      {
+        "name": "Veri / AI",
+        "percent": 22,
+        "color": "blue"
+      },
+      {
+        "name": "Siber Güvenlik",
+        "percent": 14,
+        "color": "green"
+      },
+      {
+        "name": "Mobil / Oyun",
+        "percent": 10,
+        "color": "orange"
+      },
+      {
+        "name": "Diğer",
+        "percent": 6,
+        "color": "gray"
+      }
     ],
-    "companies": ["Microsoft", "Google", "Amazon", "Trendyol", "Getir", "Logo Software", "Aselsan", "Netaş"]
+    "companies": [
+      "Microsoft",
+      "Google",
+      "Amazon",
+      "Trendyol",
+      "Getir",
+      "Logo Software",
+      "Aselsan",
+      "Netaş"
+    ]
   },
   "deanOverview": {
     "metrics": {
@@ -731,20 +989,66 @@
       "teacherPerformanceAverage": 4.8
     },
     "branchPopularity": [
-      { "label": "React / Frontend", "count": 482, "percentage": 85 },
-      { "label": ".NET / Backend", "count": 394, "percentage": 70 },
-      { "label": "SQL / Database", "count": 286, "percentage": 55 },
-      { "label": "Python / AI", "count": 185, "percentage": 40 }
+      {
+        "label": "React / Frontend",
+        "count": 482,
+        "percentage": 85
+      },
+      {
+        "label": ".NET / Backend",
+        "count": 394,
+        "percentage": 70
+      },
+      {
+        "label": "SQL / Database",
+        "count": 286,
+        "percentage": 55
+      },
+      {
+        "label": "Python / AI",
+        "count": 185,
+        "percentage": 40
+      }
     ],
     "curriculum": [
-      { "id": "c-o-1", "name": "Mobil Geliştirme (Flutter)", "ects": 6 },
-      { "id": "c-o-2", "name": "Cyber Security 101", "ects": 4 },
-      { "id": "c-o-3", "name": "Full-Stack .NET & React", "ects": 8 }
+      {
+        "id": "c-o-1",
+        "name": "Mobil Geliştirme (Flutter)",
+        "ects": 6
+      },
+      {
+        "id": "c-o-2",
+        "name": "Cyber Security 101",
+        "ects": 4
+      },
+      {
+        "id": "c-o-3",
+        "name": "Full-Stack .NET & React",
+        "ects": 8
+      }
     ],
     "employmentFunnel": [
-      { "stageNumber": 1, "name": "Staj", "count": 340, "percentage": 90, "color": "blue" },
-      { "stageNumber": 2, "name": "Mülakat", "count": 210, "percentage": 60, "color": "navy" },
-      { "stageNumber": 3, "name": "Yerleşti", "count": 185, "percentage": 48, "color": "green" }
+      {
+        "stageNumber": 1,
+        "name": "Staj",
+        "count": 340,
+        "percentage": 90,
+        "color": "blue"
+      },
+      {
+        "stageNumber": 2,
+        "name": "Mülakat",
+        "count": 210,
+        "percentage": 60,
+        "color": "navy"
+      },
+      {
+        "stageNumber": 3,
+        "name": "Yerleşti",
+        "count": 185,
+        "percentage": 48,
+        "color": "green"
+      }
     ],
     "generalEmploymentSuccess": 94
   }

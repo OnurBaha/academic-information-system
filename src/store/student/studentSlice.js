@@ -97,7 +97,6 @@ const studentSlice = createSlice({
             })
 
 
-
             .addCase(fetchStudentDocumentsAsync.pending, (state) => {
                 state.status = 'loading';
                 state.error = null;
@@ -110,7 +109,6 @@ const studentSlice = createSlice({
                 state.status = 'failed';
                 state.error = action.payload;
             })
-
 
 
             .addCase(submitStudentHomeworkAsync.pending, (state) => {
@@ -128,7 +126,6 @@ const studentSlice = createSlice({
                 state.actionStatus = 'failed';
                 state.error = action.payload;
             })
-
 
 
             .addCase(requestOfficialDocumentAsync.pending, (state) => {
