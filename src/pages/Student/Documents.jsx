@@ -70,7 +70,7 @@ export default function Documents() {
       doc.text('Fakulte / Bolum:', 25, 115)
       
       doc.setFont('Helvetica', 'normal')
-      doc.text(currentUser?.id || '20211024007', 70, 85)
+      doc.text(currentUser?.id || '2021007', 70, 85)
       doc.text(currentUser?.name || 'Ogrenci', 70, 95)
       doc.text('102*********', 70, 105)
       doc.text('Muhendislik Fakultesi / Bilgisayar Muhendisligi', 70, 115)

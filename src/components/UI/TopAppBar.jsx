@@ -1,9 +1,12 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { logout } from '../../store/auth/authSlice'
 import { fetchAnnouncementsAsync } from '../../store/announcement/announcementSlice'
 import { toast } from 'react-hot-toast'
+
+// localStorage key for read announcement IDs (per user)
+const getReadKey = (userId) => `readAnnouncements_${userId || 'default'}`
 
 export default function TopAppBar() {
   const dispatch = useDispatch()
@@ -11,15 +14,40 @@ export default function TopAppBar() {
   const location = useLocation()
 
   const { currentUser } = useSelector((state) => state.auth || {})
-  const { announcements } = useSelector((state) => state.announcements || {})
+  const { announcements: apiAnnouncements } = useSelector((state) => state.announcements || {})
+  const teacherAnnouncements = useSelector((state) => state.teacher?.announcements || [])
 
   const [isNotifOpen, setIsNotifOpen] = useState(false)
+  const [selectedAnn, setSelectedAnn] = useState(null)
   const dropdownRef = useRef(null)
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const settingsRef = useRef(null)
 
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const profileRef = useRef(null)
+
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
+
+  // Okunmuş duyuru ID'lerini localStorage'dan yükle
+  const [readIds, setReadIds] = useState(() => {
+    try {
+      const stored = localStorage.getItem(getReadKey(currentUser?.id))
+      return stored ? JSON.parse(stored) : []
+    } catch {
+      return []
+    }
+  })
+
+  // Kullanıcı değiştiğinde readIds'i güncelle
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(getReadKey(currentUser?.id))
+      setReadIds(stored ? JSON.parse(stored) : [])
+    } catch {
+      setReadIds([])
+    }
+  }, [currentUser?.id])
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -49,9 +77,13 @@ export default function TopAppBar() {
       }
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsNotifOpen(false)
+        setSelectedAnn(null)
       }
       if (settingsRef.current && !settingsRef.current.contains(event.target)) {
         setIsSettingsOpen(false)
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setIsProfileOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -61,17 +93,63 @@ export default function TopAppBar() {
   // Kullanıcı bilgileri
   const role = currentUser?.role || 'student'
   const userName = currentUser?.name || 'Kullanıcı'
-  const userId = currentUser?.studentNumber || currentUser?.phone || currentUser?.id || '—'
+  const userId = role === 'student' ? (currentUser?.studentNumber || currentUser?.id || '—') : null
 
-  // Kullanıcının rolüne göre duyuruları filtrele (öğrenci ise ders bazlı veya genel, akademisyen/dekan ise hepsini görebilir)
-  const filteredAnnouncements = announcements.filter(ann => {
-    if (role === 'student') {
-      return ann.target === 'global' || (ann.target === 'class' && ann.courseId);
-    }
-    return true;
-  });
+  // Hem API hem de teacher store duyurularını birleştir, ID'ye göre tekrarları engelle
+  const allAnnouncements = useMemo(() => {
+    const combined = [...(apiAnnouncements || []), ...(teacherAnnouncements || [])]
+    const seen = new Set()
+    return combined.filter(ann => {
+      const key = String(ann.id)
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }, [apiAnnouncements, teacherAnnouncements])
 
-  const unreadCount = filteredAnnouncements.length
+  // Kullanıcının rolüne göre duyuruları filtrele
+  const filteredAnnouncements = useMemo(() => {
+    return allAnnouncements.filter(ann => {
+      if (role === 'student') {
+        return ann.target === 'global' || ann.target === 'Tüm Öğrenciler' || (ann.target === 'class' && ann.courseId);
+      }
+      return true;
+    })
+  }, [allAnnouncements, role])
+
+  // Okunmamış sayısını hesapla
+  const unreadCount = useMemo(() => {
+    return filteredAnnouncements.filter(ann => !readIds.includes(String(ann.id))).length
+  }, [filteredAnnouncements, readIds])
+
+  // Duyuruyu okundu olarak işaretle
+  const markAsRead = useCallback((annId) => {
+    const id = String(annId)
+    setReadIds(prev => {
+      if (prev.includes(id)) return prev
+      const updated = [...prev, id]
+      localStorage.setItem(getReadKey(currentUser?.id), JSON.stringify(updated))
+      return updated
+    })
+  }, [currentUser?.id])
+
+  // Tüm duyuruları okundu olarak işaretle
+  const markAllAsRead = useCallback(() => {
+    const allIds = filteredAnnouncements.map(ann => String(ann.id))
+    setReadIds(allIds)
+    localStorage.setItem(getReadKey(currentUser?.id), JSON.stringify(allIds))
+  }, [filteredAnnouncements, currentUser?.id])
+
+  // Duyuruya tıklandığında detay görünümüne geç ve okundu olarak işaretle
+  const handleAnnClick = (ann) => {
+    setSelectedAnn(ann)
+    markAsRead(ann.id)
+  }
+
+  // Detay görünümünden listeye geri dön
+  const handleBackToList = () => {
+    setSelectedAnn(null)
+  }
 
   const handleLogout = () => {
     dispatch(logout())
@@ -96,7 +174,10 @@ export default function TopAppBar() {
         <div className="relative" ref={dropdownRef}>
           <button
             className="topbar-btn-notif"
-            onClick={() => setIsNotifOpen(!isNotifOpen)}
+            onClick={() => {
+              setIsNotifOpen(!isNotifOpen)
+              if (isNotifOpen) setSelectedAnn(null)
+            }}
             title="Bildirimler"
           >
             <span className={`material-symbols-outlined ${unreadCount > 0 ? 'bell-shaking' : ''}`}>notifications</span>
@@ -104,29 +185,93 @@ export default function TopAppBar() {
           </button>
 
           {isNotifOpen && (
-            <div className="absolute right-0 mt-3 w-80 bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-4 flex flex-col gap-2 max-h-96">
-              <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-                <span className="text-xs font-bold text-slate-800">Duyurular ({unreadCount})</span>
-              </div>
-              <div className="flex flex-col gap-2 overflow-y-auto max-h-64 pr-1">
-                {filteredAnnouncements.length === 0 ? (
-                  <p className="text-xs text-slate-400 text-center py-4">Duyuru bulunmuyor.</p>
+            <div className="notif-dropdown">
+              {/* HEADER */}
+              <div className="notif-dropdown-header">
+                {selectedAnn ? (
+                  <button className="notif-back-btn" onClick={handleBackToList}>
+                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_back</span>
+                    <span>Duyurular</span>
+                  </button>
                 ) : (
-                  filteredAnnouncements.map((ann) => (
-                    <div
-                      key={ann.id}
-                      className="notif-item notif-unread cursor-default"
-                    >
-                      <div className="text-xs font-bold text-slate-800 flex justify-between items-center">
-                        <span>{ann.title}</span>
-                        {ann.pinned && <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">Sabit</span>}
-                      </div>
-                      <p className="text-xs text-slate-500 leading-normal mt-1">{ann.body || ann.content}</p>
-                      <span className="text-[10px] text-slate-400 self-end mt-1">{ann.date}</span>
+                  <>
+                    <div className="notif-header-left">
+                      <span className="material-symbols-outlined notif-header-icon">notifications</span>
+                      <span className="notif-header-title">Duyurular</span>
+                      {unreadCount > 0 && <span className="notif-header-count">{unreadCount}</span>}
                     </div>
-                  ))
+                    {unreadCount > 0 && (
+                      <button className="notif-mark-all-btn" onClick={markAllAsRead}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>done_all</span>
+                        <span>Tümünü Oku</span>
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
+
+              {/* CONTENT */}
+              {selectedAnn ? (
+                /* DETAY GÖRÜNÜMÜ */
+                <div className="notif-detail-view">
+                  <div className="notif-detail-badges">
+                    {selectedAnn.pinned && (
+                      <span className="notif-badge-pinned">
+                        <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>push_pin</span>
+                        Sabitlendi
+                      </span>
+                    )}
+                    <span className="notif-badge-target">
+                      <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>group</span>
+                      {selectedAnn.target}
+                    </span>
+                  </div>
+                  <h4 className="notif-detail-title">{selectedAnn.title}</h4>
+                  <div className="notif-detail-date">
+                    <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>calendar_today</span>
+                    <span>{selectedAnn.date}</span>
+                  </div>
+                  <div className="notif-detail-divider" />
+                  <p className="notif-detail-body">{selectedAnn.body || selectedAnn.content}</p>
+                </div>
+              ) : (
+                /* LİSTE GÖRÜNÜMÜ */
+                <div className="notif-list-view">
+                  {filteredAnnouncements.length === 0 ? (
+                    <div className="notif-empty-state">
+                      <span className="material-symbols-outlined notif-empty-icon">notifications_off</span>
+                      <p>Henüz duyuru bulunmuyor.</p>
+                    </div>
+                  ) : (
+                    filteredAnnouncements.map((ann) => {
+                      const isRead = readIds.includes(String(ann.id))
+                      return (
+                        <div
+                          key={ann.id}
+                          className={`notif-list-item ${isRead ? 'notif-read' : 'notif-unread'}`}
+                          onClick={() => handleAnnClick(ann)}
+                        >
+                          <div className="notif-item-indicator">
+                            {!isRead && <span className="notif-unread-dot" />}
+                          </div>
+                          <div className="notif-item-content">
+                            <div className="notif-item-top">
+                              <span className="notif-item-title">{ann.title}</span>
+                              {ann.pinned && (
+                                <span className="notif-item-pin">
+                                  <span className="material-symbols-outlined" style={{ fontSize: '11px' }}>push_pin</span>
+                                </span>
+                              )}
+                            </div>
+                            <p className="notif-item-preview">{(ann.body || ann.content || '').slice(0, 80)}{(ann.body || ann.content || '').length > 80 ? '...' : ''}</p>
+                            <span className="notif-item-date">{ann.date}</span>
+                          </div>
+                        </div>
+                      )
+                    })
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -170,20 +315,58 @@ export default function TopAppBar() {
 
         <div className="topbar-dev-divider" />
 
-        <div
-          className="topbar-profile-box cursor-pointer"
-          onClick={() => navigate(role === 'student' ? '/student/profile' : role === 'teacher' ? '/teacher/profile' : '/dean/profile')}
-          title="Profilimi Görüntüle"
-        >
-          <div className="topbar-profile-text">
-            <p className="topbar-profile-name">{userName}</p>
-            <p className="topbar-profile-id">{userId}</p>
-          </div>
-          <div className="topbar-profile-avatar">
-            <div className="topbar-avatar-initial">
-              {userName.charAt(0)}
+        <div className="relative animate-fade-in" ref={profileRef}>
+          <div
+            className="topbar-profile-box cursor-pointer"
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            title="Kullanıcı Menüsü"
+          >
+            <div className="topbar-profile-text">
+              <p className="topbar-profile-name">{userName}</p>
+              {userId && <p className="topbar-profile-id">{userId}</p>}
+            </div>
+            <div className="topbar-profile-avatar">
+              {currentUser?.photo ? (
+                <img
+                  src={currentUser.photo}
+                  alt={userName}
+                  className="w-full h-full object-cover rounded-full"
+                />
+              ) : (
+                <div className="topbar-avatar-initial w-full h-full flex items-center justify-center">
+                  {userName.charAt(0)}
+                </div>
+              )}
             </div>
           </div>
+
+          {isProfileOpen && (
+            <div className="absolute right-0 mt-3 w-52 bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-2 flex flex-col gap-1">
+              <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-1">
+                Kullanıcı Paneli
+              </div>
+              <button
+                onClick={() => {
+                  setIsProfileOpen(false)
+                  navigate(role === 'student' ? '/student/profile' : role === 'teacher' ? '/teacher/profile' : '/dean/profile')
+                }}
+                className="w-full text-left px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 hover:text-blue-600 rounded-lg transition-all flex items-center gap-2 cursor-pointer border-none bg-transparent"
+              >
+                <span className="material-symbols-outlined text-base">person</span>
+                <span>Profil Bilgileri</span>
+              </button>
+              <button
+                onClick={() => {
+                  setIsProfileOpen(false)
+                  handleLogout()
+                }}
+                className="w-full text-left px-3 py-2 text-xs text-red-600 hover:bg-red-50 rounded-lg transition-all flex items-center gap-2 cursor-pointer border-none bg-transparent"
+              >
+                <span className="material-symbols-outlined text-base">logout</span>
+                <span>Çıkış Yap</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

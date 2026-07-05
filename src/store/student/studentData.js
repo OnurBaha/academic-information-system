@@ -112,14 +112,14 @@ export const defaultForumPosts = [
     replies: 2,
     hasLiked: false,
     repliesList: [
-      { id: 101, author: 'Ahmet Yılmaz', avatar: 'AY', role: 'Eğitmen', time: '1 saat önce',     text: 'Evet Mehmet Emin, boş bağımlılık dizisi ile useEffect sadece component mount edildiğinde bir kez çalışır.' },
+      { id: 101, author: 'Nazlı BAŞAK', avatar: 'NB', role: 'Eğitmen', time: '1 saat önce',     text: 'Evet Mehmet Emin, boş bağımlılık dizisi ile useEffect sadece component mount edildiğinde bir kez çalışır.' },
       { id: 102, author: 'Elif Soylu',   avatar: 'ES',                   time: '30 dakika önce', text: 'Eğer return fonksiyonu eklerseniz o da component unmount edilirken (kaldırılırken) çalışacaktır.' }
     ]
   },
   {
     id: 2,
-    author: 'Dr. Ahmet Yılmaz',
-    avatar: 'AY',
+    author: 'Dr. Nazlı BAŞAK',
+    avatar: 'NB',
     role: 'Eğitmen',
     time: '1 gün önce',
     text: 'Gelecek hafta yapılacak canlı ders için hazırlık PDF\'lerini ekledim, inceleyebilirsiniz.',

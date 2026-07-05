@@ -1,0 +1,99 @@
+{
+  "kpis": {
+    "totalStudents": 128,
+    "unreadHomework": 14,
+    "attendanceAverage": 8,
+    "completedLiveLessons": "45 Saat"
+  },
+  "pastLessons": [
+    { "id": 1, "name": "REST API Development with Express", "group": "Grup B", "date": "04.07.2026", "time": "16:30", "duration": "60 Dakika", "viewers": 42 },
+    { "id": 2, "name": "React Hooks & State Management", "group": "Grup A", "date": "03.07.2026", "time": "14:00", "duration": "90 Dakika", "viewers": 58 },
+    { "id": 3, "name": "CSS Grid & Flexbox Masterclass", "group": "Tüm Gruplar", "date": "30.06.2026", "time": "10:00", "duration": "120 Dakika", "viewers": 95 },
+    { "id": 4, "name": "Introduction to Node.js & NPM", "group": "Grup B", "date": "27.06.2026", "time": "16:30", "duration": "60 Dakika", "viewers": 39 },
+    { "id": 5, "name": "Asynchronous JavaScript & Promises", "group": "Grup A", "date": "26.06.2026", "time": "14:00", "duration": "90 Dakika", "viewers": 54 }
+  ],
+  "students": [
+    { "id": "2021001", "name": "Can Demir", "avatar": "C", "group": "Grup A", "email": "can.demir@email.com", "attendance": "%95", "grade": "AA", "status": "Aktif" },
+    { "id": "2021002", "name": "Seda Kaya", "avatar": "S", "group": "Grup A", "email": "seda.kaya@email.com", "attendance": "%88", "grade": "BA", "status": "Aktif" },
+    { "id": "2021003", "name": "Bora Ak", "avatar": "B", "group": "Grup A", "email": "bora.ak@email.com", "attendance": "%72", "grade": "CC", "status": "Aktif" },
+    { "id": "2021004", "name": "Elif Şahin", "avatar": "E", "group": "Grup A", "email": "elif.sahin@email.com", "attendance": "%98", "grade": "AA", "status": "Aktif" },
+    { "id": "2021005", "name": "Murat Yıldız", "avatar": "M", "group": "Grup B", "email": "murat.yildiz@email.com", "attendance": "%80", "grade": "CB", "status": "Aktif" },
+    { "id": "2021006", "name": "Ayşe Toprak", "avatar": "A", "group": "Grup B", "email": "ayse.toprak@email.com", "attendance": "%92", "grade": "BB", "status": "Aktif" },
+    { "id": "2021007", "name": "Kemal Arslan", "avatar": "K", "group": "Grup B", "email": "kemal.arslan@email.com", "attendance": "%60", "grade": "FF", "status": "Aktif" },
+    { "id": "2021008", "name": "Zeynep Yılmaz", "avatar": "Z", "group": "Grup A", "email": "zeynep.yilmaz@email.com", "attendance": "%94", "grade": "BA", "status": "Aktif" },
+    { "id": "2021009", "name": "Deniz Çelik", "avatar": "D", "group": "Grup B", "email": "deniz.celik@email.com", "attendance": "%85", "grade": "BB", "status": "Aktif" },
+    { "id": "2021010", "name": "Mehmet Demir", "avatar": "M", "group": "Grup B", "email": "mehmet.demir@email.com", "attendance": "%78", "grade": "CC", "status": "Aktif" },
+    { "id": "2021011", "name": "Fatma Kaya", "avatar": "F", "group": "Grup A", "email": "fatma.kaya@email.com", "attendance": "%0", "grade": "FF", "status": "Pasif" },
+    { "id": "2021012", "name": "Ali Öztürk", "avatar": "A", "group": "Grup A", "email": "ali.ozturk@email.com", "attendance": "%90", "grade": "BB", "status": "Aktif" }
+  ],
+  "announcements": [
+    { "id": 1, "title": "Vize Sınavı Tarihleri Açıklandı", "body": "Vize sınavları 15-22 Kasım tarihleri arasında yapılacaktır. Öğrencilerin derse devamını kontrol ediniz.", "date": "01.07.2024", "target": "Tüm Öğrenciler", "pinned": true },
+    { "id": 2, "title": "Ödev 4 Teslim Tarihi Uzatıldı", "body": "React Redux ödevinin teslim tarihi 10 Temmuz olarak güncellenmiştir.", "date": "30.06.2024", "target": "Grup A", "pinned": false },
+    { "id": 3, "title": "Staj Başvuruları Başladı", "body": "Yaz stajı başvuruları için kariyer portalını ziyaret ediniz.", "date": "25.06.2024", "target": "Tüm Öğrenciler", "pinned": false }
+  ],
+  "homeworkReviews": [
+    {
+      "id": 1,
+      "studentId": "2021001",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Can Demir",
+      "avatar": "C",
+      "meta": "2021001 · Ödev #4 — React Redux",
+      "github": "https://github.com/candemir/hw4",
+      "time": "03.07.2024 14:22",
+      "status": "Bekliyor",
+      "grade": "",
+      "feedback": ""
+    },
+    {
+      "id": 2,
+      "studentId": "2021002",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Seda Kaya",
+      "avatar": "S",
+      "meta": "2021002 · Ödev #4 — React Redux",
+      "github": "https://github.com/sedakaya/hw4",
+      "time": "02.07.2024 23:55",
+      "status": "İncelendi",
+      "grade": 85,
+      "feedback": "Redux store tasarımı güzel yapılmış. Action creator'lar temiz. Ancak middleware kullanımı detaylandırılabilir."
+    },
+    {
+      "id": 3,
+      "studentId": "2021004",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Elif Şahin",
+      "avatar": "E",
+      "meta": "2021004 · Ödev #4 — React Redux",
+      "github": "https://github.com/elifsahin/hw4",
+      "time": "01.07.2024 10:10",
+      "status": "Onaylandı",
+      "grade": 100,
+      "feedback": "Harika bir çalışma! State yönetimi, klasör yapısı ve kod düzeni kusursuz. Tebrikler."
+    }
+  ],
+  "liveParticipants": [
+    { "id": 1, "name": "Seda Kaya", "status": "active", "handRaised": false },
+    { "id": 2, "name": "Can Demir", "status": "active", "handRaised": true },
+    { "id": 3, "name": "Bora Ak", "status": "active", "handRaised": false },
+    { "id": 4, "name": "Aslı Yılmaz", "status": "inactive", "handRaised": false },
+    { "id": 5, "name": "Mehmet Öztürk", "status": "active", "handRaised": false },
+    { "id": 6, "name": "Fatma Şahin", "status": "active", "handRaised": false },
+    { "id": 7, "name": "Ali Yıldız", "status": "active", "handRaised": true }
+  ],
+  "incomingChatQueue": [
+    { "student": "Bora Ak", "text": "Merhaba hocam, Advanced Context API konusu vizede çıkacak mı?", "time": "14:01" },
+    { "student": "Aslı Yılmaz", "text": "Contexti birden fazla reducer ile kullanmak mantıklı mı yoksa Redux mı tercih etmeliyiz?", "time": "14:02" },
+    { "student": "Mehmet Öztürk", "text": "Hocam tahtaya yazdığınız son kodu tekrar anlatabilir misiniz?", "time": "14:03" },
+    { "student": "Fatma Şahin", "text": "Harika bir konu, teşekkürler hocam anlatım için.", "time": "14:04" },
+    { "student": "Ali Yıldız", "text": "Hocam ders sonu kodları repo üzerinden mi paylaşacaksınız?", "time": "14:05" },
+    { "student": "Seda Kaya", "text": "React.memo ve useContext birlikte kullanımı hakkında ne düşünüyorsunuz?", "time": "14:06" }
+  ],
+  "liveChatMessages": [
+    { "id": 1, "student": "Seda Kaya", "text": "Hocam yayın başladı, sesiniz ve görüntünüz net geliyor.", "time": "14:00" },
+    { "id": 2, "student": "Can Demir", "text": "İyi dersler hocam.", "time": "14:00" }
+  ]
+}

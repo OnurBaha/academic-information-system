@@ -22,6 +22,8 @@ import GradeEntry        from './pages/Teacher/GradeEntry'
 import Attendance        from './pages/Teacher/Attendance'
 import HomeworkReview    from './pages/Teacher/HomeworkReview'
 import Announcements     from './pages/Teacher/Announcements'
+import TeacherLive       from './pages/Teacher/LiveStream'
+import TeacherLessons    from './pages/Teacher/Lessons'
 
 import DeanOverview      from './pages/Dean/Overview'
 import Curriculum        from './pages/Dean/Curriculum'
@@ -56,12 +58,16 @@ export default function App() {
           <Route path="/teacher/attendance"    element={<Attendance />} />
           <Route path="/teacher/homework"      element={<HomeworkReview />} />
           <Route path="/teacher/announcements" element={<Announcements />} />
+          <Route path="/teacher/live"          element={<TeacherLive />} />
+          <Route path="/teacher/lessons"       element={<TeacherLessons />} />
+          <Route path="/teacher/profile"       element={<Profile />} />
 
           <Route path="/dean/overview"   element={<DeanOverview />} />
           <Route path="/dean/curriculum" element={<Curriculum />} />
           <Route path="/dean/faculty"    element={<Faculty />} />
           <Route path="/dean/analytics"  element={<StudentAnalytics />} />
           <Route path="/dean/approvals"  element={<ApprovalCenter />} />
+          <Route path="/dean/profile"    element={<Profile />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />

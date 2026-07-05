@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchStudentGradesAsync } from '../../store/student/studentSlice'
 import { calculateScore, getLetterGrade, simulateGano, calculateGano, getLetterBadgeStyle } from '../../utils/studentCalc'
@@ -11,6 +11,7 @@ export default function StudentGrades() {
   const dispatch = useDispatch()
   const { currentUser } = useSelector((state) => state.auth || {})
   const { grades, status } = useSelector((state) => state.student || {})
+  const { homeworkReviews = [], courses = [] } = useSelector((state) => state.teacher || {})
 
   const [selectedSemester, setSelectedSemester] = useState('current')
 
@@ -21,6 +22,95 @@ export default function StudentGrades() {
   const [estimatedGano, setEstimatedGano] = useState(3.42)
 
   const studentGrades = grades || []
+
+  const calculateStudentHomeworkAverage = (studentId, courseCode) => {
+    const course = courses.find(c => c.code === courseCode)
+    if (!course || !course.homeworks || course.homeworks.length === 0) return 0
+
+    const isDueDatePassed = (dueDateStr) => {
+      if (!dueDateStr) return true
+      const parts = dueDateStr.split(' - ')
+      const datePart = parts[0].trim()
+      const timePart = parts[1] ? parts[1].trim() : null
+
+      const dateParts = datePart.split('.')
+      if (dateParts.length !== 3) return true
+      const day = parseInt(dateParts[0], 10)
+      const month = parseInt(dateParts[1], 10) - 1
+      const year = parseInt(dateParts[2], 10)
+
+      let hours = 23
+      let minutes = 59
+      if (timePart) {
+        const timeParts = timePart.split(':')
+        if (timeParts.length === 2) {
+          hours = parseInt(timeParts[0], 10)
+          minutes = parseInt(timeParts[1], 10)
+        }
+      }
+
+      const dueDateTime = new Date(year, month, day, hours, minutes, 59)
+      return new Date() > dueDateTime
+    }
+
+    const activeHomeworks = course.homeworks.filter(hw => {
+      const review = homeworkReviews.find(r => 
+        r.studentId === studentId && 
+        r.courseCode === courseCode && 
+        r.homeworkId === hw.id
+      )
+      const hasGrade = review && review.grade !== '' && review.grade !== undefined && review.grade !== null
+      return isDueDatePassed(hw.dueDate) || hasGrade
+    })
+    if (activeHomeworks.length === 0) return 0
+
+    let weightedScoreSum = 0
+    let totalWeight = 0
+
+    activeHomeworks.forEach(hw => {
+      const review = homeworkReviews.find(r => 
+        r.studentId === studentId && 
+        r.courseCode === courseCode && 
+        r.homeworkId === hw.id
+      )
+
+      let grade = 0
+      if (review && review.grade !== '' && review.grade !== undefined && review.grade !== null) {
+        grade = Number(review.grade)
+      }
+
+      const weight = hw.weight !== undefined ? Number(hw.weight) : 0
+      weightedScoreSum += grade * weight
+      totalWeight += weight
+    })
+
+    let average = 0
+    if (totalWeight > 0) {
+      average = weightedScoreSum / totalWeight
+    } else {
+      const gradedReviews = activeHomeworks.map(hw => {
+        const review = homeworkReviews.find(r => 
+          r.studentId === studentId && 
+          r.courseCode === courseCode && 
+          r.homeworkId === hw.id
+        )
+        return review && review.grade !== '' && review.grade !== undefined && review.grade !== null ? Number(review.grade) : 0
+      })
+      average = gradedReviews.reduce((sum, g) => sum + g, 0) / activeHomeworks.length
+    }
+
+    return Math.round(average * 10) / 10
+  }
+
+  const homeworkAverages = useMemo(() => {
+    const avgs = {};
+    if (currentUser?.studentNumber && courses.length > 0) {
+      courses.forEach(course => {
+        avgs[course.code] = calculateStudentHomeworkAverage(currentUser.studentNumber, course.code);
+      });
+    }
+    return avgs;
+  }, [currentUser, courses, homeworkReviews]);
 
   useEffect(() => {
     if (currentUser?.id) {
@@ -36,10 +126,10 @@ export default function StudentGrades() {
       setSimTargetAkts(firstCourse.ects || firstCourse.akts)
 
       // Varsayılan kümülatif GANO'yu hesapla
-      const defaultGano = simulateGano(studentGrades, null, 0)
+      const defaultGano = simulateGano(studentGrades, null, 0, homeworkAverages)
       setEstimatedGano(defaultGano)
     }
-  }, [studentGrades])
+  }, [studentGrades, homeworkAverages])
 
   const downloadGradeListPDF = () => {
     try {
@@ -55,19 +145,21 @@ export default function StudentGrades() {
       doc.setFontSize(10)
       doc.setTextColor(100, 116, 139)
       doc.text(`Donem Not Cizelgesi - ${semesterLabel}`, 14, 25)
-      doc.text(`Ogrenci: ${currentUser?.name || 'Ogrenci'} | GANO: ${grades.length ? calculateGano(filteredGrades).toFixed(2) : '3.42'}`, 14, 30)
+      doc.text(`Ogrenci: ${currentUser?.name || 'Ogrenci'} | GANO: ${grades.length ? calculateGano(filteredGrades, homeworkAverages).toFixed(2) : '3.42'}`, 14, 30)
       doc.text(`Tarih: ${new Date().toLocaleDateString('tr-TR')}`, 14, 35)
 
       const bodyData = filteredGrades.map(g => {
         const hasFinal = g.final !== null && g.final !== undefined
-        const score = hasFinal ? calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project) : null
+        const hwAvg = homeworkAverages[g.courseCode]
+        const score = hasFinal ? calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project, hwAvg) : null
         const letter = hasFinal ? getLetterGrade(score) : 'Aciklanmadi'
         return [
           g.courseCode,
           g.courseName,
           g.midterm ?? g.vize ?? '-',
-          g.final ?? 'Aciklanmadi',
+          hwAvg !== undefined && hwAvg !== null && hwAvg !== 0 ? hwAvg : '-',
           g.proje ?? g.project ?? '-',
+          g.final ?? 'Aciklanmadi',
           letter,
           `${g.ects || g.akts} AKTS`
         ]
@@ -75,7 +167,7 @@ export default function StudentGrades() {
 
       autoTable(doc, {
         startY: 42,
-        head: [['Kod', 'Ders Adi', 'Vize', 'Final', 'Proje', 'Harf', 'Kredi']],
+        head: [['Kod', 'Ders Adi', 'Vize', 'Odev', 'Proje', 'Final', 'Harf', 'Kredi']],
         body: bodyData,
         styles: {
           fontSize: 8.5,
@@ -93,12 +185,13 @@ export default function StudentGrades() {
         alternateRowStyles: { fillColor: [248, 250, 252] },
         columnStyles: {
           0: { cellWidth: 20 },
-          1: { cellWidth: 65 },
+          1: { cellWidth: 50 },
           2: { cellWidth: 15, halign: 'center' },
-          3: { cellWidth: 25, halign: 'center' },
+          3: { cellWidth: 15, halign: 'center' },
           4: { cellWidth: 15, halign: 'center' },
-          5: { cellWidth: 20, halign: 'center' },
-          6: { cellWidth: 20, halign: 'center' }
+          5: { cellWidth: 25, halign: 'center' },
+          6: { cellWidth: 15, halign: 'center' },
+          7: { cellWidth: 15, halign: 'center' }
         },
         margin: { left: 14, right: 14 }
       })
@@ -139,7 +232,7 @@ export default function StudentGrades() {
       doc.text('Telefon:', 20, 120)
 
       doc.setFont('Helvetica', 'normal')
-      doc.text(currentUser?.id || '20211024007', 60, 80)
+      doc.text(currentUser?.id || '2021007', 60, 80)
       doc.text(currentUser?.name || 'Ogrenci', 60, 90)
       doc.text('...........................................................................', 60, 100)
       doc.text('[  ] Vize  /  [  ] Final  /  [  ] Proje', 60, 110)
@@ -170,15 +263,15 @@ export default function StudentGrades() {
       doc.setFontSize(10)
       doc.setTextColor(100, 116, 139)
       doc.text(`Ogrenci Ad Soyad: ${currentUser?.name || 'Ogrenci'}`, 14, 26)
-      doc.text(`Ogrenci No: ${currentUser?.id || '20211024007'}`, 14, 32)
+      doc.text(`Ogrenci No: ${currentUser?.id || '2021007'}`, 14, 32)
       doc.text(`Program: Bilgisayar Muhendisligi`, 14, 38)
-      doc.text(`Akademik GANO: ${grades.length ? calculateGano(studentGrades).toFixed(2) : '3.42'} | Toplam AKTS: 215`, 14, 44)
+      doc.text(`Akademik GANO: ${grades.length ? calculateGano(studentGrades, homeworkAverages).toFixed(2) : '3.42'} | Toplam AKTS: 215`, 14, 44)
       doc.text(`Yazdirilma Tarihi: ${new Date().toLocaleDateString('tr-TR')}`, 14, 50)
 
       // Render all student courses across all semesters
       const allGradesBody = studentGrades.map(g => {
         const hasFinal = g.final !== null && g.final !== undefined
-        const score = hasFinal ? calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project) : null
+        const score = hasFinal ? calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project, homeworkAverages[g.courseCode]) : null
         const letter = hasFinal ? getLetterGrade(score) : ''
         return [
           g.semester || '2025-2026 Guz',
@@ -250,7 +343,7 @@ export default function StudentGrades() {
       return
     }
 
-    const nextGano = simulateGano(studentGrades, simCourseCode, score)
+    const nextGano = simulateGano(studentGrades, simCourseCode, score, homeworkAverages)
     setEstimatedGano(nextGano)
     toast.success(`Simülasyon hesaplandı. Tahmini GANO: ${nextGano}`)
   }
@@ -267,7 +360,7 @@ export default function StudentGrades() {
 
   // Mevcut kümülatif GANO hesabı
   const currentGano = studentGrades.length > 0
-    ? simulateGano(studentGrades, null, 0)
+    ? simulateGano(studentGrades, null, 0, homeworkAverages)
     : 0
 
   const isLoading = status === 'loading'
@@ -370,8 +463,9 @@ export default function StudentGrades() {
                   <tr>
                     <th className="grades-th-left">Ders Adı</th>
                     <th className="grades-th-center">Vize</th>
-                    <th className="grades-th-center">Final</th>
+                    <th className="grades-th-center">Ödev</th>
                     <th className="grades-th-center">Proje</th>
+                    <th className="grades-th-center">Final</th>
                     <th className="grades-th-center">Harf</th>
                     <th className="grades-th-center">AKTS</th>
                   </tr>
@@ -379,20 +473,20 @@ export default function StudentGrades() {
                 <tbody>
                   {isLoading ? (
                     <tr>
-                      <td colSpan="6" className="grades-td-course" style={{ textAlign: 'center', padding: '30px 0' }}>
+                      <td colSpan="7" className="grades-td-course" style={{ textAlign: 'center', padding: '30px 0' }}>
                         Yükleniyor...
                       </td>
                     </tr>
                   ) : filteredGrades.length === 0 ? (
                     <tr>
-                      <td colSpan="6" className="grades-td-course" style={{ textAlign: 'center', padding: '30px 0' }}>
+                      <td colSpan="7" className="grades-td-course" style={{ textAlign: 'center', padding: '30px 0' }}>
                         Bu döneme ait not bilgisi bulunmuyor.
                       </td>
                     </tr>
                   ) : (
                     filteredGrades.map((g) => {
                       const hasFinal = g.final !== null && g.final !== undefined
-                      const score = hasFinal ? calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project) : null
+                      const score = hasFinal ? calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project, homeworkAverages[g.courseCode]) : null
                       const letter = hasFinal ? getLetterGrade(score) : ''
 
                       return (
@@ -409,14 +503,12 @@ export default function StudentGrades() {
                             </span>
                           </td>
                           <td className="grades-td-score">
-                            {g.final !== null && g.final !== undefined ? (
-                              <span className="px-2.5 py-1 rounded-md bg-indigo-50/50 dark:bg-indigo-950/20 text-indigo-750 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-900/30 text-xs font-bold">
-                                {g.final}
+                            {homeworkAverages[g.courseCode] !== undefined && homeworkAverages[g.courseCode] !== null && homeworkAverages[g.courseCode] !== 0 ? (
+                              <span className="px-2.5 py-1 rounded-md bg-amber-50/50 dark:bg-amber-950/20 text-amber-750 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/30 text-xs font-bold">
+                                {homeworkAverages[g.courseCode]}
                               </span>
                             ) : (
-                              <span className="px-2.5 py-1 rounded-md bg-amber-50/60 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-100/60 dark:border-amber-900/30 text-xs font-bold">
-                                Açıklanmadı
-                              </span>
+                              <span className="text-slate-400 dark:text-slate-650 font-bold">-</span>
                             )}
                           </td>
                           <td className="grades-td-score">
@@ -426,6 +518,17 @@ export default function StudentGrades() {
                               </span>
                             ) : (
                               <span className="text-slate-400 dark:text-slate-650 font-bold">-</span>
+                            )}
+                          </td>
+                          <td className="grades-td-score">
+                            {g.final !== null && g.final !== undefined ? (
+                              <span className="px-2.5 py-1 rounded-md bg-indigo-50/50 dark:bg-indigo-950/20 text-indigo-750 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-900/30 text-xs font-bold">
+                                {g.final}
+                              </span>
+                            ) : (
+                              <span className="px-2.5 py-1 rounded-md bg-amber-50/60 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-100/60 dark:border-amber-900/30 text-xs font-bold">
+                                Açıklanmadı
+                              </span>
                             )}
                           </td>
                           <td className="grades-td-badge">

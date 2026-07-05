@@ -25,7 +25,7 @@ export default function MainLayout() {
 
   const user = {
     name: currentUser?.name || 'Kullanıcı',
-    id: currentUser?.studentNumber || currentUser?.phone || currentUser?.id || '—'
+    id: role === 'student' ? (currentUser?.studentNumber || currentUser?.id || '—') : null
   }
 
   return (

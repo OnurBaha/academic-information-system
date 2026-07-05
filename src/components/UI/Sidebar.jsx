@@ -73,11 +73,11 @@ export default function Sidebar({ role = 'student' }) {
           <>
             <Link to="/teacher/dashboard" className={location.pathname === '/teacher/dashboard' ? 'sidebar-item-active' : 'sidebar-item'}>
               <span className="material-symbols-outlined">dashboard</span>
-              <span>Dashboard</span>
+              <span>Panel</span>
             </Link>
-            <Link to="/teacher/grades" className={location.pathname === '/teacher/grades' ? 'sidebar-item-active' : 'sidebar-item'}>
-              <span className="material-symbols-outlined">edit_note</span>
-              <span>Not Girişi</span>
+            <Link to="/teacher/lessons" className={location.pathname === '/teacher/lessons' ? 'sidebar-item-active' : 'sidebar-item'}>
+              <span className="material-symbols-outlined">menu_book</span>
+              <span>Dersler</span>
             </Link>
             <Link to="/teacher/attendance" className={location.pathname === '/teacher/attendance' ? 'sidebar-item-active' : 'sidebar-item'}>
               <span className="material-symbols-outlined">fact_check</span>
@@ -86,6 +86,10 @@ export default function Sidebar({ role = 'student' }) {
             <Link to="/teacher/homework" className={location.pathname === '/teacher/homework' ? 'sidebar-item-active' : 'sidebar-item'}>
               <span className="material-symbols-outlined">assignment</span>
               <span>Ödevler</span>
+            </Link>
+            <Link to="/teacher/grades" className={location.pathname === '/teacher/grades' ? 'sidebar-item-active' : 'sidebar-item'}>
+              <span className="material-symbols-outlined">edit_note</span>
+              <span>Not Girişi</span>
             </Link>
             <Link to="/teacher/announcements" className={location.pathname === '/teacher/announcements' ? 'sidebar-item-active' : 'sidebar-item'}>
               <span className="material-symbols-outlined">notifications_active</span>

@@ -164,7 +164,7 @@ export default function Login() {
             <p className="login-demo-title">Demo Giriş Linkleri</p>
             <div className="login-demo-links">
               <button onClick={(e) => handleDemoLogin(e, 'student.ahmet')} className="login-demo-btn" style={{ cursor: 'pointer' }}>Öğrenci</button>
-              <button onClick={(e) => handleDemoLogin(e, 'teacher.ahmet')} className="login-demo-btn" style={{ cursor: 'pointer' }}>Akademisyen</button>
+              <button onClick={(e) => handleDemoLogin(e, 'teacher.nazli')} className="login-demo-btn" style={{ cursor: 'pointer' }}>Akademisyen</button>
               <button onClick={(e) => handleDemoLogin(e, 'dean.mehmet')} className="login-demo-btn" style={{ cursor: 'pointer' }}>Dekan</button>
             </div>
           </div>

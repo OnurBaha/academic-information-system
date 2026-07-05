@@ -3,12 +3,16 @@
  * Proje varsa: vize %30, proje %20, final %50
  * Proje yoksa: vize %40, final %60
  */
-export const calculateScore = (vize, final, proje) => {
+export const calculateScore = (vize, final, proje, homework) => {
   const v = Number(vize) || 0
   const f = Number(final) || 0
 
   if (proje !== null && proje !== undefined && proje !== '-') {
     const p = Number(proje) || 0
+    if (homework !== undefined && homework !== null && homework !== '-') {
+      const hw = Number(homework) || 0
+      return v * 0.25 + p * 0.25 + hw * 0.15 + f * 0.35
+    }
     return v * 0.3 + p * 0.2 + f * 0.5
   }
 
@@ -50,7 +54,7 @@ export const getGradeCoefficient = (letterGrade) => {
  * Mevcut ders notlarına göre dönem GANO'sunu hesaplar.
  * Sadece açıklanmış (final notu girilmiş) dersleri hesaba katar.
  */
-export const calculateGano = (grades) => {
+export const calculateGano = (grades, homeworkAverages = {}) => {
   if (!grades || grades.length === 0) return 0
 
   let totalWeightedPoints = 0
@@ -60,7 +64,8 @@ export const calculateGano = (grades) => {
     // Final notu açıklanmamışsa hesaba katma
     if (g.final === null || g.final === undefined || g.final === 'Açıklanmadı') return
 
-    const score = calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project)
+    const hwAvg = homeworkAverages[g.courseCode]
+    const score = calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project, hwAvg)
     const letter = getLetterGrade(score)
     const coeff = getGradeCoefficient(letter)
     const courseEcts = Number(g.ects || g.akts || 0)
@@ -76,7 +81,7 @@ export const calculateGano = (grades) => {
  * Seçilen dersin notunu hedef notla değiştirip tahmini GANO'yu hesapla.
  * Açıklanmamış dersler de simülasyona dahil edilebilir.
  */
-export const simulateGano = (grades, courseCode, targetScore) => {
+export const simulateGano = (grades, courseCode, targetScore, homeworkAverages = {}) => {
   if (!grades || grades.length === 0) return 0
 
   const baselineAkts = 187 // Önceki dönemlerden gelen tahmini AKTS
@@ -93,7 +98,8 @@ export const simulateGano = (grades, courseCode, targetScore) => {
       score = Number(targetScore)
       hasGrade = true
     } else if (g.final !== null && g.final !== undefined && g.final !== 'Açıklanmadı') {
-      score = calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project)
+      const hwAvg = homeworkAverages[g.courseCode]
+      score = calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project, hwAvg)
       hasGrade = true
     }
 

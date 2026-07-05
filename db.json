@@ -23,14 +23,15 @@
     },
     {
       "id": "u3",
-      "username": "teacher.ahmet",
-      "email": "a.yilmaz@university.edu.tr",
+      "username": "teacher.nazli",
+      "email": "n.basak@university.edu.tr",
       "password": "password123",
-      "name": "Dr. Ahmet Yılmaz",
+      "name": "Dr. Nazlı BAŞAK",
       "role": "teacher",
       "departmentId": "d1",
       "phone": "+90 555 333 4455",
-      "address": "Beşiktaş, İstanbul"
+      "address": "Beşiktaş, İstanbul",
+      "photo": "/nazli_basak.png"
     },
     {
       "id": "u4",
@@ -73,7 +74,7 @@
       "name": "Ahmet Yılmaz",
       "role": "student",
       "departmentId": "d1",
-      "studentNumber": "20211024100",
+      "studentNumber": "2021100",
       "classLevel": 3,
       "gpa": 3.42,
       "completedEcts": 180,
@@ -91,7 +92,7 @@
       "name": "Can Demir",
       "role": "student",
       "departmentId": "d1",
-      "studentNumber": "20211024001",
+      "studentNumber": "2021001",
       "classLevel": 3,
       "gpa": 3.12,
       "phone": "+90 555 888 9900",
@@ -105,7 +106,7 @@
       "name": "Seda Kaya",
       "role": "student",
       "departmentId": "d1",
-      "studentNumber": "20211024002",
+      "studentNumber": "2021002",
       "classLevel": 3,
       "gpa": 2.95,
       "phone": "+90 555 999 0011",
@@ -119,7 +120,7 @@
       "name": "Bora Ak",
       "role": "student",
       "departmentId": "d1",
-      "studentNumber": "20211024003",
+      "studentNumber": "2021003",
       "classLevel": 3,
       "gpa": 2.78,
       "phone": "+90 555 111 4455",
@@ -133,7 +134,7 @@
       "name": "Elif Şahin",
       "role": "student",
       "departmentId": "d1",
-      "studentNumber": "20211024004",
+      "studentNumber": "2021004",
       "classLevel": 3,
       "gpa": 3.85,
       "phone": "+90 555 222 5566",
@@ -147,7 +148,7 @@
       "name": "Murat Yıldız",
       "role": "student",
       "departmentId": "d1",
-      "studentNumber": "20211024005",
+      "studentNumber": "2021005",
       "classLevel": 3,
       "gpa": 2.64,
       "phone": "+90 555 333 6677",
@@ -161,7 +162,7 @@
       "name": "Ayşe Toprak",
       "role": "student",
       "departmentId": "d1",
-      "studentNumber": "20211024006",
+      "studentNumber": "2021006",
       "classLevel": 3,
       "gpa": 3.2,
       "phone": "+90 555 444 7788",
@@ -175,7 +176,7 @@
       "name": "Kemal Arslan",
       "role": "student",
       "departmentId": "d1",
-      "studentNumber": "20211024007",
+      "studentNumber": "2021007",
       "classLevel": 3,
       "gpa": 2.45,
       "phone": "+90 555 555 8899",
@@ -612,7 +613,8 @@
         "07/04/2026",
         "28/04/2026"
       ],
-      "absencePercentage": 35
+      "absencePercentage": 35,
+      "attendanceStatus": "Mevcut"
     },
     {
       "id": "g3",
@@ -635,16 +637,18 @@
       "courseCode": "WEB 307",
       "courseName": "Web Programming",
       "instructor": "Dr. Elif Soylu",
-      "midterm": 95,
+      "midterm": 85,
       "final": 85,
       "project": 92,
-      "letterGrade": "BA",
+      "letterGrade": "BB",
       "ects": 5,
       "semester": "2025-2026 Bahar",
       "absentDates": [
         "10/04/2026"
       ],
-      "absencePercentage": 8
+      "absencePercentage": 8,
+      "attendanceStatus": "Mevcut",
+      "average": 74
     },
     {
       "id": "g5",
@@ -698,6 +702,129 @@
         "18/05/2026"
       ],
       "absencePercentage": 10
+    },
+    {
+      "id": "g-web307-u10",
+      "studentId": "u10",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming",
+      "instructor": "Dr. Elif Soylu",
+      "midterm": 85,
+      "final": 90,
+      "project": 88,
+      "letterGrade": "BB",
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": 75
+    },
+    {
+      "id": "g-web307-u11",
+      "studentId": "u11",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming",
+      "instructor": "Dr. Elif Soylu",
+      "midterm": 72,
+      "final": 68,
+      "project": 80,
+      "letterGrade": "CB",
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "02/03/2026"
+      ],
+      "absencePercentage": 10,
+      "attendanceStatus": "Yok",
+      "average": 66
+    },
+    {
+      "id": "g-web307-u12",
+      "studentId": "u12",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming",
+      "instructor": "Dr. Elif Soylu",
+      "midterm": 55,
+      "final": 92,
+      "project": 98,
+      "letterGrade": "BB",
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": 70
+    },
+    {
+      "id": "g-web307-u13",
+      "studentId": "u13",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming",
+      "instructor": "Dr. Elif Soylu",
+      "midterm": 95,
+      "final": 100,
+      "project": 100,
+      "letterGrade": "BA",
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": 88
+    },
+    {
+      "id": "g-web307-u14",
+      "studentId": "u14",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming",
+      "instructor": "Dr. Elif Soylu",
+      "midterm": 60,
+      "final": 75,
+      "project": 65,
+      "letterGrade": "CC",
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "02/03/2026"
+      ],
+      "absencePercentage": 10,
+      "attendanceStatus": "Mevcut",
+      "average": 58
+    },
+    {
+      "id": "g-web307-u15",
+      "studentId": "u15",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming",
+      "instructor": "Dr. Elif Soylu",
+      "midterm": 95,
+      "final": 88,
+      "project": 72,
+      "letterGrade": "BB",
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": 73
+    },
+    {
+      "id": "g-web307-u16",
+      "studentId": "u16",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming",
+      "instructor": "Dr. Elif Soylu",
+      "midterm": 96,
+      "final": 100,
+      "project": 75,
+      "letterGrade": "BB",
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Belirsiz",
+      "average": 78
     }
   ],
   "studentDashboard": {
@@ -863,7 +990,7 @@
     {
       "id": "hw-sub-1",
       "studentName": "Can Demir",
-      "studentNumber": "20211024001",
+      "studentNumber": "2021001",
       "avatar": "C",
       "homeworkTitle": "Ödev #4 — React Redux",
       "status": "pending",
@@ -873,7 +1000,7 @@
     {
       "id": "hw-sub-2",
       "studentName": "Seda Kaya",
-      "studentNumber": "20211024002",
+      "studentNumber": "2021002",
       "avatar": "S",
       "homeworkTitle": "Ödev #4 — React Redux",
       "status": "reviewed",
@@ -883,7 +1010,7 @@
     {
       "id": "hw-sub-3",
       "studentName": "Elif Şahin",
-      "studentNumber": "20211024004",
+      "studentNumber": "2021004",
       "avatar": "E",
       "homeworkTitle": "Ödev #4 — React Redux",
       "status": "approved",
@@ -967,49 +1094,49 @@
     {
       "id": "att-r-1",
       "studentName": "Can Demir",
-      "studentId": "20211024001",
+      "studentId": "2021001",
       "avatar": "C",
       "status": "present"
     },
     {
       "id": "att-r-2",
       "studentName": "Seda Kaya",
-      "studentId": "20211024002",
+      "studentId": "2021002",
       "avatar": "S",
       "status": "absent"
     },
     {
       "id": "att-r-3",
       "studentName": "Bora Ak",
-      "studentId": "20211024003",
+      "studentId": "2021003",
       "avatar": "B",
       "status": "present"
     },
     {
       "id": "att-r-4",
       "studentName": "Elif Şahin",
-      "studentId": "20211024004",
+      "studentId": "2021004",
       "avatar": "E",
       "status": "present"
     },
     {
       "id": "att-r-5",
       "studentName": "Murat Yıldız",
-      "studentId": "20211024005",
+      "studentId": "2021005",
       "avatar": "M",
       "status": "absent"
     },
     {
       "id": "att-r-6",
       "studentName": "Ayşe Toprak",
-      "studentId": "20211024006",
+      "studentId": "2021006",
       "avatar": "A",
       "status": "present"
     },
     {
       "id": "att-r-7",
       "studentName": "Kemal Arslan",
-      "studentId": "20211024007",
+      "studentId": "2021007",
       "avatar": "K",
       "status": "indeterminate"
     }
@@ -1018,7 +1145,7 @@
     {
       "id": "ge1",
       "studentName": "Can Demir",
-      "studentNumber": "20211024001",
+      "studentNumber": "2021001",
       "avatar": "C",
       "midterm": 85,
       "final": 90,
@@ -1028,7 +1155,7 @@
     {
       "id": "ge2",
       "studentName": "Seda Kaya",
-      "studentNumber": "20211024002",
+      "studentNumber": "2021002",
       "avatar": "S",
       "midterm": 72,
       "final": 68,
@@ -1038,7 +1165,7 @@
     {
       "id": "ge3",
       "studentName": "Bora Ak",
-      "studentNumber": "20211024003",
+      "studentNumber": "2021003",
       "avatar": "B",
       "midterm": 55,
       "final": null,
@@ -1048,7 +1175,7 @@
     {
       "id": "ge4",
       "studentName": "Elif Şahin",
-      "studentNumber": "20211024004",
+      "studentNumber": "2021004",
       "avatar": "E",
       "midterm": 95,
       "final": 100,
@@ -1058,7 +1185,7 @@
     {
       "id": "ge5",
       "studentName": "Murat Yıldız",
-      "studentNumber": "20211024005",
+      "studentNumber": "2021005",
       "avatar": "M",
       "midterm": 60,
       "final": 75,
@@ -1597,7 +1724,7 @@
         "code": "DTS 201",
         "name": "Data Structures",
         "room": "Amfi-1",
-        "instructor": "Prof. Dr. Ahmet Yılmaz"
+        "instructor": "Prof. Dr. Nazlı BAŞAK"
       },
       {
         "id": 102,
@@ -1637,7 +1764,7 @@
         "code": "DTS 201",
         "name": "Data Structures",
         "room": "Amfi-1",
-        "instructor": "Prof. Dr. Ahmet Yılmaz"
+        "instructor": "Prof. Dr. Nazlı BAŞAK"
       },
       {
         "id": 106,
@@ -2440,7 +2567,7 @@
       "id": "apt-1",
       "studentId": "u7",
       "studentName": "Ahmet Yılmaz",
-      "studentNumber": "20211024100",
+      "studentNumber": "2021100",
       "advisorId": "u20",
       "advisorName": "Prof. Dr. Selçuk Yılmaz",
       "timeSlotId": "slot-4",
@@ -2454,7 +2581,7 @@
       "id": "lVGpiU6CbhM",
       "studentId": "u7",
       "studentName": "Ahmet Yılmaz",
-      "studentNumber": "20211024100",
+      "studentNumber": "2021100",
       "advisorId": "u20",
       "advisorName": "Prof. Dr. Selçuk Yılmaz",
       "timeSlotId": "slot-1",

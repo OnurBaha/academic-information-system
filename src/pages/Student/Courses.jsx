@@ -213,7 +213,8 @@ const Timer = () => {
       doc.setFontSize(8)
       doc.text('Bu belge Academic Information System uzerinden otomatik olarak uretilmistir.', 14, 268)
       
-      doc.save(title.replace(/\s+/g, '_'))
+      const filename = title.toLowerCase().endsWith('.pdf') ? title : `${title}.pdf`
+      doc.save(filename.replace(/\s+/g, '_'))
       toast.success(`${title} başarıyla indirildi!`)
     } catch (err) {
       console.error(err)
@@ -573,13 +574,13 @@ const Timer = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex-1 bg-amber-50/50 dark:bg-amber-950/10 border border-amber-100/50 dark:border-amber-900/20 p-5 rounded-2xl">
-                    <h4 className="text-xs font-bold text-amber-800 dark:text-amber-400 flex items-center gap-1.5 mb-2">
-                      <span className="material-symbols-outlined text-sm">warning</span>
+                  <div className="flex-1 bg-blue-50/50 dark:bg-blue-950/10 border border-blue-100/50 dark:border-blue-900/20 p-5 rounded-2xl">
+                    <h4 className="text-xs font-bold text-blue-800 dark:text-blue-400 flex items-center gap-1.5 mb-2">
+                      <span className="material-symbols-outlined text-sm">info</span>
                       <span>Ders Materyalleri ve Notları Hakkında</span>
                     </h4>
-                    <p className="text-[11px] text-amber-700 dark:text-amber-300/80 leading-relaxed m-0">
-                      Yüz yüze derslerin ders notları, basılı kitaplar ve ders içi laboratuvar uygulamaları üzerinden takip edilmektedir. Telif hakları ve üniversite senato kararı gereğince bu ders için çevrimiçi ders notu veya PDF paylaşımı yapılmamaktadır.
+                    <p className="text-[11px] text-blue-700 dark:text-blue-300/80 leading-relaxed m-0">
+                      Bu ders yüz yüze işlenmektedir. Derse ait haftalık ders notları, slaytlar ve ek okuma materyallerine sayfanın altındaki "Ders Notları & PDF" sekmesinden ulaşabilir ve indirebilirsiniz.
                     </p>
                   </div>
                 </div>
@@ -591,9 +592,8 @@ const Timer = () => {
 
       </div>
 
-      {/* Alt Bölüm: 3 Sekmeli Ders Materyali & Forum (Sadece Online Derslerde Gösterilir) */}
-      {isOnline && (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm overflow-hidden">
+      {/* Alt Bölüm: 3 Sekmeli Ders Materyali & Forum (Tüm Derslerde Gösterilir) */}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm overflow-hidden">
 
           {/* Sekme Butonları */}
           <div className="flex border-b border-slate-200 dark:border-slate-700/60 px-4 overflow-x-auto whitespace-nowrap scrollbar-none bg-slate-50/50 dark:bg-slate-800/40">
@@ -861,7 +861,6 @@ const Timer = () => {
         </div>
 
       </div>
-      )}
     </section>
   )
 }

@@ -108,7 +108,7 @@ export default function StudentAttendance() {
       doc.setFontSize(10)
       doc.setTextColor(100, 116, 139)
       doc.text(`Devamsizlik Raporu - ${semesterLabel}`, 14, 25)
-      doc.text(`Ogrenci: ${currentUser?.name || 'Ogrenci'} | Ogrenci No: ${currentUser?.id || '20211024007'}`, 14, 30)
+      doc.text(`Ogrenci: ${currentUser?.name || 'Ogrenci'} | Ogrenci No: ${currentUser?.id || '2021007'}`, 14, 30)
       doc.text(`Tarih: ${new Date().toLocaleDateString('tr-TR')}`, 14, 35)
 
       const bodyData = filteredGrades.map(g => {
