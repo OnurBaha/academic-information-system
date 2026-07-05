@@ -1,78 +1,62 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { logout } from '../../store/auth/authSlice'
 import { fetchStudentDocumentsAsync } from '../../store/student/studentSlice'
 import { toast } from 'react-hot-toast'
+import { jsPDF } from 'jspdf'
+import autoTable from 'jspdf-autotable'
+import { academicBadges, fallbackCertificates } from '../../store/student/studentData'
 
-// Statik Rozetler
-const academicBadges = [
-  {
-    title: "Üstün Başarı",
-    description: "Dönem Ortalaması 3.90+",
-    icon: "auto_awesome",
-    colorClass: "bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400"
-  },
-  {
-    title: "Aktif Katılımcı",
-    description: "15+ Kulüp Etkinliği",
-    icon: "groups",
-    colorClass: "bg-indigo-500/10 border-indigo-500/20 text-indigo-600 dark:text-indigo-400"
-  },
-  {
-    title: "Kod Ustası",
-    description: "GitHub Final Projesi",
-    icon: "code",
-    colorClass: "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-  }
-]
-
-// Fallback Sertifikalar
-const fallbackCertificates = [
-  {
-    id: 1,
-    name: "Full-Stack Developer Başarı Sertifikası",
-    issuer: "SoftIto Akademi",
-    date: "12 Eylül 2023",
-    licenseId: "SO-2023-9941-XF",
-    icon: "workspace_premium",
-    bgColor: "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400"
-  },
-  {
-    id: 2,
-    name: "Veri Yapıları ve Algoritmalar",
-    issuer: "SoftIto Akademi",
-    date: "05 Haziran 2023",
-    licenseId: "SO-2023-8822-DS",
-    icon: "terminal",
-    bgColor: "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400"
-  },
-  {
-    id: 3,
-    name: "Siber Güvenlik Temelleri",
-    issuer: "SoftIto Akademi",
-    date: "18 Mart 2023",
-    licenseId: "SO-2023-1120-SC",
-    icon: "security",
-    bgColor: "bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400"
-  }
-]
+// academicBadges ve fallbackCertificates → src/data/studentData.js'ten import edilir
 
 export default function Profile() {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { currentUser } = useSelector((state) => state.auth || {})
   const { documents } = useSelector((state) => state.student || {})
 
+  const role = currentUser?.role || 'student'
   const certificates = (documents || []).filter(d => d.type === 'certificate')
 
   // İletişim Bilgileri Durumu (E-posta Kilitli)
-  const [email] = useState(currentUser?.email || 'ahmet.yilmaz@softito.edu.tr')
+  const [email] = useState(currentUser?.email || 'n.basak@university.edu.tr')
   const [phone, setPhone] = useState(currentUser?.phone || '+90 (555) 000 00 00')
-  const [city, setCity] = useState('İstanbul')
 
   // Adres Bilgileri Durumu (Ayrı Kutu)
   const [address, setAddress] = useState(currentUser?.address || 'Kadıköy, İstanbul')
 
   // Sertifika Listesi Durumu (Silme/Güncelleme için dinamik state)
   const [certificatesList, setCertificatesList] = useState([])
+
+  const mockTeacherCourses = [
+    { id: 1, name: 'Modern Web Geliştirme (WEB 307)', code: 'WEB 307', hours: '5 Saat / Hafta', icon: 'code', bgColor: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400', licenseId: 'C-WEB307', date: 'Bahar Dönemi' },
+    { id: 2, name: 'Veri Tabanı Yönetim Sistemleri (DBM 301)', code: 'DBM 301', hours: '5 Saat / Hafta', icon: 'database', bgColor: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400', licenseId: 'C-DBM301', date: 'Bahar Dönemi' },
+    { id: 3, name: 'İşletim Sistemleri (OPS 302)', code: 'OPS 302', hours: '2.5 Saat / Hafta', icon: 'memory', bgColor: 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400', licenseId: 'C-OPS302', date: 'Bahar Dönemi' }
+  ]
+
+  const mockTeacherPublications = [
+    { title: 'Yapay Zeka ve Eğitimde Dönüşüm', icon: 'auto_awesome', colorClass: 'border-amber-200 text-amber-600 bg-amber-50 dark:bg-amber-950/20', description: 'TÜBİTAK Bilim Dergisi - 2025', url: 'https://dergipark.org.tr' },
+    { title: 'Dağıtık Veri Tabanı Sistemlerinde Optimizasyon', icon: 'query_stats', colorClass: 'border-blue-200 text-blue-600 bg-blue-50 dark:bg-blue-950/20', description: 'IEEE Software Engineering - 2024', url: 'https://ieeexplore.ieee.org' },
+    { title: 'Modern Web Teknolojileri ve Güvenlik', icon: 'shield_lock', colorClass: 'border-emerald-200 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20', description: 'ACM Transactions on Web - 2023', url: 'https://dl.acm.org' }
+  ]
+
+  const mockDeanDepartments = [
+    { id: 1, name: 'Bilgisayar Mühendisliği Bölümü', code: 'CENG', hours: 'Bölüm Başkanı: Doç. Dr. Mert Akın', icon: 'computer', bgColor: 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400', licenseId: 'D-CENG', date: 'Aktif Kontrol' },
+    { id: 2, name: 'Endüstri Mühendisliği Bölümü', code: 'IE', hours: 'Bölüm Başkanı: Prof. Dr. Selçuk Yılmaz', icon: 'engineering', bgColor: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400', licenseId: 'D-IE', date: 'Aktif Kontrol' },
+    { id: 3, name: 'Yazılım Mühendisliği Bölümü', code: 'SE', hours: 'Bölüm Başkanı: Dr. Elif Soylu', icon: 'terminal', bgColor: 'bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400', licenseId: 'D-SE', date: 'Aktif Kontrol' }
+  ]
+
+  const mockDeanTasks = [
+    { title: 'Fakülte Müfredat İncelemesi', icon: 'menu_book', colorClass: 'border-blue-200 text-blue-600 bg-blue-50 dark:bg-blue-950/20', description: 'Bahar Dönemi müfredat değişiklik onayları' },
+    { title: 'Akademik Kadro Toplantısı', icon: 'groups', colorClass: 'border-emerald-200 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20', description: 'Temmuz ayı kadro ve planlama değerlendirmesi' }
+  ]
+
+  const handleLogout = () => {
+    dispatch(logout())
+    toast.success('Başarıyla çıkış yapıldı')
+    navigate('/')
+  }
 
   // Harici Yükleme Dosya Durumu
   const [selectedCertFile, setSelectedCertFile] = useState(null)
@@ -83,10 +67,10 @@ export default function Profile() {
   const [saveStatus, setSaveStatus] = useState('idle') // 'idle' | 'saving' | 'success'
 
   useEffect(() => {
-    if (currentUser?.id) {
+    if (currentUser?.id && role === 'student') {
       dispatch(fetchStudentDocumentsAsync(currentUser.id))
     }
-  }, [dispatch, currentUser])
+  }, [dispatch, currentUser, role])
 
   // Redux sertifikalarını state'e eşitle
   useEffect(() => {
@@ -126,11 +110,6 @@ export default function Profile() {
     if (!address.trim()) {
       toast.error('Lütfen adres alanını boş bırakmayın.')
       return
-    }
-    // Adres içindeki şehri otomatik yakala
-    const parts = address.split(',')
-    if (parts.length > 1) {
-      setCity(parts[parts.length - 1].trim())
     }
     toast.success('Adres bilgileriniz başarıyla güncellendi!')
   }
@@ -175,6 +154,63 @@ export default function Profile() {
     toast.success('Sertifika kaldırıldı.')
   }
 
+  const downloadCertificatesPDF = () => {
+    try {
+      const doc = new jsPDF()
+      
+      doc.setFont('Helvetica', 'bold')
+      doc.setFontSize(16)
+      doc.setTextColor(30, 41, 59)
+      doc.text('KAZANILAN SERTIFIKALAR RAPORU', 14, 18)
+      
+      doc.setFont('Helvetica', 'normal')
+      doc.setFontSize(10)
+      doc.setTextColor(100, 116, 139)
+      doc.text(`Ogrenci Ad Soyad: ${currentUser?.name || 'Ogrenci'}`, 14, 26)
+      doc.text(`Ogrenci No: ${currentUser?.id || '2021007'}`, 14, 32)
+      doc.text(`Tarih: ${new Date().toLocaleDateString('tr-TR')}`, 14, 38)
+      
+      const bodyData = certificatesList.map(c => [
+        c.name,
+        c.issuer || 'SoftIto Akademi',
+        c.date,
+        c.licenseId
+      ])
+
+      autoTable(doc, {
+        startY: 44,
+        head: [['Sertifika Adi', 'Veren Kurum', 'Verilis Tarihi', 'Lisans / Belge ID']],
+        body: bodyData,
+        styles: {
+          fontSize: 9,
+          cellPadding: 4,
+          lineColor: [226, 232, 240],
+          lineWidth: 0.3,
+          font: 'Helvetica'
+        },
+        headStyles: {
+          fillColor: [30, 58, 138],
+          textColor: 255,
+          fontStyle: 'bold'
+        },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        columnStyles: {
+          0: { cellWidth: 70 },
+          1: { cellWidth: 40 },
+          2: { cellWidth: 35 },
+          3: { cellWidth: 40 }
+        },
+        margin: { left: 14, right: 14 }
+      })
+
+      doc.save(`Sertifikalar_${currentUser?.id || 'Ogrenci'}.pdf`)
+      toast.success('Sertifikalar listesi başarıyla indirildi!')
+    } catch (err) {
+      console.error(err)
+      toast.error('Sertifikalar PDF oluşturulurken bir hata oluştu!')
+    }
+  }
+
   return (
     <section className="flex-grow p-4 md:p-8 max-w-7xl mx-auto space-y-6 text-slate-800 dark:text-white">
       
@@ -205,7 +241,7 @@ export default function Profile() {
                   <img
                     className="w-full h-full object-cover"
                     alt="Profil Fotoğrafı"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPS4JeJwTrLYNaaRatmdTdxV5peWrRR7VmpjiC2WoDEngtf6tXGiNYM9AsZKJZUyt7W_ZQ9AybUiXqtAyXrRwvTe19nQ2fgymViJz6WINvghtIePXH5vtDT0ivI495jWCn5_9P6VN5W_7VxidM0tdsNBEy9hpZXG4jlQ2HbxTNeVBlJVacusztTV36-kUZTTlC5w0o1IiZN2a2z4r2edQxXIR5QLvF4dmlW0KE01RHSRCmXDaWr0-aZYo3OlHflQpLrRNwT_bDgDs-"
+                    src={currentUser?.photo || "https://lh3.googleusercontent.com/aida-public/AB6AXuAPS4JeJwTrLYNaaRatmdTdxV5peWrRR7VmpjiC2WoDEngtf6tXGiNYM9AsZKJZUyt7W_ZQ9AybUiXqtAyXrRwvTe19nQ2fgymViJz6WINvghtIePXH5vtDT0ivI495jWCn5_9P6VN5W_7VxidM0tdsNBEy9hpZXG4jlQ2HbxTNeVBlJVacusztTV36-kUZTTlC5w0o1IiZN2a2z4r2edQxXIR5QLvF4dmlW0KE01RHSRCmXDaWr0-aZYo3OlHflQpLrRNwT_bDgDs-"}
                   />
                 </div>
               </div>
@@ -216,14 +252,14 @@ export default function Profile() {
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h3 className="text-base font-extrabold text-slate-800 dark:text-white">
-                    {currentUser?.name || 'Ahmet Yılmaz'}
+                    {currentUser?.name || 'Nazlı BAŞAK'}
                   </h3>
                   <span className="px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-extrabold text-[8px] rounded-full border border-blue-100 dark:border-blue-900/30 uppercase tracking-wider">
-                    Öğrenci
+                    {role === 'student' ? 'Öğrenci' : role === 'teacher' ? 'Akademisyen' : role === 'dean' ? 'Dekan' : 'Yönetici'}
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-semibold">
-                  Yazılım Mühendisliği Bölümü - 3. Sınıf
+                  {role === 'student' ? 'Yazılım Mühendisliği Bölümü - 3. Sınıf' : role === 'teacher' ? 'Bilgisayar Mühendisliği Bölümü - Öğretim Üyesi' : 'Mühendislik Fakültesi - Dekan'}
                 </p>
               </div>
 
@@ -241,6 +277,15 @@ export default function Profile() {
                   <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-lg shrink-0">location_on</span>
                   <span className="truncate">{address}</span>
                 </div>
+              </div>
+              <div className="pt-4 mt-2 border-t border-slate-50 dark:border-slate-800/40">
+                <button
+                  onClick={handleLogout}
+                  className="w-full py-2 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-bold text-xs rounded-xl shadow-sm transition-all active:scale-95 cursor-pointer border-none flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-sm font-bold">logout</span>
+                  <span>Çıkış Yap</span>
+                </button>
               </div>
             </div>
 
@@ -338,161 +383,319 @@ export default function Profile() {
         {/* Sağ Kolon (8 Kolon Genişliği) */}
         <div className="col-span-12 lg:col-span-8 space-y-6">
           
-          {/* Sertifikalar Bölümü */}
-          <div className="space-y-4">
-            
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-              <h3 className="text-base font-extrabold text-blue-900 dark:text-blue-400">Kazanılan Sertifikalar</h3>
-              
-              <button
-                onClick={() => toast.success('Tüm sertifikalarınız PDF olarak indiriliyor...')}
-                className="px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-bold text-[10px] rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
-              >
-                <span className="material-symbols-outlined text-sm">download</span>
-                <span>PDF Olarak İndir</span>
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              {certificatesList.map((cert) => (
-                <div
-                  key={cert.id}
-                  className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between p-6 bento-card group"
-                >
-                  <div>
-                    <div className="flex justify-between items-start mb-5">
-                      <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${cert.bgColor || 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'}`}>
-                        <span className="material-symbols-outlined text-2xl font-bold">
-                          {cert.icon || 'workspace_premium'}
-                        </span>
-                      </div>
-                      
-                      <div className="flex gap-1">
-                        <button
-                          onClick={() => toast.success('Paylaşım bağlantısı kopyalandı!')}
-                          className="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700/40 rounded-lg transition-colors material-symbols-outlined text-base cursor-pointer"
-                          title="Paylaş"
-                        >
-                          share
-                        </button>
-                        <button
-                          onClick={() => toast.success('Sertifika kaynağı açılıyor...')}
-                          className="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700/40 rounded-lg transition-colors material-symbols-outlined text-base cursor-pointer"
-                          title="Görüntüle"
-                        >
-                          open_in_new
-                        </button>
-                        <button
-                          onClick={() => handleRemoveCert(cert.id)}
-                          className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors material-symbols-outlined text-base cursor-pointer"
-                          title="Sertifikayı Sil"
-                        >
-                          delete
-                        </button>
-                      </div>
-                    </div>
-
-                    <h4 className="text-xs font-extrabold text-slate-800 dark:text-white leading-relaxed">
-                      {cert.name}
-                    </h4>
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">
-                      Veriliş Tarihi: {cert.date}
-                    </p>
-                  </div>
-
-                  <div className="pt-4 mt-6 border-t border-slate-50 dark:border-slate-800/40 flex items-center justify-between">
-                    <div>
-                      <p className="text-[8px] text-slate-400 uppercase tracking-widest font-bold">Lisans ID</p>
-                      <p className="text-[10px] text-slate-700 dark:text-slate-300 font-mono font-bold">{cert.licenseId}</p>
-                    </div>
-
-                    <div className="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-bold text-[9px] rounded-full border border-emerald-100 dark:border-emerald-900/30">
-                      Doğrulandı
-                    </div>
-                  </div>
+          {role === 'student' ? (
+            <>
+              {/* Sertifikalar Bölümü */}
+              <div className="space-y-4">
+                
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                  <h3 className="text-base font-extrabold text-blue-900 dark:text-blue-400">Kazanılan Sertifikalar</h3>
+                  
+                  <button
+                    onClick={downloadCertificatesPDF}
+                    className="px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-bold text-[10px] rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                  >
+                    <span className="material-symbols-outlined text-sm">download</span>
+                    <span>PDF Olarak İndir</span>
+                  </button>
                 </div>
-              ))}
 
-              {selectedCertFile ? (
-                <div className="border-2 border-blue-500/30 bg-blue-50/10 rounded-3xl p-6 flex flex-col justify-between min-h-[190px]">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400 font-bold truncate">
-                      <span className="material-symbols-outlined text-lg">description</span>
-                      <span className="truncate">{selectedCertFile.name}</span>
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-slate-400 uppercase">Sertifika İsmi</label>
-                      <input
-                        type="text"
-                        value={newCertName}
-                        onChange={(e) => setNewCertName(e.target.value)}
-                        className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-semibold"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2 justify-end pt-3">
-                    <button
-                      onClick={() => setSelectedCertFile(null)}
-                      className="px-2.5 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-[10px] rounded-lg cursor-pointer"
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  
+                  {certificatesList.map((cert) => (
+                    <div
+                      key={cert.id}
+                      className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between p-6 bento-card group"
                     >
-                      İptal
-                    </button>
-                    <button
-                      onClick={handleSaveUploadedCert}
-                      className="px-3.5 py-1.5 bg-blue-900 hover:bg-blue-800 text-white font-bold text-[10px] rounded-lg cursor-pointer"
+                      <div>
+                        <div className="flex justify-between items-start mb-5">
+                          <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${cert.bgColor || 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'}`}>
+                            <span className="material-symbols-outlined text-2xl font-bold">
+                              {cert.icon || 'workspace_premium'}
+                            </span>
+                          </div>
+                          
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => toast.success('Paylaşım bağlantısı kopyalandı!')}
+                              className="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700/40 rounded-lg transition-colors material-symbols-outlined text-base cursor-pointer"
+                              title="Paylaş"
+                            >
+                              share
+                            </button>
+                            <button
+                              onClick={() => toast.success('Sertifika kaynağı açılıyor...')}
+                              className="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700/40 rounded-lg transition-colors material-symbols-outlined text-base cursor-pointer"
+                              title="Görüntüle"
+                            >
+                              open_in_new
+                            </button>
+                            <button
+                              onClick={() => handleRemoveCert(cert.id)}
+                              className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors material-symbols-outlined text-base cursor-pointer"
+                              title="Sertifikayı Sil"
+                            >
+                              delete
+                            </button>
+                          </div>
+                        </div>
+
+                        <h4 className="text-xs font-extrabold text-slate-800 dark:text-white leading-relaxed">
+                          {cert.name}
+                        </h4>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">
+                          Veriliş Tarihi: {cert.date}
+                        </p>
+                      </div>
+
+                      <div className="pt-4 mt-6 border-t border-slate-50 dark:border-slate-800/40 flex items-center justify-between">
+                        <div>
+                          <p className="text-[8px] text-slate-400 uppercase tracking-widest font-bold">Lisans ID</p>
+                          <p className="text-[10px] text-slate-700 dark:text-slate-300 font-mono font-bold">{cert.licenseId}</p>
+                        </div>
+
+                        <div className="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-bold text-[9px] rounded-full border border-emerald-100 dark:border-emerald-900/30">
+                          Doğrulandı
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {selectedCertFile ? (
+                    <div className="border-2 border-blue-500/30 bg-blue-50/10 rounded-3xl p-6 flex flex-col justify-between min-h-[190px]">
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400 font-bold truncate">
+                          <span className="material-symbols-outlined text-lg">description</span>
+                          <span className="truncate">{selectedCertFile.name}</span>
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <label className="text-[9px] font-bold text-slate-400 uppercase">Sertifika İsmi</label>
+                          <input
+                            type="text"
+                            value={newCertName}
+                            onChange={(e) => setNewCertName(e.target.value)}
+                            className="w-full px-2.5 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 font-semibold"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 justify-end pt-3">
+                        <button
+                          onClick={() => setSelectedCertFile(null)}
+                          className="px-2.5 py-1.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-[10px] rounded-lg cursor-pointer"
+                        >
+                          İptal
+                        </button>
+                        <button
+                          onClick={handleSaveUploadedCert}
+                          className="px-3.5 py-1.5 bg-blue-900 hover:bg-blue-800 text-white font-bold text-[10px] rounded-lg cursor-pointer"
+                        >
+                          Profile Kaydet
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => document.getElementById('cert-upload-input').click()}
+                      className="group border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center p-8 hover:border-blue-500/50 hover:bg-blue-50/20 dark:hover:bg-blue-950/10 transition-all cursor-pointer min-h-[190px]"
                     >
-                      Profile Kaydet
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div
-                  onClick={() => document.getElementById('cert-upload-input').click()}
-                  className="group border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center p-8 hover:border-blue-500/50 hover:bg-blue-50/20 dark:hover:bg-blue-950/10 transition-all cursor-pointer min-h-[190px]"
-                >
-                  <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                    <span className="material-symbols-outlined text-lg">add_task</span>
-                  </div>
-                  <p className="text-xs font-bold text-slate-800 dark:text-white">Harici Sertifika Yükle</p>
-                  <p className="text-[9px] text-slate-400 dark:text-slate-500 text-center mt-1 font-semibold max-w-[180px]">
-                    Belgelerinizi (.pdf, .png, .jpg) buraya tıklayarak seçin
-                  </p>
-                </div>
-              )}
+                      <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                        <span className="material-symbols-outlined text-lg">add_task</span>
+                      </div>
+                      <p className="text-xs font-bold text-slate-800 dark:text-white">Harici Sertifika Yükle</p>
+                      <p className="text-[9px] text-slate-400 dark:text-slate-500 text-center mt-1 font-semibold max-w-[180px]">
+                        Belgelerinizi (.pdf, .png, .jpg) buraya tıklayarak seçin
+                      </p>
+                    </div>
+                  )}
 
-            </div>
-          </div>
-
-          {/* Akademik Rozetler Bölümü */}
-          <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6 space-y-4">
-            <h4 className="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2 border-l-4 border-blue-600 pl-3">
-              Akademik Rozetler
-            </h4>
-
-            <div className="flex flex-wrap gap-4">
-              {academicBadges.map((badge, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/60 px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800/60 w-full sm:w-auto shadow-sm"
-                >
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border ${badge.colorClass}`}>
-                    <span className="material-symbols-outlined text-lg font-bold">{badge.icon}</span>
-                  </div>
-                  <div>
-                    <p className="text-xs font-extrabold text-slate-800 dark:text-white">
-                      {badge.title}
-                    </p>
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold">
-                      {badge.description}
-                    </p>
-                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
+
+              {/* Akademik Rozetler Bölümü */}
+              <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6 space-y-4">
+                <h4 className="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2 border-l-4 border-blue-600 pl-3">
+                  Akademik Rozetler
+                </h4>
+
+                <div className="flex flex-wrap gap-4">
+                  {academicBadges.map((badge, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/60 px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800/60 w-full sm:w-auto shadow-sm"
+                    >
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border ${badge.colorClass}`}>
+                        <span className="material-symbols-outlined text-lg font-bold">{badge.icon}</span>
+                      </div>
+                      <div>
+                        <p className="text-xs font-extrabold text-slate-800 dark:text-white">
+                          {badge.title}
+                        </p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold">
+                          {badge.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : role === 'teacher' ? (
+            <>
+              {/* Verilen Dersler Bölümü */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                  <h3 className="text-base font-extrabold text-blue-900 dark:text-blue-400">Verilen Canlı / Sorumlu Olunan Dersler</h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {mockTeacherCourses.map((course) => (
+                    <div
+                      key={course.id}
+                      className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between p-6 bento-card group"
+                    >
+                      <div>
+                        <div className="flex justify-between items-start mb-5">
+                          <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${course.bgColor}`}>
+                            <span className="material-symbols-outlined text-2xl font-bold">
+                              {course.icon}
+                            </span>
+                          </div>
+                        </div>
+
+                        <h4 className="text-xs font-extrabold text-slate-800 dark:text-white leading-relaxed">
+                          {course.name}
+                        </h4>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">
+                          Eğitim Türü: Canlı Ders & Hibrit ({course.hours})
+                        </p>
+                      </div>
+
+                      <div className="pt-4 mt-6 border-t border-slate-50 dark:border-slate-800/40 flex items-center justify-between">
+                        <div>
+                          <p className="text-[8px] text-slate-400 uppercase tracking-widest font-bold">Ders Kodu</p>
+                          <p className="text-[10px] text-slate-700 dark:text-slate-300 font-mono font-bold">{course.code}</p>
+                        </div>
+
+                        <div className="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-bold text-[9px] rounded-full border border-emerald-100 dark:border-emerald-900/30">
+                          {course.date}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Akademik Yayınlar Bölümü */}
+              <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6 space-y-4">
+                <h4 className="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2 border-l-4 border-blue-600 pl-3">
+                  Akademik Yayınlar & Bildiriler
+                </h4>
+
+                <div className="flex flex-col gap-4">
+                  {mockTeacherPublications.map((pub, idx) => (
+                    <a
+                      key={idx}
+                      href={pub.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/60 px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800 hover:bg-blue-50/50 dark:hover:bg-blue-950/30 transition-all cursor-pointer group no-underline"
+                    >
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border ${pub.colorClass}`}>
+                        <span className="material-symbols-outlined text-lg font-bold">{pub.icon}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-extrabold text-slate-800 dark:text-white group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
+                          {pub.title}
+                        </p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold font-mono">
+                          {pub.description}
+                        </p>
+                      </div>
+                      <span className="material-symbols-outlined text-base text-slate-300 dark:text-slate-600 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors shrink-0">
+                        open_in_new
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Dekan Bölümü */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                  <h3 className="text-base font-extrabold text-blue-900 dark:text-blue-400">Yönetilen Bölümler (Mühendislik Fakültesi)</h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {mockDeanDepartments.map((dept) => (
+                    <div
+                      key={dept.id}
+                      className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between p-6 bento-card group"
+                    >
+                      <div>
+                        <div className="flex justify-between items-start mb-5">
+                          <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${dept.bgColor}`}>
+                            <span className="material-symbols-outlined text-2xl font-bold">
+                              {dept.icon}
+                            </span>
+                          </div>
+                        </div>
+
+                        <h4 className="text-xs font-extrabold text-slate-800 dark:text-white leading-relaxed">
+                          {dept.name}
+                        </h4>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 font-semibold">
+                          {dept.hours}
+                        </p>
+                      </div>
+
+                      <div className="pt-4 mt-6 border-t border-slate-50 dark:border-slate-800/40 flex items-center justify-between">
+                        <div>
+                          <p className="text-[8px] text-slate-400 uppercase tracking-widest font-bold">Bölüm Kodu</p>
+                          <p className="text-[10px] text-slate-700 dark:text-slate-300 font-mono font-bold">{dept.code}</p>
+                        </div>
+
+                        <div className="px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-bold text-[9px] rounded-full border border-blue-100 dark:border-blue-900/30">
+                          {dept.date}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Dekan Görevleri Bölümü */}
+              <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6 space-y-4">
+                <h4 className="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2 border-l-4 border-blue-600 pl-3">
+                  Fakülte Koordinasyon & Görev Takibi
+                </h4>
+
+                <div className="flex flex-col gap-4">
+                  {mockDeanTasks.map((task, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-3 bg-slate-50 dark:bg-slate-900/60 px-4 py-3 rounded-xl border border-slate-100 dark:border-slate-800/60 shadow-sm"
+                    >
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border ${task.colorClass}`}>
+                        <span className="material-symbols-outlined text-lg font-bold">{task.icon}</span>
+                      </div>
+                      <div>
+                        <p className="text-xs font-extrabold text-slate-800 dark:text-white">
+                          {task.title}
+                        </p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold font-mono">
+                          {task.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
 
         </div>
 

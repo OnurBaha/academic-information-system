@@ -52,12 +52,16 @@ export default function AcademicCalendar() {
 
   // ── PDF İndirme ───────────────────
   const downloadExamSchedulePDF = () => {
+    if (examSemesterFilter === 'yaz') {
+      toast.error('Yaz okulu sınav takvimi henüz açıklanmadığı için PDF indirilemez.')
+      return
+    }
     try {
       const doc = new jsPDF()
       const examsToPrint = studentExams[examSemesterFilter] || []
       const semesterLabel =
         examSemesterFilter === 'guz' ? 'Guz Donemi' :
-        examSemesterFilter === 'bahar' ? 'Bahar Donemi' : 'Yaz Ogretimi'
+          examSemesterFilter === 'bahar' ? 'Bahar Donemi' : 'Yaz Ogretimi'
 
       // Title
       doc.setFont('Helvetica', 'bold')
@@ -72,8 +76,8 @@ export default function AcademicCalendar() {
       // Bordered table
       autoTable(doc, {
         startY: 40,
-        head: [['Tarih', 'Saat', 'Ders Kodu', 'Ders Adi', 'Sinif / Lab / Blok', 'Gozlemci']],
-        body: examsToPrint.map(e => [e.date, e.time, e.code, e.name, e.room, e.instructor]),
+        head: [['Tarih', 'Saat', 'Sinav Turu', 'Ders Kodu', 'Ders Adi', 'Sinif / Lab / Blok', 'Gozlemci']],
+        body: examsToPrint.map(e => [e.date, e.time, e.type || 'Sinav', e.code, e.name, e.room, e.instructor]),
         styles: {
           fontSize: 8,
           cellPadding: 3,
@@ -92,12 +96,13 @@ export default function AcademicCalendar() {
           fillColor: [248, 250, 252]
         },
         columnStyles: {
-          0: { cellWidth: 28 },
-          1: { cellWidth: 22 },
+          0: { cellWidth: 24 },
+          1: { cellWidth: 16 },
           2: { cellWidth: 24 },
-          3: { cellWidth: 55 },
-          4: { cellWidth: 32 },
-          5: { cellWidth: 32 }
+          3: { cellWidth: 20 },
+          4: { cellWidth: 50 },
+          5: { cellWidth: 28 },
+          6: { cellWidth: 28 }
         },
         margin: { left: 14, right: 14 }
       })
@@ -111,31 +116,28 @@ export default function AcademicCalendar() {
   }
 
   // ── Filtreleme ve Sayfalama ─────────────────────────────────────────────
-  const filteredAcademicEvents = Array.isArray(academicEvents) ? academicEvents.filter(event => {
+  const parseDateString = (dateStr) => {
+    const parts = dateStr.split('.')
+    if (parts.length === 3) {
+      return new Date(parts[2], parts[1] - 1, parts[0])
+    }
+    return new Date(0)
+  }
+
+  const sortedAcademicEvents = Array.isArray(academicEvents) ? [...academicEvents].filter(event => {
     const q = searchTerm.toLowerCase()
     const matchesSearch = event.title.toLowerCase().includes(q) || event.date.toLowerCase().includes(q)
     const matchesTab = academicSemesterFilter === 'all' || event.semester === academicSemesterFilter
     return matchesSearch && matchesTab
-  }) : []
+  }).sort((a, b) => parseDateString(a.date) - parseDateString(b.date)) : []
 
-  const totalPages = Math.ceil(filteredAcademicEvents.length / ITEMS_PER_PAGE)
-  const pagedEvents = filteredAcademicEvents.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  )
+  // Sayfalama artık tek liste halinde gösterildiği için etkisizdir
+  const totalPages = 1
+  const pagedEvents = sortedAcademicEvents
 
   // Sayfalama yardımcısı — en fazla 7 sayfa butonu göster
   const getPageNumbers = () => {
-    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1)
-    const pages = []
-    if (currentPage <= 4) {
-      pages.push(1, 2, 3, 4, 5, '...', totalPages)
-    } else if (currentPage >= totalPages - 3) {
-      pages.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages)
-    } else {
-      pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages)
-    }
-    return pages
+    return [1]
   }
 
   if (loading) {
@@ -153,8 +155,8 @@ export default function AcademicCalendar() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[75vh] p-6 max-w-[1440px] mx-auto w-full animate-fade-in">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-slate-800 dark:text-white flex items-center justify-center gap-3">
-            <span className="material-symbols-outlined text-primary text-4xl">calendar_month</span>
+          <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white flex items-center justify-center gap-3">
+            <span className="material-symbols-outlined text-primary text-3xl">calendar_month</span>
             <span>Akademik &amp; Sınav Takvimi</span>
           </h2>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 max-w-xl leading-relaxed">
@@ -223,12 +225,12 @@ export default function AcademicCalendar() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
           <div>
-            <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+            <h2 className="student-page-title flex items-center gap-2">
               <span className="material-symbols-outlined text-blue-600 text-2xl">calendar_today</span>
               <span>2025-2026 Akademik Takvim</span>
             </h2>
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-              T.C. İstanbul Aydın Üniversitesi Ön Lisans ve Lisans Eğitim-Öğretim Yılı Takvimi.
+            <p className="student-page-subtitle">
+              T.C. İstanbul Softito Üniversitesi Ön Lisans ve Lisans Eğitim-Öğretim Yılı Takvimi.
             </p>
           </div>
           <div className="flex gap-2">
@@ -262,11 +264,10 @@ export default function AcademicCalendar() {
               <button
                 key={tab.id}
                 onClick={() => setAcademicSemesterFilter(tab.id)}
-                className={`py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer border-none ${
-                  academicSemesterFilter === tab.id
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
-                }`}
+                className={`py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer border-none ${academicSemesterFilter === tab.id
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
+                  }`}
               >
                 {tab.label}
               </button>
@@ -291,8 +292,7 @@ export default function AcademicCalendar() {
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[10px] font-bold">
-                  <th className="py-3.5 px-6 w-12 text-center">#</th>
-                  <th className="py-3.5 px-4 w-56">Tarih</th>
+                  <th className="py-3.5 px-6 w-56">Tarih</th>
                   <th className="py-3.5 px-4">Etkinlik Başlığı</th>
                 </tr>
               </thead>
@@ -300,16 +300,13 @@ export default function AcademicCalendar() {
                 {pagedEvents.length > 0 ? (
                   pagedEvents.map((item, idx) => (
                     <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                      <td className="py-3.5 px-6 text-center text-slate-400 dark:text-slate-600 font-semibold text-[10px]">
-                        {(currentPage - 1) * ITEMS_PER_PAGE + idx + 1}
-                      </td>
-                      <td className="py-3.5 px-4 font-bold text-slate-800 dark:text-slate-200 w-56">{item.date}</td>
+                      <td className="py-3.5 px-6 font-bold text-slate-800 dark:text-slate-200 w-56">{item.date}</td>
                       <td className="py-3.5 px-4 font-semibold text-slate-700 dark:text-slate-300 leading-normal">{item.title}</td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={3} className="py-10 text-center text-slate-400 dark:text-slate-500 font-medium">
+                    <td colSpan={2} className="py-10 text-center text-slate-400 dark:text-slate-500 font-medium">
                       Arama kriterlerinize uygun etkinlik bulunamadı.
                     </td>
                   </tr>
@@ -322,7 +319,7 @@ export default function AcademicCalendar() {
           {totalPages > 1 && (
             <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
               <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                Toplam <span className="font-bold text-slate-600 dark:text-slate-300">{filteredAcademicEvents.length}</span> kayıt,{' '}
+                Toplam <span className="font-bold text-slate-600 dark:text-slate-300">{sortedAcademicEvents.length}</span> kayıt,{' '}
                 sayfa <span className="font-bold text-slate-600 dark:text-slate-300">{currentPage}</span> / {totalPages}
               </p>
               <div className="flex items-center gap-1">
@@ -342,11 +339,10 @@ export default function AcademicCalendar() {
                     <button
                       key={p}
                       onClick={() => setCurrentPage(p)}
-                      className={`w-7 h-7 flex items-center justify-center rounded-lg text-[11px] font-bold transition-all cursor-pointer border ${
-                        currentPage === p
-                          ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                          : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:text-blue-600'
-                      }`}
+                      className={`w-7 h-7 flex items-center justify-center rounded-lg text-[11px] font-bold transition-all cursor-pointer border ${currentPage === p
+                        ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:text-blue-600'
+                        }`}
                     >
                       {p}
                     </button>
@@ -382,11 +378,11 @@ export default function AcademicCalendar() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
           <div>
-            <h2 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+            <h2 className="student-page-title flex items-center gap-2">
               <span className="material-symbols-outlined text-emerald-600 text-2xl">edit_calendar</span>
               <span>Sınav Takvimi</span>
             </h2>
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Dönemlik sınav saatleri, derslik yerleşimi ve gözetmen öğretim üyeleri.</p>
+            <p className="student-page-subtitle">Dönemlik sınav saatleri, derslik yerleşimi ve gözetmen öğretim üyeleri.</p>
           </div>
           <div className="flex gap-2">
             <button
@@ -417,11 +413,10 @@ export default function AcademicCalendar() {
               <button
                 key={term.id}
                 onClick={() => setExamSemesterFilter(term.id)}
-                className={`py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer border-none ${
-                  examSemesterFilter === term.id
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
-                }`}
+                className={`py-1.5 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer border-none ${examSemesterFilter === term.id
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
+                  }`}
               >
                 {term.label}
               </button>
@@ -438,44 +433,62 @@ export default function AcademicCalendar() {
         </div>
 
         {/* Sınavlar Tablosu */}
-        <div className="bg-white dark:bg-[#111827] rounded-3xl p-6 shadow-sm border border-slate-200/50 dark:border-slate-800/80 transition-all duration-300">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[10px] font-bold">
-                  <th className="py-3.5 px-4 rounded-l-xl">Tarih</th>
-                  <th className="py-3.5 px-4">Saat</th>
-                  <th className="py-3.5 px-4">Ders Kodu</th>
-                  <th className="py-3.5 px-4">Ders Adı</th>
-                  <th className="py-3.5 px-4">Sınıf / Lab / Blok</th>
-                  <th className="py-3.5 px-4 rounded-r-xl">Gözetmen / Öğretim Üyesi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {currentExams.length > 0 ? (
-                  currentExams.map((exam, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                      <td className="py-4 px-4 font-bold text-slate-800 dark:text-slate-200">{exam.date}</td>
-                      <td className="py-4 px-4 text-slate-600 dark:text-slate-300 font-semibold">{exam.time}</td>
-                      <td className="py-4 px-4">
-                        <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-extrabold">{exam.code}</span>
-                      </td>
-                      <td className="py-4 px-4 font-semibold text-slate-800 dark:text-slate-200 leading-normal">{exam.name}</td>
-                      <td className="py-4 px-4 font-medium text-slate-500 dark:text-slate-400">{exam.room}</td>
-                      <td className="py-4 px-4 text-slate-500 dark:text-slate-400">{exam.instructor}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={6} className="py-10 text-center text-slate-400 dark:text-slate-500 font-medium">
-                      Bu döneme ait kayıtlı sınav bilgisi bulunmamaktadır.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+        {examSemesterFilter === 'yaz' ? (
+          <div className="bg-white dark:bg-[#111827] rounded-3xl p-8 shadow-sm border border-slate-200/50 dark:border-slate-800/80 transition-all duration-300 flex items-center gap-4">
+            <span className="material-symbols-outlined text-3xl text-blue-650 shrink-0">info</span>
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-350 leading-relaxed m-0">
+              Yaz okulu sınav takvimi henüz açıklanmamıştır. Yaz okulu 16.07.2026 tarihinde başlayacaktır.
+            </p>
           </div>
-        </div>
+        ) : (
+          <div className="bg-white dark:bg-[#111827] rounded-3xl p-6 shadow-sm border border-slate-200/50 dark:border-slate-800/80 transition-all duration-300">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase tracking-wider text-[10px] font-bold">
+                    <th className="py-3.5 px-4 rounded-l-xl">Tarih</th>
+                    <th className="py-3.5 px-4">Saat</th>
+                    <th className="py-3.5 px-4">Sınav Türü</th>
+                    <th className="py-3.5 px-4">Ders Kodu</th>
+                    <th className="py-3.5 px-4">Ders Adı</th>
+                    <th className="py-3.5 px-4">Sınıf / Lab / Blok</th>
+                    <th className="py-3.5 px-4 rounded-r-xl">Gözetmen / Öğretim Üyesi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {currentExams.length > 0 ? (
+                    currentExams.map((exam, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                        <td className="py-4 px-4 font-bold text-slate-800 dark:text-slate-200">{exam.date}</td>
+                        <td className="py-4 px-4 text-slate-600 dark:text-slate-300 font-semibold">{exam.time}</td>
+                        <td className="py-4 px-4">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${exam.type === 'Ara Sınav'
+                            ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 border border-blue-100/40 dark:border-blue-900/30'
+                            : exam.type === 'Final Sınavı'
+                              ? 'bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-400 border border-red-100/40 dark:border-red-900/30'
+                              : 'bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400 border border-amber-100/40 dark:border-amber-900/30'
+                            }`}>{exam.type || 'Sınav'}</span>
+                        </td>
+                        <td className="py-4 px-4">
+                          <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-extrabold">{exam.code}</span>
+                        </td>
+                        <td className="py-4 px-4 font-semibold text-slate-800 dark:text-slate-200 leading-normal">{exam.name}</td>
+                        <td className="py-4 px-4 font-medium text-slate-500 dark:text-slate-400">{exam.room}</td>
+                        <td className="py-4 px-4 text-slate-500 dark:text-slate-400">{exam.instructor}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={7} className="py-10 text-center text-slate-400 dark:text-slate-500 font-medium">
+                        Bu döneme ait kayıtlı sınav bilgisi bulunmamaktadır.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
       </div>
     )
