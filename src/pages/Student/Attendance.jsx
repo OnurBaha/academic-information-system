@@ -96,8 +96,8 @@ export default function StudentAttendance() {
   const coursesWithAbsences = filteredGrades.filter(g => g.absentDates && g.absentDates.length > 0).length
   const criticalCourses = filteredGrades.filter(g => (g.absencePercentage || 0) >= 30).length
 
-  // Genel katılım yüzdesi
-  const attendanceRate = currentUser?.attendanceRate || 92
+  // Genel katılım yüzdesi (Her devamsızlık günü için %5 azalır)
+  const attendanceRate = Math.max(0, 100 - (totalAbsentDays * 5))
   const strokeCircumference = 364
   const strokeOffset = strokeCircumference - (strokeCircumference * attendanceRate) / 100
 

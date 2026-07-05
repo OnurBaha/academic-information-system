@@ -57,6 +57,9 @@ export default function Courses() {
 
   useEffect(() => {
     setActiveLecture(courseLectures[0])
+    if (selectedCourseCode && selectedCourseCode !== 'WEB 307') {
+      setActiveTab('notes')
+    }
   }, [selectedCourseCode])
 
   // Genel ders beğenisi
@@ -619,17 +622,19 @@ const Timer = () => {
               <span>Derste Yazılan Kodlar (GitHub)</span>
             </button>
 
-            <button
-              onClick={() => setActiveTab('forum')}
-              className={`py-4 px-6 text-xs font-bold flex items-center gap-1.5 transition-all border-b-2 relative cursor-pointer ${activeTab === 'forum'
-                ? 'border-blue-600 text-blue-600 dark:text-blue-400'
-                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-            >
-              <span className="material-symbols-outlined text-base">forum</span>
-              <span>Soru-Cevap / Forum</span>
-              <span className="absolute top-3.5 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
-            </button>
+            {currentCourse?.code === 'WEB 307' && (
+              <button
+                onClick={() => setActiveTab('forum')}
+                className={`py-4 px-6 text-xs font-bold flex items-center gap-1.5 transition-all border-b-2 relative cursor-pointer ${activeTab === 'forum'
+                  ? 'border-blue-600 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                  }`}
+              >
+                <span className="material-symbols-outlined text-base">forum</span>
+                <span>Soru-Cevap / Forum</span>
+                <span className="absolute top-3.5 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+              </button>
+            )}
           </div>
 
           {/* Sekme İçerikleri */}
@@ -720,7 +725,7 @@ const Timer = () => {
               </div>
             )}
 
-            {activeTab === 'forum' && (
+            {activeTab === 'forum' && currentCourse?.code === 'WEB 307' && (
               <div className="space-y-6">
                 <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-700/60">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Soru Cevap ve Tartışmalar</h4>

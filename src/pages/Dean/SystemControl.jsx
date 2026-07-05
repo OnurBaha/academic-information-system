@@ -8,6 +8,7 @@ import {
   createNewSection,
   writeSystemLog 
 } from '../../store/dean/deanSlice';
+import { toast } from 'react-hot-toast';
 
 export default function SystemControl() {
   const dispatch = useDispatch();
@@ -67,7 +68,7 @@ export default function SystemControl() {
   };
 
   const handlePasswordReset = (user) => {
-    alert(`${user.name} isimli kullanıcının şifresi başarıyla sıfırlandı. Yeni geçici şifre: university123`);
+    toast.success(`${user.name} isimli kullanıcının şifresi başarıyla sıfırlandı. Yeni geçici şifre: university123`, { duration: 6000 });
     dispatch(writeSystemLog({
       operator: 'Prof. Dr. Kemal Arslan',
       action: 'Şifre Sıfırlama',
@@ -91,7 +92,7 @@ export default function SystemControl() {
       }));
       dispatch(fetchDeanDashboardData());
       setNewSecName('');
-      alert('Yeni sınıf şubesi başarıyla açıldı ve kontenjan tanımlandı!');
+      toast.success('Yeni sınıf şubesi başarıyla açıldı ve kontenjan tanımlandı!');
     });
   };
 

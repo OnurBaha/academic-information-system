@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchTeacherStudentsGradesAsync, updateStudentGradeAsync, fetchTeacherDashboardDataAsync } from '../../store/teacher/teacherSlice'
 import { apiFetch } from '../../services/api'
+import { calculateScore, getLetterGrade } from '../../utils/studentCalc'
 
 export default function GradeEntry() {
   const dispatch = useDispatch()
@@ -152,9 +153,9 @@ export default function GradeEntry() {
   }
 
   // Ödevlerin hücre bazında durum veya notunu getiren fonksiyon
-  const getHomeworkCellStatus = (studentNumber, hw) => {
+  const getHomeworkCellStatus = (studentId, hw) => {
     const review = homeworkReviews.find(r => 
-      r.studentId === studentNumber && 
+      r.studentId === studentId && 
       r.courseCode === selectedCourseCode && 
       r.homeworkId === hw.id
     )
@@ -231,22 +232,12 @@ export default function GradeEntry() {
     }
   }, [toast])
 
-  // Vize (%25), Proje (%25), Ödev (%15) ve Final (%35) notlarına göre harf notunu hesaplayan yardımcı fonksiyon
+  // Vize (%25 veya %40), Proje (%25), Ödev (%15) ve Final (%35 veya %60) notlarına göre harf notunu hesaplayan ortak fonksiyon
+  // calculateScore + getLetterGrade (studentCalc.js) kullanılır — iki taraf aynı sonucu görür
   const calculateLetterGrade = (midterm, final, project, homeworkAvg = 0) => {
     if (midterm === '' || final === '' || midterm === null || final === null) return '—'
-    const m = parseFloat(midterm) || 0
-    const f = parseFloat(final) || 0
-    const p = parseFloat(project) || 0
-    const hw = parseFloat(homeworkAvg) || 0
-    const average = Math.round((m * 0.25) + (p * 0.25) + (hw * 0.15) + (f * 0.35))
-
-    if (average >= 90) return 'AA'
-    if (average >= 80) return 'BA'
-    if (average >= 70) return 'BB'
-    if (average >= 60) return 'CB'
-    if (average >= 50) return 'CC'
-    if (average >= 45) return 'DC'
-    return 'FF'
+    const score = calculateScore(midterm, final, project !== '' && project !== null ? project : undefined, homeworkAvg || 0)
+    return getLetterGrade(score)
   }
 
   // Kullanıcı girdi alanlarındaki (vize, final, proje) not değişimlerini kontrol edip filtreleyen fonksiyon
@@ -281,7 +272,7 @@ export default function GradeEntry() {
   const handleSave = async () => {
     try {
       await Promise.all(students.map(s => {
-        const hwStats = calculateStudentHomeworkAverage(s.studentNumber, selectedCourseCode)
+        const hwStats = calculateStudentHomeworkAverage(s.studentId, selectedCourseCode)
         return dispatch(updateStudentGradeAsync({
           gradeId: s.id,
           midterm: s.midterm,
@@ -406,7 +397,7 @@ export default function GradeEntry() {
               </thead>
               <tbody>
                 {students.map((student, index) => {
-                  const hwStats = calculateStudentHomeworkAverage(student.studentNumber, selectedCourseCode)
+                  const hwStats = calculateStudentHomeworkAverage(student.studentId, selectedCourseCode)
                   const letter = calculateLetterGrade(student.midterm, student.final, student.project, hwStats.average)
                   return (
                     <tr key={student.id} className="grades-entry-row">
@@ -508,7 +499,7 @@ export default function GradeEntry() {
               </thead>
               <tbody>
                 {students.map((student, index) => {
-                  const hwStats = calculateStudentHomeworkAverage(student.studentNumber, selectedCourseCode)
+                  const hwStats = calculateStudentHomeworkAverage(student.studentId, selectedCourseCode)
                   return (
                     <tr key={student.id} className="grades-entry-row">
                       <td className="grades-entry-td-left-num">{index + 1}</td>
@@ -520,7 +511,7 @@ export default function GradeEntry() {
                       </td>
                       <td className="grades-entry-td-left-id">{student.studentNumber}</td>
                       {courseHomeworks.map(hw => {
-                        const statusVal = getHomeworkCellStatus(student.studentNumber, hw)
+                        const statusVal = getHomeworkCellStatus(student.studentId, hw)
                         return (
                           <td key={hw.id} className="grades-entry-td-center">
                             <span className={statusVal.className}>{statusVal.text}</span>

@@ -104,9 +104,9 @@ export default function StudentGrades() {
 
   const homeworkAverages = useMemo(() => {
     const avgs = {};
-    if (currentUser?.studentNumber && courses.length > 0) {
+    if (currentUser?.id && courses.length > 0) {
       courses.forEach(course => {
-        avgs[course.code] = calculateStudentHomeworkAverage(currentUser.studentNumber, course.code);
+        avgs[course.code] = calculateStudentHomeworkAverage(currentUser.id, course.code);
       });
     }
     return avgs;

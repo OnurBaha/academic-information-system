@@ -33,23 +33,48 @@ export default function StudentDashboard() {
     }
   }, [dispatch, currentUser])
 
+  const [studentCourses, setStudentCourses] = useState([])
+
+  const isRegistered = (lesson, coursesList) => {
+    if (!coursesList || coursesList.length === 0) return false
+    
+    const normCode = (c) => (c || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+    const normName = (n) => (n || '').toLowerCase().trim()
+    
+    const lessonCode = lesson.courseCode || lesson.code
+    if (lessonCode) {
+      const lCodeNorm = normCode(lessonCode)
+      return coursesList.some(sc => normCode(sc.code) === lCodeNorm)
+    }
+    
+    const lNameNorm = normName(lesson.name)
+    return coursesList.some(sc => {
+      const scNameNorm = normName(sc.courseName)
+      return lNameNorm === scNameNorm || lNameNorm.startsWith(scNameNorm) || scNameNorm.startsWith(lNameNorm)
+    })
+  }
+
   useEffect(() => {
+    if (!currentUser?.id) return
+
     Promise.all([
       fetch('http://localhost:3001/weeklyLessonsByWeek').then(res => res.json()),
       fetch('http://localhost:3001/academicEvents').then(res => res.json()),
-      fetch('http://localhost:3001/bulletins').then(res => res.json())
+      fetch('http://localhost:3001/bulletins').then(res => res.json()),
+      fetch(`http://localhost:3001/studentCourses?studentId=${currentUser.id}`).then(res => res.json())
     ])
-      .then(([schedule, events, bulls]) => {
+      .then(([schedule, events, bulls, studentCoursesData]) => {
         setWeeklySchedule(schedule)
         setAcademicEvents(events)
         setBulletins(bulls)
+        setStudentCourses(studentCoursesData || [])
         setOverviewLoading(false)
       })
       .catch(err => {
         console.error('Error loading dashboard overview data', err)
         setOverviewLoading(false)
       })
-  }, [])
+  }, [currentUser])
 
 
 
@@ -97,7 +122,9 @@ export default function StudentDashboard() {
     }
 
     const currentWeekSchedule = weeklySchedule[String(weekIndex)] || {}
-    return currentWeekSchedule[todayName] || []
+    const rawLessons = currentWeekSchedule[todayName] || []
+    
+    return rawLessons.filter(lesson => isRegistered(lesson, studentCourses))
   }
 
   const todayLessons = getTodayLessons()

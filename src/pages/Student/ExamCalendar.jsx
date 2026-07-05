@@ -8,10 +8,22 @@ export default function ExamCalendar() {
   const navigate = useNavigate()
   const [activeSemester, setActiveSemester] = useState('bahar')
   const [studentExams, setStudentExams] = useState(null)
+  const [registeredCourseCodes, setRegisteredCourseCodes] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('http://localhost:3001/studentExams')
+    const user = JSON.parse(localStorage.getItem('currentUser')) || { id: 'u7' }
+    
+    // Fetch student's registered courses first
+    fetch(`http://localhost:3001/studentCourses?studentId=${user.id}`)
+      .then(res => res.json())
+      .then(courses => {
+        const codes = courses.map(c => c.code)
+        setRegisteredCourseCodes(codes)
+        
+        // Fetch all exams
+        return fetch('http://localhost:3001/studentExams')
+      })
       .then(res => res.json())
       .then(data => {
         setStudentExams(data)
@@ -31,7 +43,7 @@ export default function ExamCalendar() {
     }
     try {
       const doc = new jsPDF()
-      const examsToPrint = studentExams[activeSemester] || []
+      const examsToPrint = (studentExams[activeSemester] || []).filter(exam => registeredCourseCodes.includes(exam.code))
       const semesterLabel =
         activeSemester === 'guz' ? 'Guz Donemi' :
         activeSemester === 'bahar' ? 'Bahar Donemi' : 'Yaz Ogretimi'
@@ -84,7 +96,7 @@ export default function ExamCalendar() {
     }
   }
 
-  const currentExams = studentExams ? (studentExams[activeSemester] || []) : []
+  const currentExams = studentExams ? (studentExams[activeSemester] || []).filter(exam => registeredCourseCodes.includes(exam.code)) : []
 
   if (loading) {
     return (

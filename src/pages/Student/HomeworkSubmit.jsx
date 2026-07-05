@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
-import { submitStudentHomeworkAsync } from '../../store/student/studentSlice'
+import { submitStudentHomeworkAsync, fetchStudentGradesAsync } from '../../store/student/studentSlice'
 import { initialHomeworks } from '../../store/student/studentData'
 
 // initialHomeworks → src/data/studentData.js'ten import edilir
@@ -11,6 +11,8 @@ export default function HomeworkSubmit() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth)
+  const { courses: teacherCourses = [] } = useSelector((state) => state.teacher || {})
+  const { grades = [] } = useSelector((state) => state.student || {})
 
   // Sayfa Durumları
   const [homeworks, setHomeworks] = useState(initialHomeworks)
@@ -20,6 +22,50 @@ export default function HomeworkSubmit() {
   const [studentNotes, setStudentNotes] = useState({}) // Ödev notları
   const [uploadedFiles, setUploadedFiles] = useState({}) // Yüklenen dosya isimleri
   const [confirmingRowId, setConfirmingRowId] = useState(null) // Onaylama durumundaki ödev
+  const [currentPage, setCurrentPage] = useState(1)
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [activeFilter, searchQuery])
+
+  // Öğrenci not bilgilerini getirme (ödevlerin ait olduğu dersleri eşleştirmek için)
+  useEffect(() => {
+    if (user?.id) {
+      dispatch(fetchStudentGradesAsync(user.id))
+    }
+  }, [dispatch, user])
+
+  // Öğretmenin verdiği yeni ödevleri öğrenci listesine dahil et
+  useEffect(() => {
+    if (!teacherCourses.length) return
+    const dynamicHws = []
+    teacherCourses.forEach(course => {
+      if (!Array.isArray(course.homeworks)) return
+      course.homeworks.forEach(hw => {
+        // initialHomeworks'te aynı başlık yoksa ekle
+        const alreadyExists = initialHomeworks.some(ih => ih.title === hw.title && ih.courseCode === course.code)
+        if (!alreadyExists) {
+          dynamicHws.push({
+            id: hw.id,
+            courseName: course.name,
+            courseCode: course.code,
+            title: hw.title,
+            dueDate: hw.dueDate || '',
+            daysLeft: null,
+            status: 'Bekliyor',
+            colorClass: 'bg-blue-100/50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400'
+          })
+        }
+      })
+    })
+    if (dynamicHws.length > 0) {
+      setHomeworks(prev => {
+        const existingIds = new Set(prev.map(h => h.id))
+        const newOnes = dynamicHws.filter(h => !existingIds.has(h.id))
+        return newOnes.length > 0 ? [...prev, ...newOnes] : prev
+      })
+    }
+  }, [teacherCourses])
 
   // İstatistikleri hesapla (Dinamik ve canlı tepki veren sayaçlar)
   const pendingCount = homeworks.filter(h => h.status === 'Bekliyor').length
@@ -54,14 +100,25 @@ export default function HomeworkSubmit() {
     const fileName = uploadedFiles[rowId] || `${user?.name || 'Ahmet'}_${courseName.replace(/\s+/g, '_')}_Odev.pdf`
     const comment = studentNotes[rowId] || ''
     
+    const homeworkItem = homeworks.find(h => h.id === rowId)
+    const courseCode = homeworkItem?.courseCode
+    const gradeRecord = grades.find(g => g.courseCode === courseCode)
+    const finalGradeId = gradeRecord ? gradeRecord.id : rowId
+
     try {
       // Redux / DB update (studentGrades endpointi üzerinden)
       await dispatch(submitStudentHomeworkAsync({
-        gradeId: rowId,
+        gradeId: finalGradeId,
         homeworkPayload: {
           fileName,
           studentComment: comment,
-          githubLink: `https://github.com/${user?.username || 'ogrenci'}/${courseName.toLowerCase().replace(/\s+/g, '-')}`
+          githubLink: `https://github.com/${user?.username || 'ahmetyilmaz'}/${courseName.toLowerCase().replace(/\s+/g, '-')}`,
+          studentId: user?.id || 'u7',
+          courseCode: courseCode || '',
+          homeworkId: homeworkItem?.id || 'hw-1',
+          studentName: user?.name || 'Ahmet Yılmaz',
+          studentNumber: user?.studentNumber || '20211024100',
+          title: homeworkItem?.title || ''
         }
       })).unwrap()
 
@@ -97,12 +154,45 @@ export default function HomeworkSubmit() {
     return matchesSearch && matchesTab
   })
 
-  // Bekleyen ödevler listede 1. sırada (en üstte) olmalı
+  // Bekleyen ödevler listede 1. sırada (en üstte) olmalı, ardından teslim edilenler (en yeniden en eskiye) gelmeli
   const sortedList = [...filteredList].sort((a, b) => {
     if (a.status === 'Bekliyor' && b.status !== 'Bekliyor') return -1
     if (a.status !== 'Bekliyor' && b.status === 'Bekliyor') return 1
+
+    if (a.status === 'Teslim Edildi' && b.status === 'Teslim Edildi') {
+      const parseDate = (dStr) => {
+        if (!dStr) return 0
+        const clean = dStr.replace(',', '').trim()
+        const parts = clean.split(' ')
+        const dateParts = parts[0].split('.')
+        if (dateParts.length !== 3) return 0
+        const day = parseInt(dateParts[0], 10)
+        const month = parseInt(dateParts[1], 10) - 1
+        const year = parseInt(dateParts[2], 10)
+        
+        let hours = 0, minutes = 0
+        if (parts[1]) {
+          const timeParts = parts[1].split(':')
+          hours = parseInt(timeParts[0] || 0, 10)
+          minutes = parseInt(timeParts[1] || 0, 10)
+        }
+        return new Date(year, month, day, hours, minutes).getTime()
+      }
+      return parseDate(b.submittedAt) - parseDate(a.submittedAt)
+    }
     return 0
   })
+
+  const itemsPerPage = 5
+  const totalPages = Math.ceil(sortedList.length / itemsPerPage) || 1
+  
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages)
+    }
+  }, [totalPages, currentPage])
+
+  const displayedHomeworks = sortedList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   return (
     <section className="flex-grow p-4 md:p-8 max-w-7xl mx-auto space-y-6 text-slate-800 dark:text-white">
@@ -239,7 +329,7 @@ export default function HomeworkSubmit() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/40 text-xs">
-              {sortedList.map((hw) => {
+              {displayedHomeworks.map((hw) => {
                 const isCompleted = hw.status === 'Teslim Edildi'
                 const isOpened = expandedRow === hw.id
                 const cleanTitle = hw.title.replace(/^Ödev\s*(?:#?\d+)?\s*[-—]\s*/i, '')
@@ -365,14 +455,14 @@ export default function HomeworkSubmit() {
                                   
                                   {/* Dosya yükleme alanı */}
                                   <div className="flex flex-col gap-2 text-left">
-                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                                       Ödev Dosyası
-                                    </label>
-                                    <div
-                                      onClick={() => document.getElementById(`file-input-${hw.id}`).click()}
-                                      className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800/80 p-6 flex flex-col items-center justify-center text-center hover:border-blue-500 hover:bg-blue-50/20 dark:hover:bg-blue-950/10 transition-all cursor-pointer group"
+                                    </span>
+                                    <label
+                                      htmlFor={`file-input-${hw.id}`}
+                                      className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800/80 p-6 flex flex-col items-center justify-center text-center hover:border-blue-500 hover:bg-blue-50/20 dark:hover:bg-blue-950/10 transition-all cursor-pointer group block w-full"
                                     >
-                                      <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 flex items-center justify-center mb-3 group-hover:text-blue-600 transition-colors">
+                                      <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-550 flex items-center justify-center mb-3 group-hover:text-blue-600 transition-colors mx-auto">
                                         <span className="material-symbols-outlined text-2xl">upload_file</span>
                                       </div>
                                       <p className="text-xs font-bold text-slate-800 dark:text-white">
@@ -385,7 +475,7 @@ export default function HomeworkSubmit() {
                                       <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-1 font-semibold">
                                         Sadece .pdf, .docx, .zip formatları - Maks 50MB
                                       </p>
-                                    </div>
+                                    </label>
                                   </div>
 
                                   {/* Not & Gönderim Butonları (Onaylama Aşaması Dahil) */}
@@ -473,14 +563,53 @@ export default function HomeworkSubmit() {
         </div>
 
         {/* Tablo Alt Sayfalama */}
-        <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase">
-          <p>Toplam {filteredList.length} kayıt arasından 1-{filteredList.length} arası gösteriliyor</p>
-          <div className="flex gap-1.5">
-            <button className="w-7 h-7 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800/60 flex justify-between items-center text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase">
+          <p>
+            Toplam {sortedList.length} ödevden{' '}
+            {sortedList.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}-
+            {Math.min(currentPage * itemsPerPage, sortedList.length)} arası listeleniyor
+          </p>
+          <div className="flex gap-1.5 items-center">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`w-7 h-7 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-colors ${
+                currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer'
+              }`}
+            >
               <span className="material-symbols-outlined text-sm">chevron_left</span>
             </button>
-            <button className="w-7 h-7 rounded bg-blue-900 text-white flex items-center justify-center text-xs">1</button>
-            <button className="w-7 h-7 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const pageNum = i + 1
+              if (totalPages > 5 && Math.abs(pageNum - currentPage) > 1 && pageNum !== 1 && pageNum !== totalPages) {
+                if (pageNum === 2 || pageNum === totalPages - 1) {
+                  return <span key={pageNum} className="text-slate-450 px-0.5 normal-case">...</span>
+                }
+                return null
+              }
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`w-7 h-7 rounded flex items-center justify-center text-xs cursor-pointer font-bold ${
+                    currentPage === pageNum
+                      ? 'bg-blue-900 text-white'
+                      : 'border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              )
+            })}
+
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className={`w-7 h-7 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-colors ${
+                currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer'
+              }`}
+            >
               <span className="material-symbols-outlined text-sm">chevron_right</span>
             </button>
           </div>

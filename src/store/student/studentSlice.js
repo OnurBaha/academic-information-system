@@ -110,7 +110,8 @@ export const submitStudentHomeworkAsync = createAsyncThunk(
     'student/submitHomeworkAsync',
     async ({ gradeId, homeworkPayload }, { rejectWithValue }) => {
         try {
-            return await apiFetch(`/studentGrades/${gradeId}`, {
+            // 1. Update the student's grade record
+            const gradeResult = await apiFetch(`/studentGrades/${gradeId}`, {
                 method: 'PATCH',
                 body: JSON.stringify({
                     homeworkStatus: 'submitted',
@@ -120,6 +121,55 @@ export const submitStudentHomeworkAsync = createAsyncThunk(
                     githubLink: homeworkPayload.githubLink,
                 }),
             });
+
+            // 2. Create or update the homework review entry so the teacher sees it
+            try {
+                const reviews = await apiFetch('/homeworkReviews');
+                const existing = reviews.find(r => 
+                    r.studentId === homeworkPayload.studentId && 
+                    r.courseCode === homeworkPayload.courseCode && 
+                    r.homeworkId === homeworkPayload.homeworkId
+                );
+
+                const reviewData = {
+                    studentId: homeworkPayload.studentId,
+                    courseCode: homeworkPayload.courseCode,
+                    homeworkId: homeworkPayload.homeworkId,
+                    name: homeworkPayload.studentName,
+                    avatar: homeworkPayload.avatar || (homeworkPayload.studentName ? homeworkPayload.studentName.charAt(0) : 'Ö'),
+                    meta: `${homeworkPayload.studentNumber} · ${homeworkPayload.title || 'Ödev'}`,
+                    github: homeworkPayload.githubLink,
+                    fileName: homeworkPayload.fileName,
+                    time: new Date().toLocaleString('tr-TR'),
+                    status: 'Bekliyor',
+                    grade: '',
+                    feedback: ''
+                };
+
+                if (existing) {
+                    await apiFetch(`/homeworkReviews/${existing.id}`, {
+                        method: 'PATCH',
+                        body: JSON.stringify({
+                            github: reviewData.github,
+                            fileName: reviewData.fileName,
+                            time: reviewData.time,
+                            status: 'Bekliyor'
+                        })
+                    });
+                } else {
+                    await apiFetch('/homeworkReviews', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            id: `rev-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`,
+                            ...reviewData
+                        })
+                    });
+                }
+            } catch (reviewErr) {
+                console.error("Error updating homeworkReviews:", reviewErr);
+            }
+
+            return gradeResult;
         } catch (error) {
             return rejectWithValue(error.message);
         }

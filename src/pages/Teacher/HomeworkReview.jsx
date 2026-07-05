@@ -24,6 +24,11 @@ export default function HomeworkReview() {
   const [selectedHomework, setSelectedHomework] = useState('')
   const [selectedStudentId, setSelectedStudentId] = useState('')
   const [subFilterTab, setSubFilterTab] = useState('All')
+  const [teacherCurrentPage, setTeacherCurrentPage] = useState(1)
+
+  useEffect(() => {
+    setTeacherCurrentPage(1)
+  }, [selectedCourse, selectedHomework, subFilterTab])
 
   // Dynamic student derivation
   const students = useMemo(() => {
@@ -118,10 +123,12 @@ export default function HomeworkReview() {
     // Dispatch action
     dispatch(addHomework({
       courseCode: newHwCourseCode,
-      title: newHwTitle,
-      givenDate: formattedGiven,
-      dueDate: formattedDue,
-      weight: Number(newHwWeight)
+      homeworkPayload: {
+        title: newHwTitle,
+        givenDate: formattedGiven,
+        dueDate: formattedDue,
+        weight: Number(newHwWeight)
+      }
     }))
 
     // Bir sonraki ödev ID'sini hesaplama
@@ -387,6 +394,31 @@ export default function HomeworkReview() {
     return true
   })
 
+  const sortedFilteredStudents = useMemo(() => {
+    return [...filteredStudents].sort((a, b) => {
+      const statusOrder = {
+        'Bekliyor': 1,
+        'İncelendi': 2,
+        'Onaylandı': 3,
+        'Teslim Edilmedi': 4
+      }
+      const orderA = statusOrder[a.status] || 99
+      const orderB = statusOrder[b.status] || 99
+      return orderA - orderB
+    })
+  }, [filteredStudents])
+
+  const tItemsPerPage = 5
+  const tTotalPages = Math.ceil(sortedFilteredStudents.length / tItemsPerPage) || 1
+
+  useEffect(() => {
+    if (teacherCurrentPage > tTotalPages) {
+      setTeacherCurrentPage(tTotalPages)
+    }
+  }, [tTotalPages, teacherCurrentPage])
+
+  const displayedStudents = sortedFilteredStudents.slice((teacherCurrentPage - 1) * tItemsPerPage, teacherCurrentPage * tItemsPerPage)
+
   // Öğrenci Bazlı Görünüm için Seçili Öğrenci Bilgileri
   const selectedStudent = students.find(s => s.id === selectedStudentId)
 
@@ -625,8 +657,8 @@ export default function HomeworkReview() {
 
           {/* Öğrenci Listesi */}
           <div className="hw-list-container">
-            {filteredStudents.length > 0 ? (
-              filteredStudents.map(({ student, review, isSubmitted, status }) => {
+            {displayedStudents.length > 0 ? (
+              displayedStudents.map(({ student, review, isSubmitted, status }) => {
                 const inputKey = `${student.id}_${selectedCourse}_${selectedHomework}`
                 const gradeVal = grades[inputKey] !== undefined 
                   ? grades[inputKey] 
@@ -689,7 +721,7 @@ export default function HomeworkReview() {
                       <div className="flex items-center gap-2">
                         {isSubmitted ? (
                           <span className={getStatusBadge(status)}>
-                            Teslim Edildi: {status}
+                            {status === 'Bekliyor' ? 'Onay Bekliyor' : status}
                           </span>
                         ) : (
                           <span className="px-2.5 py-1 bg-red-50 text-red-600 text-xs font-bold rounded-full border border-red-100/50">
@@ -738,16 +770,23 @@ export default function HomeworkReview() {
                       </div>
                     </div>
 
+                    {review?.fileName && (
+                      <div className="text-[11px] text-slate-500 font-semibold mb-2 bg-slate-100 dark:bg-slate-800/80 p-2 rounded-lg flex items-center gap-1.5 w-full">
+                        <span className="material-symbols-outlined text-[13px] text-blue-600">description</span>
+                        <span>Dosya: {review.fileName}</span>
+                      </div>
+                    )}
+
                     {/* Aksiyon Butonları */}
                     <div className="hw-actions-wrap flex gap-2">
                       <button
                         className={`flex-1 py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all border ${
-                          isSubmitted 
+                          review?.github 
                             ? 'bg-blue-50 hover:bg-blue-100 border-blue-200/50 text-blue-600' 
                             : 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed'
                         }`}
                         onClick={() => handleOpenGithub(review?.github)}
-                        disabled={!isSubmitted}
+                        disabled={!review?.github}
                       >
                         <span className="material-symbols-outlined">link</span>
                         <span>Dosya Gör / Git</span>
@@ -780,15 +819,69 @@ export default function HomeworkReview() {
                       )}
                     </div>
                   </div>
-                )
-              })
-            ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-slate-400 bg-white border border-slate-200/60 rounded-xl">
-                <span className="material-symbols-outlined text-4xl mb-2 text-slate-300">search_off</span>
-                <p className="text-sm font-medium">Seçilen kriterlere uygun öğrenci bulunamadı.</p>
+                )})
+              ) : (
+                <div className="flex flex-col items-center justify-center py-12 text-slate-400 bg-white border border-slate-200/60 rounded-xl">
+                  <span className="material-symbols-outlined text-4xl mb-2 text-slate-300">search_off</span>
+                  <p className="text-sm font-medium">Seçilen kriterlere uygun öğrenci bulunamadı.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Sayfalama Kontrolleri */}
+            {sortedFilteredStudents.length > 0 && (
+              <div className="mt-4 px-6 py-4 bg-white border border-slate-200/65 rounded-xl flex justify-between items-center text-slate-500 text-[10px] font-bold uppercase shadow-sm">
+                <p>
+                  Toplam {sortedFilteredStudents.length} kayıt arasından{' '}
+                  {(teacherCurrentPage - 1) * tItemsPerPage + 1}-
+                  {Math.min(teacherCurrentPage * tItemsPerPage, sortedFilteredStudents.length)} arası gösteriliyor
+                </p>
+                <div className="flex gap-1.5 items-center">
+                  <button
+                    onClick={() => setTeacherCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={teacherCurrentPage === 1}
+                    className={`w-7 h-7 rounded border border-slate-200 flex items-center justify-center transition-colors ${
+                      teacherCurrentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-100 cursor-pointer text-slate-700'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-sm">chevron_left</span>
+                  </button>
+                  
+                  {Array.from({ length: tTotalPages }).map((_, i) => {
+                    const pageNum = i + 1
+                    if (tTotalPages > 5 && Math.abs(pageNum - teacherCurrentPage) > 1 && pageNum !== 1 && pageNum !== tTotalPages) {
+                      if (pageNum === 2 || pageNum === tTotalPages - 1) {
+                        return <span key={pageNum} className="text-slate-450 px-0.5 normal-case">...</span>
+                      }
+                      return null
+                    }
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setTeacherCurrentPage(pageNum)}
+                        className={`w-7 h-7 rounded flex items-center justify-center text-xs cursor-pointer font-bold ${
+                          teacherCurrentPage === pageNum
+                            ? 'bg-blue-900 text-white'
+                            : 'border border-slate-200 hover:bg-slate-100 text-slate-700'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    )
+                  })}
+
+                  <button
+                    onClick={() => setTeacherCurrentPage(prev => Math.min(prev + 1, tTotalPages))}
+                    disabled={teacherCurrentPage === tTotalPages}
+                    className={`w-7 h-7 rounded border border-slate-200 flex items-center justify-center transition-colors ${
+                      teacherCurrentPage === tTotalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-100 cursor-pointer text-slate-700'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-sm">chevron_right</span>
+                  </button>
+                </div>
               </div>
             )}
-          </div>
         </>
       )}
 
@@ -901,7 +994,7 @@ export default function HomeworkReview() {
                       <div>
                         {isSubmitted ? (
                           <span className={getStatusBadge(status)}>
-                            Teslim Edildi: {status}
+                            {status === 'Bekliyor' ? 'Onay Bekliyor' : status}
                           </span>
                         ) : (
                           <span className="px-2.5 py-1 bg-red-50 text-red-600 text-xs font-bold rounded-full border border-red-100/50">
@@ -942,16 +1035,23 @@ export default function HomeworkReview() {
                       </div>
                     </div>
 
+                    {hw.review?.fileName && (
+                      <div className="text-[11px] text-slate-500 font-semibold mb-2 bg-slate-100 dark:bg-slate-800/80 p-2 rounded-lg flex items-center gap-1.5 w-full">
+                        <span className="material-symbols-outlined text-[13px] text-blue-600">description</span>
+                        <span>Dosya: {hw.review.fileName}</span>
+                      </div>
+                    )}
+
                     {/* Kaydetme Butonu */}
                     <div className="flex justify-end gap-2">
                       <button
                         className={`px-4 py-2 border rounded-lg text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all ${
-                          isSubmitted
+                          review?.github
                             ? 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
                             : 'bg-slate-50 text-slate-400 border-slate-100 cursor-not-allowed'
                         }`}
                         onClick={() => handleOpenGithub(review?.github)}
-                        disabled={!isSubmitted}
+                        disabled={!review?.github}
                       >
                         <span className="material-symbols-outlined text-sm">link</span>
                         <span>Dosya Gör</span>

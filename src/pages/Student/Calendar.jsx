@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { miniCalendarWeeks } from '../../store/student/studentData'
 
 export default function Calendar() {
@@ -7,22 +8,47 @@ export default function Calendar() {
   const [loading, setLoading] = useState(true)
 
   const [schedules, setSchedules] = useState([])
+  const [studentCourses, setStudentCourses] = useState([])
+  const { currentUser: user } = useSelector((state) => state.auth || {})
+
+  const isRegistered = (lesson, coursesList) => {
+    if (!coursesList || coursesList.length === 0) return false
+    
+    const normCode = (c) => (c || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+    const normName = (n) => (n || '').toLowerCase().trim()
+    
+    const lessonCode = lesson.courseCode || lesson.code
+    if (lessonCode) {
+      const lCodeNorm = normCode(lessonCode)
+      return coursesList.some(sc => normCode(sc.code) === lCodeNorm)
+    }
+    
+    const lNameNorm = normName(lesson.name)
+    return coursesList.some(sc => {
+      const scNameNorm = normName(sc.courseName)
+      return lNameNorm === scNameNorm || lNameNorm.startsWith(scNameNorm) || scNameNorm.startsWith(lNameNorm)
+    })
+  }
 
   useEffect(() => {
+    if (!user?.id) return
+
     Promise.all([
       fetch('http://localhost:3001/weeklyLessonsByWeek').then(res => res.json()),
-      fetch('http://localhost:3001/schedules?status=approved').then(res => res.json())
+      fetch('http://localhost:3001/schedules?status=approved').then(res => res.json()),
+      fetch(`http://localhost:3001/studentCourses?studentId=${user.id}`).then(res => res.json())
     ])
-      .then(([lessonsData, schedulesData]) => {
+      .then(([lessonsData, schedulesData, studentCoursesData]) => {
         setWeeklyLessonsByWeek(lessonsData)
         setSchedules(schedulesData)
+        setStudentCourses(studentCoursesData || [])
         setLoading(false)
       })
       .catch(err => {
         console.error('Error fetching calendar data', err)
         setLoading(false)
       })
-  }, [])
+  }, [user])
 
   const getWeekdayIndex = (day, month) => {
     const mIdx = month === 'May' ? 4 : 5
@@ -66,15 +92,18 @@ export default function Calendar() {
     else if (dayOfWeek === 4) dayLessons = [...(currentWeekLessons.thursday || [])]
     else if (dayOfWeek === 5) dayLessons = [...(currentWeekLessons.friday || [])]
 
+    // Kayıtlı olunan derslere göre filtrele
+    dayLessons = dayLessons.filter(lesson => isRegistered(lesson, studentCourses))
+
     // Bu güne denk gelen onaylı dekan programlarını ekle
     const dayNames = [null, 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma']
     const currentDayName = dayNames[dayOfWeek]
     
-    if (currentDayName) {
-      const activeSchedules = schedules.filter(s => s.day === currentDayName)
+    if (currentDayName && weekIndex !== 5 && weekIndex !== 8) {
+      const activeSchedules = schedules.filter(s => s.day === currentDayName && isRegistered(s, studentCourses))
       activeSchedules.forEach(s => {
         // Çakışmayı önlemek için eğer zaten aynı isimde ders varsa ekleme
-        if (!dayLessons.some(l => l.name === s.courseName)) {
+        if (!dayLessons.some(l => (l.name || '').toLowerCase().trim() === (s.courseName || '').toLowerCase().trim())) {
           // Saat aralığına göre top piksel hesaplama simülasyonu
           // '09:00 - 10:30' -> 09:00 (top: 0), 10:30 (height: 120)
           const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
@@ -231,10 +260,12 @@ export default function Calendar() {
 
               {/* Pazartesi Ders Gösterimi */}
               {((() => {
-                const lessons = weeklyLessonsByWeek[weekIndex]?.monday || []
-                const approvedSchedules = schedules.filter(s => s.day === 'Pazartesi')
+                const lessons = [...(weeklyLessonsByWeek[weekIndex]?.monday || [])].filter(l => isRegistered(l, studentCourses))
+                const approvedSchedules = (weekIndex === 5 || weekIndex === 8)
+                  ? []
+                  : schedules.filter(s => s.day === 'Pazartesi' && isRegistered(s, studentCourses))
                 approvedSchedules.forEach(s => {
-                  if (!lessons.some(l => l.name === s.courseName)) {
+                  if (!lessons.some(l => (l.name || '').toLowerCase().trim() === (s.courseName || '').toLowerCase().trim())) {
                     const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
                     const topVal = (startHour - 9) * 80
                     lessons.push({
@@ -261,16 +292,16 @@ export default function Calendar() {
                   }}
                   onClick={() => setSelectedDay(getWeekdayDayNum(1, weekIndex))}
                 >
-                  <div className={`w-full h-full course-card-inner course-card-${course.color} ${isMondayActive ? 'active' : ''} rounded-lg p-3 flex flex-col gap-1 shadow-sm transition-transform hover:scale-[1.02] cursor-pointer`}>
-                    <span className={`font-label-sm text-${course.color} uppercase tracking-wider`}>{course.type}</span>
-                    <h4 className={`font-title-lg text-${course.color} text-[14px] leading-tight font-bold`}>{course.name}</h4>
-                    <p className="text-[11px] text-on-surface-variant font-medium mt-auto flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]">person</span>
-                      <span>{course.instructor}</span>
+                  <div className={`w-full h-full course-card-inner course-card-${course.color} ${isMondayActive ? 'active' : ''} rounded-lg p-2 flex flex-col gap-0.5 shadow-sm transition-transform hover:scale-[1.02] cursor-pointer overflow-hidden`}>
+                    <span className={`text-[9px] font-bold text-${course.color} uppercase tracking-wider`}>{course.type}</span>
+                    <h4 className={`text-${course.color} text-[11px] md:text-[12px] leading-tight font-extrabold line-clamp-2`}>{course.name}</h4>
+                    <p className="text-[10px] text-on-surface-variant font-semibold mt-auto flex items-center gap-1 truncate">
+                      <span className="material-symbols-outlined text-[11px]">person</span>
+                      <span className="truncate">{course.instructor}</span>
                     </p>
-                    <p className="text-[11px] text-on-surface-variant font-medium flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]">meeting_room</span>
-                      <span>{course.room}</span>
+                    <p className="text-[10px] text-on-surface-variant font-semibold flex items-center gap-1 truncate">
+                      <span className="material-symbols-outlined text-[11px]">meeting_room</span>
+                      <span className="truncate">{course.room}</span>
                     </p>
                   </div>
                 </div>
@@ -278,10 +309,12 @@ export default function Calendar() {
 
               {/* Salı Ders Gösterimi */}
               {((() => {
-                const lessons = weeklyLessonsByWeek[weekIndex]?.tuesday || []
-                const approvedSchedules = schedules.filter(s => s.day === 'Salı')
+                const lessons = [...(weeklyLessonsByWeek[weekIndex]?.tuesday || [])].filter(l => isRegistered(l, studentCourses))
+                const approvedSchedules = (weekIndex === 5 || weekIndex === 8)
+                  ? []
+                  : schedules.filter(s => s.day === 'Salı' && isRegistered(s, studentCourses))
                 approvedSchedules.forEach(s => {
-                  if (!lessons.some(l => l.name === s.courseName)) {
+                  if (!lessons.some(l => (l.name || '').toLowerCase().trim() === (s.courseName || '').toLowerCase().trim())) {
                     const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
                     const topVal = (startHour - 9) * 80
                     lessons.push({
@@ -308,16 +341,16 @@ export default function Calendar() {
                   }}
                   onClick={() => setSelectedDay(getWeekdayDayNum(2, weekIndex))}
                 >
-                  <div className={`w-full h-full course-card-inner course-card-${course.color} ${isTuesdayActive ? 'active' : ''} rounded-lg p-3 flex flex-col gap-1 shadow-sm transition-transform hover:scale-[1.02] cursor-pointer`}>
-                    <span className={`font-label-sm text-${course.color} uppercase tracking-wider`}>{course.type}</span>
-                    <h4 className={`font-title-lg text-${course.color} text-[14px] leading-tight font-bold`}>{course.name}</h4>
-                    <p className="text-[11px] text-on-surface-variant font-medium mt-auto flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]">person</span>
-                      <span>{course.instructor}</span>
+                  <div className={`w-full h-full course-card-inner course-card-${course.color} ${isTuesdayActive ? 'active' : ''} rounded-lg p-2 flex flex-col gap-0.5 shadow-sm transition-transform hover:scale-[1.02] cursor-pointer overflow-hidden`}>
+                    <span className={`text-[9px] font-bold text-${course.color} uppercase tracking-wider`}>{course.type}</span>
+                    <h4 className={`text-${course.color} text-[11px] md:text-[12px] leading-tight font-extrabold line-clamp-2`}>{course.name}</h4>
+                    <p className="text-[10px] text-on-surface-variant font-semibold mt-auto flex items-center gap-1 truncate">
+                      <span className="material-symbols-outlined text-[11px]">person</span>
+                      <span className="truncate">{course.instructor}</span>
                     </p>
-                    <p className="text-[11px] text-on-surface-variant font-medium flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]">meeting_room</span>
-                      <span>{course.room}</span>
+                    <p className="text-[10px] text-on-surface-variant font-semibold flex items-center gap-1 truncate">
+                      <span className="material-symbols-outlined text-[11px]">meeting_room</span>
+                      <span className="truncate">{course.room}</span>
                     </p>
                   </div>
                 </div>
@@ -325,10 +358,12 @@ export default function Calendar() {
 
               {/* Çarşamba Ders Gösterimi */}
               {((() => {
-                const lessons = weeklyLessonsByWeek[weekIndex]?.wednesday || []
-                const approvedSchedules = schedules.filter(s => s.day === 'Çarşamba')
+                const lessons = [...(weeklyLessonsByWeek[weekIndex]?.wednesday || [])].filter(l => isRegistered(l, studentCourses))
+                const approvedSchedules = (weekIndex === 5 || weekIndex === 8)
+                  ? []
+                  : schedules.filter(s => s.day === 'Çarşamba' && isRegistered(s, studentCourses))
                 approvedSchedules.forEach(s => {
-                  if (!lessons.some(l => l.name === s.courseName)) {
+                  if (!lessons.some(l => (l.name || '').toLowerCase().trim() === (s.courseName || '').toLowerCase().trim())) {
                     const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
                     const topVal = (startHour - 9) * 80
                     lessons.push({
@@ -355,16 +390,16 @@ export default function Calendar() {
                   }}
                   onClick={() => setSelectedDay(getWeekdayDayNum(3, weekIndex))}
                 >
-                  <div className={`w-full h-full course-card-inner course-card-${course.color} ${isWednesdayActive ? 'active' : ''} rounded-lg p-3 flex flex-col gap-1 shadow-sm transition-transform hover:scale-[1.02] cursor-pointer`}>
-                    <span className={`font-label-sm text-${course.color} uppercase tracking-wider`}>{course.type}</span>
-                    <h4 className={`font-title-lg text-${course.color} text-[14px] leading-tight font-bold`}>{course.name}</h4>
-                    <p className="text-[11px] text-on-surface-variant font-medium mt-auto flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]">person</span>
-                      <span>{course.instructor}</span>
+                  <div className={`w-full h-full course-card-inner course-card-${course.color} ${isWednesdayActive ? 'active' : ''} rounded-lg p-2 flex flex-col gap-0.5 shadow-sm transition-transform hover:scale-[1.02] cursor-pointer overflow-hidden`}>
+                    <span className={`text-[9px] font-bold text-${course.color} uppercase tracking-wider`}>{course.type}</span>
+                    <h4 className={`text-${course.color} text-[11px] md:text-[12px] leading-tight font-extrabold line-clamp-2`}>{course.name}</h4>
+                    <p className="text-[10px] text-on-surface-variant font-semibold mt-auto flex items-center gap-1 truncate">
+                      <span className="material-symbols-outlined text-[11px]">person</span>
+                      <span className="truncate">{course.instructor}</span>
                     </p>
-                    <p className="text-[11px] text-on-surface-variant font-medium flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]">meeting_room</span>
-                      <span>{course.room}</span>
+                    <p className="text-[10px] text-on-surface-variant font-semibold flex items-center gap-1 truncate">
+                      <span className="material-symbols-outlined text-[11px]">meeting_room</span>
+                      <span className="truncate">{course.room}</span>
                     </p>
                   </div>
                 </div>
@@ -372,10 +407,12 @@ export default function Calendar() {
 
               {/* Perşembe Ders Gösterimi */}
               {((() => {
-                const lessons = weeklyLessonsByWeek[weekIndex]?.thursday || []
-                const approvedSchedules = schedules.filter(s => s.day === 'Perşembe')
+                const lessons = [...(weeklyLessonsByWeek[weekIndex]?.thursday || [])].filter(l => isRegistered(l, studentCourses))
+                const approvedSchedules = (weekIndex === 5 || weekIndex === 8)
+                  ? []
+                  : schedules.filter(s => s.day === 'Perşembe' && isRegistered(s, studentCourses))
                 approvedSchedules.forEach(s => {
-                  if (!lessons.some(l => l.name === s.courseName)) {
+                  if (!lessons.some(l => (l.name || '').toLowerCase().trim() === (s.courseName || '').toLowerCase().trim())) {
                     const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
                     const topVal = (startHour - 9) * 80
                     lessons.push({
@@ -402,16 +439,16 @@ export default function Calendar() {
                   }}
                   onClick={() => setSelectedDay(getWeekdayDayNum(4, weekIndex))}
                 >
-                  <div className={`w-full h-full course-card-inner course-card-${course.color} ${isThursdayActive ? 'active' : ''} rounded-lg p-3 flex flex-col gap-1 shadow-sm transition-transform hover:scale-[1.02] cursor-pointer`}>
-                    <span className={`font-label-sm text-${course.color} uppercase tracking-wider`}>{course.type}</span>
-                    <h4 className={`font-title-lg text-${course.color} text-[14px] leading-tight font-bold`}>{course.name}</h4>
-                    <p className="text-[11px] text-on-surface-variant font-medium mt-auto flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]">person</span>
-                      <span>{course.instructor}</span>
+                  <div className={`w-full h-full course-card-inner course-card-${course.color} ${isThursdayActive ? 'active' : ''} rounded-lg p-2 flex flex-col gap-0.5 shadow-sm transition-transform hover:scale-[1.02] cursor-pointer overflow-hidden`}>
+                    <span className={`text-[9px] font-bold text-${course.color} uppercase tracking-wider`}>{course.type}</span>
+                    <h4 className={`text-${course.color} text-[11px] md:text-[12px] leading-tight font-extrabold line-clamp-2`}>{course.name}</h4>
+                    <p className="text-[10px] text-on-surface-variant font-semibold mt-auto flex items-center gap-1 truncate">
+                      <span className="material-symbols-outlined text-[11px]">person</span>
+                      <span className="truncate">{course.instructor}</span>
                     </p>
-                    <p className="text-[11px] text-on-surface-variant font-medium flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]">meeting_room</span>
-                      <span>{course.room}</span>
+                    <p className="text-[10px] text-on-surface-variant font-semibold flex items-center gap-1 truncate">
+                      <span className="material-symbols-outlined text-[11px]">meeting_room</span>
+                      <span className="truncate">{course.room}</span>
                     </p>
                   </div>
                 </div>
@@ -419,10 +456,12 @@ export default function Calendar() {
 
               {/* Cuma Ders Gösterimi */}
               {((() => {
-                const lessons = weeklyLessonsByWeek[weekIndex]?.friday || []
-                const approvedSchedules = schedules.filter(s => s.day === 'Cuma')
+                const lessons = [...(weeklyLessonsByWeek[weekIndex]?.friday || [])].filter(l => isRegistered(l, studentCourses))
+                const approvedSchedules = (weekIndex === 5 || weekIndex === 8)
+                  ? []
+                  : schedules.filter(s => s.day === 'Cuma' && isRegistered(s, studentCourses))
                 approvedSchedules.forEach(s => {
-                  if (!lessons.some(l => l.name === s.courseName)) {
+                  if (!lessons.some(l => (l.name || '').toLowerCase().trim() === (s.courseName || '').toLowerCase().trim())) {
                     const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
                     const topVal = (startHour - 9) * 80
                     lessons.push({
@@ -449,16 +488,16 @@ export default function Calendar() {
                   }}
                   onClick={() => setSelectedDay(getWeekdayDayNum(5, weekIndex))}
                 >
-                  <div className={`w-full h-full course-card-inner course-card-${course.color} ${isFridayActive ? 'active' : ''} rounded-lg p-3 flex flex-col gap-1 shadow-sm transition-transform hover:scale-[1.02] cursor-pointer`}>
-                    <span className={`font-label-sm text-${course.color} uppercase tracking-wider`}>{course.type}</span>
-                    <h4 className={`font-title-lg text-${course.color} text-[14px] leading-tight font-bold`}>{course.name}</h4>
-                    <p className="text-[11px] text-on-surface-variant font-medium mt-auto flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]">person</span>
-                      <span>{course.instructor}</span>
+                  <div className={`w-full h-full course-card-inner course-card-${course.color} ${isFridayActive ? 'active' : ''} rounded-lg p-2 flex flex-col gap-0.5 shadow-sm transition-transform hover:scale-[1.02] cursor-pointer overflow-hidden`}>
+                    <span className={`text-[9px] font-bold text-${course.color} uppercase tracking-wider`}>{course.type}</span>
+                    <h4 className={`text-${course.color} text-[11px] md:text-[12px] leading-tight font-extrabold line-clamp-2`}>{course.name}</h4>
+                    <p className="text-[10px] text-on-surface-variant font-semibold mt-auto flex items-center gap-1 truncate">
+                      <span className="material-symbols-outlined text-[11px]">person</span>
+                      <span className="truncate">{course.instructor}</span>
                     </p>
-                    <p className="text-[11px] text-on-surface-variant font-medium flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]">meeting_room</span>
-                      <span>{course.room}</span>
+                    <p className="text-[10px] text-on-surface-variant font-semibold flex items-center gap-1 truncate">
+                      <span className="material-symbols-outlined text-[11px]">meeting_room</span>
+                      <span className="truncate">{course.room}</span>
                     </p>
                   </div>
                 </div>

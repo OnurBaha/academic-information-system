@@ -16,6 +16,7 @@ export default function Documents() {
   const [docSearchQuery, setDocSearchQuery] = useState('')
   const [showOtherForm, setShowOtherForm] = useState(false)
   const [otherDocType, setOtherDocType] = useState('Staj Belgesi')
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     if (currentUser?.id) {
@@ -150,6 +151,7 @@ export default function Documents() {
     if (requestOfficialDocumentAsync.fulfilled.match(resultAction)) {
       toast.success(`${type} talebiniz oluşturuldu ve anında indirilebilir duruma getirildi!`)
       setShowOtherForm(false)
+      setCurrentPage(1)
     } else {
       toast.error(resultAction.payload || 'Talep oluşturulamadı')
     }
@@ -169,8 +171,20 @@ export default function Documents() {
       (req.description && req.description.toLowerCase().includes(queryDoc))
   })
 
-  // En fazla 5 belgenin listelenmesi sınırı
-  const displayedRequests = filteredRequests.slice(0, 5)
+  // Yeni taleplerin en üstte çıkması için ters çevir
+  const sortedRequests = [...filteredRequests].reverse()
+
+  const itemsPerPage = 5
+  const totalPages = Math.ceil(sortedRequests.length / itemsPerPage) || 1
+
+  // Sayfa aralığı aşılmasın diye kontrol
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages)
+    }
+  }, [totalPages, currentPage])
+
+  const displayedRequests = sortedRequests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   // Sertifika arama filtreleme mantığı
   const filteredCertificates = certificates.filter((cert) => {
@@ -361,7 +375,7 @@ export default function Documents() {
                   return (
                     <tr key={req.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors group">
                       <td className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400">
-                        #BEL-2026-{String(idx + 1).padStart(3, '0')}
+                        #BEL-2026-{String((currentPage - 1) * itemsPerPage + idx + 1).padStart(3, '0')}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
@@ -397,13 +411,53 @@ export default function Documents() {
 
         {/* Tablo Alt Sayfalama */}
         <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800/60 flex justify-between items-center text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase">
-          <p>Toplam {filteredRequests.length} belgeden {displayedRequests.length} tanesi listeleniyor</p>
-          <div className="flex gap-1.5">
-            <button className="w-7 h-7 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <p>
+            Toplam {filteredRequests.length} belgeden{' '}
+            {filteredRequests.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}-
+            {Math.min(currentPage * itemsPerPage, filteredRequests.length)} arası listeleniyor
+          </p>
+          <div className="flex gap-1.5 items-center">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`w-7 h-7 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-colors ${
+                currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer'
+              }`}
+            >
               <span className="material-symbols-outlined text-sm">chevron_left</span>
             </button>
-            <button className="w-7 h-7 rounded bg-blue-900 text-white flex items-center justify-center text-xs">1</button>
-            <button className="w-7 h-7 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            
+            {Array.from({ length: totalPages }).map((_, i) => {
+              const pageNum = i + 1
+              // Sadece geçerli sayfanın etrafındaki sayfaları göster (Basit pagination)
+              if (totalPages > 5 && Math.abs(pageNum - currentPage) > 1 && pageNum !== 1 && pageNum !== totalPages) {
+                if (pageNum === 2 || pageNum === totalPages - 1) {
+                  return <span key={pageNum} className="text-slate-450 px-0.5 normal-case">...</span>
+                }
+                return null
+              }
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`w-7 h-7 rounded flex items-center justify-center text-xs cursor-pointer font-bold ${
+                    currentPage === pageNum
+                      ? 'bg-blue-900 text-white'
+                      : 'border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              )
+            })}
+
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className={`w-7 h-7 rounded border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-colors ${
+                currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer'
+              }`}
+            >
               <span className="material-symbols-outlined text-sm">chevron_right</span>
             </button>
           </div>

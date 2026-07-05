@@ -100,8 +100,7 @@ export default function TopAppBar() {
   const userName = currentUser?.name || 'Kullanıcı'
   const userId = role === 'student' ? (currentUser?.studentNumber || currentUser?.id || '—') : null
 
-  // Hem API hem de teacher store duyurularını birleştir, ID'ye göre tekrarları engelle
-  // Hem API, teacher hem de dekan bültenlerini birleştir
+  // Hem API, teacher hem de dekan bültenlerini birleştir ve en yeniden en eskiye sırala
   const allAnnouncements = useMemo(() => {
     const mappedBulletins = bulletins.map(b => ({
       id: b.id,
@@ -117,8 +116,27 @@ export default function TopAppBar() {
       ...(teacherAnnouncements || []),
       ...mappedBulletins
     ]
+
+    const parseDate = (dStr) => {
+      if (!dStr) return 0
+      const clean = dStr.split('-')[0].trim()
+      const parts = clean.includes('/') ? clean.split('/') : clean.split('.')
+      if (parts.length !== 3) return 0
+      const day = parseInt(parts[0], 10)
+      const month = parseInt(parts[1], 10) - 1
+      const year = parseInt(parts[2], 10)
+      return new Date(year, month, day).getTime()
+    }
+
+    const sorted = [...combined].sort((a, b) => {
+      const dateA = parseDate(a.date)
+      const dateB = parseDate(b.date)
+      if (dateB !== dateA) return dateB - dateA
+      return String(b.id).localeCompare(String(a.id))
+    })
+
     const seen = new Set()
-    return combined.filter(ann => {
+    return sorted.filter(ann => {
       const key = String(ann.id)
       if (seen.has(key)) return false
       seen.add(key)
@@ -131,6 +149,10 @@ export default function TopAppBar() {
     return allAnnouncements.filter(ann => {
       if (role === 'student') {
         return ann.target === 'global' || ann.target === 'Tüm Öğrenciler' || (ann.target === 'class' && ann.courseId);
+      }
+      if (role === 'dean') {
+        // Öğretmenin sınıf duyuruları veya sadece öğrencilere özel duyurular dekanda görünmemeli
+        return ann.target !== 'class' && ann.target !== 'Tüm Öğrenciler';
       }
       return true;
     })

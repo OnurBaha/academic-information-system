@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiFetch } from '../../services/api';
+import { calculateScore, getLetterGrade } from '../../utils/studentCalc';
 
 // Async Thunks
 export const fetchTeacherStudentsGradesAsync = createAsyncThunk(
@@ -27,19 +28,11 @@ export const updateStudentGradeAsync = createAsyncThunk(
             let letterGrade = null;
 
             if (updatedMidterm !== null && updatedFinal !== null && updatedMidterm !== undefined && updatedFinal !== undefined) {
-                const m = updatedMidterm || 0;
-                const f = updatedFinal || 0;
-                const p = updatedProject || 0;
                 const hw = homeworkAverage !== undefined ? Number(homeworkAverage) : 0;
-                average = Math.round((m * 0.25) + (p * 0.25) + (hw * 0.15) + (f * 0.35));
-
-                if (average >= 90) letterGrade = 'AA';
-                else if (average >= 80) letterGrade = 'BA';
-                else if (average >= 70) letterGrade = 'BB';
-                else if (average >= 60) letterGrade = 'CB';
-                else if (average >= 50) letterGrade = 'CC';
-                else if (average >= 45) letterGrade = 'DC';
-                else letterGrade = 'FF';
+                // Use shared calculateScore + getLetterGrade so teacher & student see identical result
+                const score = calculateScore(updatedMidterm, updatedFinal, updatedProject, hw);
+                average = Math.round(score);
+                letterGrade = getLetterGrade(score);
             }
 
             return await apiFetch(`/studentGrades/${gradeId}`, {
@@ -62,9 +55,30 @@ export const updateAttendanceAsync = createAsyncThunk(
     'teacher/updateAttendanceAsync',
     async ({ gradeId, attendanceStatus }, { rejectWithValue }) => {
         try {
+            const currentGrade = await apiFetch(`/studentGrades/${gradeId}`);
+            const totalWeeks = 14; // Toplam ders haftası
+
+            let absentDates = Array.isArray(currentGrade.absentDates) ? [...currentGrade.absentDates] : [];
+
+            if (attendanceStatus === 'Yok') {
+                // Bugünün tarihini dd.mm.yyyy formatında ekle (tekrar ekleme)
+                const now = new Date();
+                const todayStr = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
+                if (!absentDates.includes(todayStr)) {
+                    absentDates.push(todayStr);
+                }
+            } else if (attendanceStatus === 'Mevcut') {
+                // Mevcut işaretlenirse bugünü listeden kaldır
+                const now = new Date();
+                const todayStr = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
+                absentDates = absentDates.filter(d => d !== todayStr);
+            }
+
+            const absencePercentage = Math.round((absentDates.length / totalWeeks) * 100);
+
             return await apiFetch(`/studentGrades/${gradeId}`, {
                 method: 'PATCH',
-                body: JSON.stringify({ attendanceStatus }),
+                body: JSON.stringify({ attendanceStatus, absentDates, absencePercentage }),
             });
         } catch (error) {
             return rejectWithValue(error.message);
@@ -162,8 +176,9 @@ export const evaluateHomework = createAsyncThunk(
                 }
             }
 
+            let result;
             if (reviewId) {
-                return await apiFetch(`/homeworkReviews/${reviewId}`, {
+                result = await apiFetch(`/homeworkReviews/${reviewId}`, {
                     method: 'PATCH',
                     body: JSON.stringify({
                         grade: grade !== '' && grade !== null && grade !== undefined ? Number(grade) : '',
@@ -172,7 +187,7 @@ export const evaluateHomework = createAsyncThunk(
                     })
                 });
             } else {
-                return await apiFetch('/homeworkReviews', {
+                result = await apiFetch('/homeworkReviews', {
                     method: 'POST',
                     body: JSON.stringify({
                         id: `rev-${Date.now()}`,
@@ -188,6 +203,75 @@ export const evaluateHomework = createAsyncThunk(
                     })
                 });
             }
+
+            // Sync with studentGrades!
+            try {
+                const [allReviews, allCourses, allGrades] = await Promise.all([
+                    apiFetch('/homeworkReviews'),
+                    apiFetch('/courses'),
+                    apiFetch('/studentGrades')
+                ]);
+
+                const gradeRec = allGrades.find(g => g.studentId === studentId && g.courseCode === courseCode);
+                if (gradeRec) {
+                    const course = allCourses.find(c => c.code === courseCode);
+                    if (course && Array.isArray(course.homeworks) && course.homeworks.length > 0) {
+                        const updatedReviews = allReviews.map(r => {
+                            if (r.studentId === studentId && r.courseCode === courseCode && r.homeworkId === homeworkId) {
+                                return { ...r, grade: grade !== '' && grade !== null && grade !== undefined ? Number(grade) : '' };
+                            }
+                            return r;
+                        });
+
+                        const exists = allReviews.some(r => r.studentId === studentId && r.courseCode === courseCode && r.homeworkId === homeworkId);
+                        if (!exists) {
+                            updatedReviews.push({ studentId, courseCode, homeworkId, grade: grade !== '' && grade !== null && grade !== undefined ? Number(grade) : '' });
+                        }
+
+                        let weightedScoreSum = 0;
+                        let totalWeight = 0;
+                        let gradedCount = 0;
+
+                        course.homeworks.forEach(hw => {
+                            const rev = updatedReviews.find(r => r.studentId === studentId && r.courseCode === courseCode && r.homeworkId === hw.id);
+                            let hGrade = 0;
+                            if (rev && rev.grade !== '' && rev.grade !== undefined && rev.grade !== null) {
+                                hGrade = Number(rev.grade);
+                                gradedCount++;
+                            }
+                            const weight = hw.weight !== undefined ? Number(hw.weight) : 0;
+                            weightedScoreSum += hGrade * weight;
+                            totalWeight += weight;
+                        });
+
+                        let homeworkAvg = 0;
+                        if (totalWeight > 0) {
+                            homeworkAvg = weightedScoreSum / totalWeight;
+                        } else if (gradedCount > 0) {
+                            homeworkAvg = weightedScoreSum / gradedCount;
+                        }
+                        homeworkAvg = Math.round(homeworkAvg * 10) / 10;
+
+                        if (gradeRec.midterm !== null && gradeRec.final !== null && gradeRec.midterm !== undefined && gradeRec.final !== undefined) {
+                            const score = calculateScore(gradeRec.midterm, gradeRec.final, gradeRec.project ?? gradeRec.proje, homeworkAvg);
+                            const average = Math.round(score);
+                            const letterGrade = getLetterGrade(score);
+
+                            await apiFetch(`/studentGrades/${gradeRec.id}`, {
+                                method: 'PATCH',
+                                body: JSON.stringify({
+                                    average,
+                                    letterGrade
+                                })
+                            });
+                        }
+                    }
+                }
+            } catch (syncErr) {
+                console.error("Error syncing studentGrades in evaluateHomework:", syncErr);
+            }
+
+            return result;
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -348,6 +432,8 @@ const teacherSlice = createSlice({
                 const index = state.studentsGrades.findIndex((g) => g.id === action.payload.id);
                 if (index !== -1) {
                     state.studentsGrades[index].attendanceStatus = action.payload.attendanceStatus;
+                    state.studentsGrades[index].absentDates = action.payload.absentDates;
+                    state.studentsGrades[index].absencePercentage = action.payload.absencePercentage;
                 }
             })
             .addCase(updateAttendanceAsync.rejected, (state, action) => {

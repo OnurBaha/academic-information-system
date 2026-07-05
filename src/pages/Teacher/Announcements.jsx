@@ -107,16 +107,6 @@ export default function Announcements() {
     <section className="ann-page-canvas">
       <div className="ann-page-header">
         <h2 className="ann-page-title">Duyuru &amp; İletişim Portalı</h2>
-        <button
-          className="ann-btn-new"
-          onClick={() => {
-            handleCancel()
-            document.querySelector('.ann-input-title')?.focus()
-          }}
-        >
-          <span className="material-symbols-outlined">add</span>
-          <span>Yeni Duyuru</span>
-        </button>
       </div>
 
       <div className="ann-composer-card">

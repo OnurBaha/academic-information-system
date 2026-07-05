@@ -19,14 +19,14 @@ export default function CourseRegistration() {
   const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   // Harç ödeme durumları
-  const [isTuitionPaid, setIsTuitionPaid] = useState(user?.tuitionPaid || false)
+  const [isTuitionPaid, setIsTuitionPaid] = useState(false)
   const [paymentStep, setPaymentStep] = useState('overview') // 'overview' | 'installments' | 'card' | 'sms' | 'success'
   const [selectedInstallment, setSelectedInstallment] = useState(1) // 1, 3, 6, 12
   const [cardName, setCardName] = useState('')
   const [cardNumber, setCardNumber] = useState('')
   const [cardExpiry, setCardExpiry] = useState('')
-  const cardExpiryMonth = cardExpiry.split('/')[0] || ''
-  const cardExpiryYear = cardExpiry.split('/')[1] || ''
+  const cardExpiryMonth = (cardExpiry.split('/')[0] || '').trim()
+  const cardExpiryYear = (cardExpiry.split('/')[1] || '').trim()
   const [cardCvv, setCardCvv] = useState('')
   const [smsCode, setSmsCode] = useState('')
   const [smsError, setSmsError] = useState('')
@@ -52,10 +52,59 @@ export default function CourseRegistration() {
         }
       }
 
-      // Harç ödeme durumu kontrolü
-      const savedTuition = localStorage.getItem(`tuition_paid_2026_2027_${user.id}`)
-      if (savedTuition === 'true' || user?.tuitionPaid) {
-        setIsTuitionPaid(true)
+      // Harç ödeme durumunu local storage'dan kontrol et (2026-2027 için)
+      const tuitionPaidNextYear = localStorage.getItem(`tuition_paid_2026_2027_${user.id}`) === 'true'
+      setIsTuitionPaid(tuitionPaidNextYear)
+
+      if (!tuitionPaidNextYear) {
+        // Eğer local storage sıfırlandıysa, veritabanındaki ders kayıt onay taleplerini de temizle (fresh simulation)
+        fetch(`http://localhost:3001/studentRequests?studentId=${user.id}&requestType=Ders%20Kayıt%20Onayı`)
+          .then(res => res.json())
+          .then(requests => {
+            if (requests && requests.length > 0) {
+              requests.forEach(req => {
+                fetch(`http://localhost:3001/studentRequests/${req.id}`, { method: 'DELETE' })
+                  .catch(err => console.error('Error deleting request:', err))
+              })
+            }
+          })
+          .catch(err => console.error('Error fetching/cleaning studentRequests:', err))
+          
+        setStatusState('Taslak')
+        localStorage.removeItem(`course_reg_${user.id}`)
+      } else {
+        // Ders kayıt talebi durumunu veritabanından çek ve senkronize et
+        fetch(`http://localhost:3001/studentRequests?studentId=${user.id}&requestType=Ders%20Kayıt%20Onayı`)
+          .then(res => res.json())
+          .then(requests => {
+            if (requests && requests.length > 0) {
+              const latest = requests[requests.length - 1]
+              if (latest.status === 'approved') {
+                setStatusState('Onaylandı')
+                const saved = localStorage.getItem(`course_reg_${user.id}`)
+                if (saved) {
+                  const parsed = JSON.parse(saved)
+                  localStorage.setItem(`course_reg_${user.id}`, JSON.stringify({
+                    ...parsed,
+                    status: 'Onaylandı'
+                  }))
+                }
+              } else if (latest.status === 'rejected') {
+                setStatusState('Taslak')
+                const saved = localStorage.getItem(`course_reg_${user.id}`)
+                if (saved) {
+                  const parsed = JSON.parse(saved)
+                  localStorage.setItem(`course_reg_${user.id}`, JSON.stringify({
+                    ...parsed,
+                    status: 'Taslak'
+                  }))
+                }
+              } else if (latest.status === 'pending') {
+                setStatusState('Onay Bekliyor')
+              }
+            }
+          })
+          .catch(err => console.error('Error fetching course registration request status:', err))
       }
     }
   }, [user])
@@ -167,7 +216,7 @@ export default function CourseRegistration() {
     }
 
     // Doğrulama: Tüm zorunlu derslerin seçilmiş olma zorunluluğu
-    const compulsoryCourses = courses.filter((c) => c.type === 'Zorunlu')
+    const compulsoryCourses = courses.filter((c) => c.type === 'Zorunlu' && (!c.departmentId || c.departmentId === user?.departmentId))
     const hasAllCompulsory = compulsoryCourses.every((compCourse) =>
       selectedCourses.some((selCourse) => selCourse.id === compCourse.id)
     )
@@ -185,13 +234,22 @@ export default function CourseRegistration() {
     setIsSubmitting(true)
 
     try {
-      // FAZ 4.2 — Dersleri db.json /studentCourses koleksiyonuna kaydet
-      if (user?.id) {
-        await dispatch(registerStudentCoursesAsync({
-          studentId: user.id,
-          coursesList: selectedCourses
-        })).unwrap()
+      // DB'ye ders kayıt onayı talebi gönder
+      const requestPayload = {
+        studentId: user.id,
+        studentName: user.name || 'Ahmet Yılmaz',
+        studentNumber: user.studentNumber || '20211024100',
+        requestType: 'Ders Kayıt Onayı',
+        details: `2026-2027 Güz Dönemi ders seçim onayı talep edilmiştir. (Toplam ${selectedCourses.length} Ders, ${totalAkts} AKTS)`,
+        status: 'pending',
+        createdAt: new Date().toLocaleDateString('tr-TR')
       }
+      
+      await fetch('http://localhost:3001/studentRequests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestPayload)
+      })
 
       setStatusState('Onay Bekliyor')
       saveState(selectedCourses, 'Onay Bekliyor')
@@ -208,7 +266,7 @@ export default function CourseRegistration() {
           createNotification({
             studentId: user.id,
             title: 'Ders Kaydı Gönderildi',
-            content: `2026-2027 Güz Dönemi ders kayıt talebiniz danışman onayına sunulmuştur. Durum: Danışman Onayı Bekleniyor`,
+            content: `2026-2027 Güz Dönemi ders kayıt talebiniz dekan onayına sunulmuştur. Durum: Dekan Onayı Bekleniyor`,
             date: formattedDate,
             read: false,
           })
@@ -223,9 +281,26 @@ export default function CourseRegistration() {
   }
 
   // İşlem: Gönderimi iptal et ve taslağa dön
-  const handleCancelSubmission = () => {
+  const handleCancelSubmission = async () => {
     setStatusState('Taslak')
     saveState(selectedCourses, 'Taslak')
+    
+    // Also delete the studentRequest from database if it exists!
+    try {
+      const res = await fetch(`http://localhost:3001/studentRequests?studentId=${user.id}&requestType=Ders%20Kayıt%20Onayı`)
+      const requests = await res.json()
+      if (requests && requests.length > 0) {
+        const pendingRequest = requests.find(r => r.status === 'pending')
+        if (pendingRequest) {
+          await fetch(`http://localhost:3001/studentRequests/${pendingRequest.id}`, {
+            method: 'DELETE'
+          })
+        }
+      }
+    } catch (err) {
+      console.error("Error deleting request:", err)
+    }
+
     toast.success('Ders seçimi onay talebi iptal edildi, taslak moduna geri dönüldü.')
   }
 
@@ -255,11 +330,20 @@ export default function CourseRegistration() {
     toast.success('Doğrulama SMS kodu gönderildi.')
   }
 
-  const handleVerifySms = (e) => {
+  const handleVerifySms = async (e) => {
     e.preventDefault()
     if (smsCode.trim().length >= 4) {
+      toast.success('Ödeme başarıyla tamamlandı ve ders kaydı açıldı!')
+      setIsTuitionPaid(true)
+      if (user?.id) {
+        localStorage.setItem(`tuition_paid_2026_2027_${user.id}`, 'true')
+        try {
+          await dispatch(updateProfileAsync({ id: user.id, tuitionPaid: true })).unwrap()
+        } catch (err) {
+          console.error('Error saving tuition status to DB', err)
+        }
+      }
       setPaymentStep('success')
-      toast.success('Ödeme doğrulaması başarılı!')
     } else {
       setSmsError('Lütfen en az 4 haneli bir onay kodu giriniz.')
     }
@@ -286,7 +370,8 @@ export default function CourseRegistration() {
 
   // Sanal kart simülasyon yardımcıları
   const formatCardNumberDisplay = (num) => {
-    const padded = num.padEnd(16, '•')
+    const clean = num.replace(/\s/g, '')
+    const padded = clean.padEnd(16, '•')
     return `${padded.slice(0, 4)} ${padded.slice(4, 8)} ${padded.slice(8, 12)} ${padded.slice(12, 16)}`
   }
 
@@ -309,7 +394,7 @@ export default function CourseRegistration() {
       (c.id && c.id.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (c.name && c.name.toLowerCase().includes(searchQuery.toLowerCase()))
     const matchesCategory = categoryFilter === 'All' || c.category === categoryFilter
-    
+
     // Öğrenci sadece kendi bölüm derslerini veya genel seçmeli dersleri görebilir
     const isDeptMatch = !c.departmentId || c.departmentId === user?.departmentId;
 
@@ -550,7 +635,7 @@ export default function CourseRegistration() {
                           placeholder="Kart üzerindeki isim"
                           value={cardName}
                           onChange={(e) => setCardName(e.target.value)}
-                          className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm"
+                          className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm text-slate-800 dark:text-white"
                         />
                       </div>
 
@@ -560,10 +645,15 @@ export default function CourseRegistration() {
                           type="text"
                           required
                           placeholder="XXXX XXXX XXXX XXXX"
-                          maxLength={16}
+                          maxLength={19}
                           value={cardNumber}
-                          onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, ''))}
-                          className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm tracking-widest"
+                          onChange={(e) => {
+                            const cleaned = e.target.value.replace(/\D/g, '')
+                            const matches = cleaned.match(/\d{1,4}/g)
+                            const formatted = matches ? matches.join(' ') : ''
+                            setCardNumber(formatted)
+                          }}
+                          className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm tracking-widest text-slate-800 dark:text-white"
                         />
                       </div>
 
@@ -573,18 +663,18 @@ export default function CourseRegistration() {
                           <input
                             type="text"
                             required
-                            placeholder="AA/YY"
-                            maxLength={5}
+                            placeholder="AA / YY"
+                            maxLength={7}
                             value={cardExpiry}
                             onChange={(e) => {
                               const cleaned = e.target.value.replace(/[^\d]/g, '')
                               let formatted = cleaned
                               if (cleaned.length > 2) {
-                                formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}`
+                                formatted = `${cleaned.slice(0, 2)} / ${cleaned.slice(2, 4)}`
                               }
                               setCardExpiry(formatted)
                             }}
-                            className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm text-center font-mono"
+                            className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm text-center font-mono text-slate-800 dark:text-white"
                           />
                         </div>
 
@@ -599,7 +689,7 @@ export default function CourseRegistration() {
                             onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, ''))}
                             onFocus={() => setIsCvvFocused(true)}
                             onBlur={() => setIsCvvFocused(false)}
-                            className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm text-center font-mono"
+                            className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm text-center font-mono text-slate-800 dark:text-white"
                           />
                         </div>
                       </div>
@@ -649,9 +739,10 @@ export default function CourseRegistration() {
                       type="text"
                       required
                       placeholder="Onay Kodu"
+                      maxLength={4}
                       value={smsCode}
                       onChange={(e) => {
-                        setSmsCode(e.target.value)
+                        setSmsCode(e.target.value.replace(/\D/g, ''))
                         setSmsError('')
                       }}
                       className="w-full px-4 py-3 bg-[#f6f9ff] dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-base tracking-widest text-center font-bold"
@@ -739,7 +830,7 @@ export default function CourseRegistration() {
                 Ders Seçiminiz Alınmıştır!
               </h2>
               <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                Talebiniz başarıyla danışmanınız <strong>{user?.advisor || 'Prof. Dr. Selçuk Yılmaz'}</strong> onayına gönderilmiştir.
+                Talebiniz başarıyla dekanlık onayına gönderilmiştir.
               </p>
             </div>
 
@@ -781,9 +872,9 @@ export default function CourseRegistration() {
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 {statusState === 'Onaylandı'
-                  ? 'Tebrikler! Ders seçiminiz akademik danışmanınız tarafından onaylanmıştır.'
+                  ? 'Tebrikler! Ders seçiminiz dekanlık tarafından onaylanmıştır.'
                   : statusState === 'Onay Bekliyor'
-                    ? 'Ders seçiminiz yapılmış olup akademik danışman onayı beklenmektedir.'
+                    ? 'Ders seçiminiz yapılmış olup dekanlık onayı beklenmektedir.'
                     : 'Okul ücreti ödemeniz doğrulanmıştır. En az 1 adet Seçmeli ders seçerek onay kutusuna gönderin.'}
               </p>
             </div>
@@ -801,7 +892,7 @@ export default function CourseRegistration() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                 </span>
-                Danışman Onayı Bekleniyor
+                Dekan Onayı Bekleniyor
               </span>
             ) : (
               <span className="bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 px-3.5 py-1.5 rounded-full text-xs font-bold border border-blue-200 dark:border-blue-900/40 flex items-center gap-1.5">
@@ -1106,7 +1197,7 @@ export default function CourseRegistration() {
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                     </span>
                     <span className="text-[11px] font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-wide animate-pulse">
-                      Danışman Onayı Bekleniyor
+                      Dekan Onayı Bekleniyor
                     </span>
                   </div>
                 ) : (
@@ -1183,7 +1274,7 @@ export default function CourseRegistration() {
                     </>
                   ) : (
                     <>
-                      <span>Danışman Onayına Gönder</span>
+                      <span>Dekan Onayına Gönder</span>
                       <span className="material-symbols-outlined text-sm">send</span>
                     </>
                   )}
