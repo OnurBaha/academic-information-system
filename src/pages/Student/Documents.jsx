@@ -24,7 +24,6 @@ export default function Documents() {
     }
   }, [dispatch, currentUser])
 
-  // FAZ 2.2 — Belge durumu badge yardımcısı (Dekan onayını göster)
   const getStatusBadge = (status) => {
     switch (status) {
       case 'ready':
@@ -51,12 +50,10 @@ export default function Documents() {
     }
   }
 
-  // PDF İndirme Fonksiyonu (Gerçek indirme simülasyonu)
   const handleDownloadPdf = (title) => {
     try {
       const doc = new jsPDF()
       
-      // Çerçeve (Resmi Görünüm)
       doc.setDrawColor(30, 58, 138)
       doc.setLineWidth(1)
       doc.rect(10, 10, 190, 277)
@@ -79,7 +76,6 @@ export default function Documents() {
       doc.setFontSize(10)
       doc.setTextColor(51, 65, 85)
       
-      // Belge içeriği
       let contentText = ''
       if (title.includes('Ogrenci') || title.includes('Öğrenci')) {
         contentText = `Yukarida kimlik bilgileri yer alan ${currentUser?.name || 'Ogrenci'} isimli ogrencinin, Universitemiz Bilgisayar Muhendisligi programinda kayitli ve aktif ogrencimiz oldugunu gosterir resmi ogrenci belgesidir.\n\nBu belge ogrencinin talebi uzerine ilgili makama sunulmak uzere duzenlenmistir.`
@@ -89,7 +85,6 @@ export default function Documents() {
         contentText = `Yukarida kimlik bilgileri yer alan ${currentUser?.name || 'Ogrenci'} isimli ogrencimizin, universitemiz resmi kayitlarina gore hazirlanmis resmi ${title} belgesidir.\n\nBu belge ilgili makama sunulmak uzere ogrencinin talebi dogrultusunda duzenlenmistir.`
       }
       
-      // Öğrenci Detayları Kutusu
       doc.rect(20, 75, 170, 45)
       doc.setFont('Helvetica', 'bold')
       doc.text('Ogrenci No:', 25, 85)
@@ -103,11 +98,9 @@ export default function Documents() {
       doc.text('102*********', 70, 105)
       doc.text('Muhendislik Fakultesi / Bilgisayar Muhendisligi', 70, 115)
       
-      // İçerik Metni
       const splitText = doc.splitTextToSize(contentText, 170)
       doc.text(splitText, 20, 140)
       
-      // Belge Doğrulama Kodu
       doc.setFont('Helvetica', 'bold')
       doc.setFontSize(9)
       doc.text('Belge Dogrulama Kodu: ' + Math.random().toString(36).substring(2, 10).toUpperCase(), 20, 200)
@@ -115,7 +108,6 @@ export default function Documents() {
       doc.setFontSize(8)
       doc.text('Bu belge elektronik imzali olup, yukaridaki dogrulama kodu ile sorgulanabilir.', 20, 205)
       
-      // İmza Yetkilileri
       doc.setFont('Helvetica', 'bold')
       doc.setFontSize(10)
       doc.text('Ogrenci Isleri Daire Baskani', 130, 230)
@@ -130,7 +122,6 @@ export default function Documents() {
     }
   }
 
-  // Talep Gönderimi Fonksiyonu
   const handleRequestSubmit = async (type) => {
     let description = ''
     if (type === 'Öğrenci Belgesi') {
@@ -159,11 +150,9 @@ export default function Documents() {
 
   const documentRequests = (documents || []).filter(d => (d.type === 'document' || !d.type) && d.title !== 'Askerlik Tecil Belgesi')
   
-  // defaultCertificates → src/data/studentData.js'ten import edilir
   const certificatesList = (documents || []).filter(d => d.type === 'certificate')
   const certificates = certificatesList.length > 0 ? certificatesList : defaultCertificates
 
-  // Arama filtreleme mantığı (Geçmiş Talepler için)
   const filteredRequests = documentRequests.filter((req) => {
     const queryDoc = docSearchQuery.trim().toLowerCase()
     return queryDoc === '' || 
@@ -171,13 +160,11 @@ export default function Documents() {
       (req.description && req.description.toLowerCase().includes(queryDoc))
   })
 
-  // Yeni taleplerin en üstte çıkması için ters çevir
   const sortedRequests = [...filteredRequests].reverse()
 
   const itemsPerPage = 5
   const totalPages = Math.ceil(sortedRequests.length / itemsPerPage) || 1
 
-  // Sayfa aralığı aşılmasın diye kontrol
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages)
@@ -186,7 +173,6 @@ export default function Documents() {
 
   const displayedRequests = sortedRequests.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
-  // Sertifika arama filtreleme mantığı
   const filteredCertificates = certificates.filter((cert) => {
     const queryDoc = docSearchQuery.trim().toLowerCase()
     return queryDoc === '' || 
@@ -199,7 +185,6 @@ export default function Documents() {
   return (
     <section className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 text-slate-800 dark:text-white">
       
-      {/* Üst Bilgi Başlığı */}
       <div className="student-hero-banner">
         <div className="absolute right-0 top-0 w-1/3 h-full opacity-10 pointer-events-none">
           <span className="material-symbols-outlined text-[200px] translate-x-12 -translate-y-6">history_edu</span>
@@ -212,10 +197,8 @@ export default function Documents() {
         </div>
       </div>
 
-      {/* Belge Talep Bento Kartları Grubu */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        {/* Kart 1: Öğrenci Belgesi */}
         <div className="bento-card bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between group shadow-sm">
           <div>
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center mb-5 transition-transform group-hover:scale-110">
@@ -239,7 +222,6 @@ export default function Documents() {
           </div>
         </div>
 
-        {/* Kart 2: Transkript */}
         <div className="bento-card bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between group shadow-sm">
           <div>
             <div className="w-12 h-12 bg-amber-100 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center mb-5 transition-transform group-hover:scale-110">
@@ -263,7 +245,6 @@ export default function Documents() {
           </div>
         </div>
 
-        {/* Kart 3: Mezuniyet Belgesi */}
         <div className="bento-card bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between group shadow-sm">
           <div>
             <div className="w-12 h-12 bg-slate-100 dark:bg-slate-900/60 text-slate-400 dark:text-slate-500 rounded-xl flex items-center justify-center mb-5 transition-transform group-hover:scale-110">
@@ -289,10 +270,8 @@ export default function Documents() {
 
       </div>
 
-      {/* Geçmiş Taleplerim Tablo Alanı */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm overflow-hidden">
         
-        {/* Tablo Başlık Barı */}
         <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-800/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50 dark:bg-slate-800/40">
           <h3 className="text-base font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2">
             <span className="material-symbols-outlined">history</span>
@@ -300,7 +279,6 @@ export default function Documents() {
           </h3>
           
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            {/* Arama Girişi */}
             <div className="relative flex-grow sm:flex-none">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">search</span>
               <input
@@ -312,7 +290,6 @@ export default function Documents() {
               />
             </div>
 
-            {/* Diğer Belge Talebi Formu / Butonu */}
             {!showOtherForm ? (
               <button
                 onClick={() => setShowOtherForm(true)}
@@ -348,7 +325,6 @@ export default function Documents() {
           </div>
         </div>
 
-        {/* Tablo İçeriği */}
         <div className="overflow-x-auto">
           {isLoading ? (
             <div className="text-center py-10 text-slate-400 dark:text-slate-500">
@@ -409,7 +385,6 @@ export default function Documents() {
           )}
         </div>
 
-        {/* Tablo Alt Sayfalama */}
         <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800/60 flex justify-between items-center text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase">
           <p>
             Toplam {filteredRequests.length} belgeden{' '}
@@ -429,7 +404,6 @@ export default function Documents() {
             
             {Array.from({ length: totalPages }).map((_, i) => {
               const pageNum = i + 1
-              // Sadece geçerli sayfanın etrafındaki sayfaları göster (Basit pagination)
               if (totalPages > 5 && Math.abs(pageNum - currentPage) > 1 && pageNum !== 1 && pageNum !== totalPages) {
                 if (pageNum === 2 || pageNum === totalPages - 1) {
                   return <span key={pageNum} className="text-slate-450 px-0.5 normal-case">...</span>
@@ -465,10 +439,8 @@ export default function Documents() {
 
       </div>
 
-      {/* Bilgi Kartları ve Sertifikalar 2'li Bento Alanı */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
         
-        {/* Kart 1: Yardım mı gerekiyor? */}
         <div className="flex flex-col p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800/60 shadow-sm">
           <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/60 pb-2.5 mb-3 shrink-0">
             <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl font-bold">contact_support</span>
@@ -489,7 +461,6 @@ export default function Documents() {
           </div>
         </div>
 
-        {/* Kart 3: Sertifikalarım Listesi */}
         <div className="flex flex-col p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800/60 shadow-sm">
           <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/60 pb-2.5 mb-3 shrink-0">
             <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl font-bold">workspace_premium</span>

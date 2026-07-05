@@ -188,7 +188,7 @@ const courseSlice = createSlice({
                 state.error = action.payload;
             })
             
-            // updateCurriculumCourseAsync
+            // müfredat dersini güncelle
             .addCase(updateCurriculumCourseAsync.fulfilled, (state, action) => {
                 const index = state.curriculum.findIndex((c) => c.id === action.payload.id);
                 if (index !== -1) {
@@ -196,7 +196,7 @@ const courseSlice = createSlice({
                 }
             })
             
-            // deleteCurriculumCourseAsync
+            // müfredat dersini sil
             .addCase(deleteCurriculumCourseAsync.fulfilled, (state, action) => {
                 state.curriculum = state.curriculum.filter((c) => c.id !== action.payload);
             });

@@ -130,6 +130,7 @@ export default function CourseRegistration() {
   }, [paymentStep])
 
   // Kaydetme yardımcısı
+  // kayıt durumunu kaydet
   const saveState = (newSelected, newStatus) => {
     if (user?.id) {
       localStorage.setItem(
@@ -147,6 +148,7 @@ export default function CourseRegistration() {
   const selectedElectivesCount = selectedCourses.filter((c) => c.type === 'Seçmeli').length
 
   // Ders işlem fonksiyonları
+  // ders ekle
   const handleAddCourse = (course) => {
     if (!isTuitionPaid) {
       toast.error('Öncelikle okul ücretini ödemeniz gerekmektedir.')
@@ -175,6 +177,7 @@ export default function CourseRegistration() {
     toast.success(`${course.code || course.id} dersi eklendi.`)
   }
 
+  // ders sil
   const handleRemoveCourse = (courseId) => {
     if (statusState !== 'Taslak') {
       toast.error('Ders seçiminiz onayda veya onaylanmış olduğu için değişiklik yapamazsınız.')
@@ -188,6 +191,7 @@ export default function CourseRegistration() {
   }
 
   // İşlem: Taslak kaydetme
+  // taslağı kaydet
   const handleSaveDraft = () => {
     if (statusState !== 'Taslak') {
       toast.error('Onay bekleyen veya onaylanmış kayıtlar üzerinde taslak kaydedilemez.')
@@ -199,6 +203,7 @@ export default function CourseRegistration() {
   }
 
   // İşlem: Danışmana gönderme
+  // danışmana gönder
   const handleSendToAdvisor = async () => {
     if (!isTuitionPaid) {
       toast.error('Öncelikle okul ücretini ödemeniz gerekmektedir.')
@@ -281,6 +286,7 @@ export default function CourseRegistration() {
   }
 
   // İşlem: Gönderimi iptal et ve taslağa dön
+  // gönderimi iptal et
   const handleCancelSubmission = async () => {
     setStatusState('Taslak')
     saveState(selectedCourses, 'Taslak')
@@ -305,6 +311,7 @@ export default function CourseRegistration() {
   }
 
   // Demo durumu geçişleri
+  // demo durumunu değiştir
   const handleDemoSetStatus = (newStatus) => {
     setStatusState(newStatus)
     saveState(selectedCourses, newStatus)
@@ -312,14 +319,17 @@ export default function CourseRegistration() {
   }
 
   // Harç ödeme formu işlemleri
+  // ödemeyi başlat
   const handleStartPayment = () => {
     setPaymentStep('installments')
   }
 
+  // kart bilgilerine geç
   const handleNextToCard = () => {
     setPaymentStep('card')
   }
 
+  // sms kodu gönder
   const handleSendSms = (e) => {
     e.preventDefault()
     if (!cardName || !cardNumber || !cardExpiryMonth || !cardExpiryYear || !cardCvv) {
@@ -330,6 +340,7 @@ export default function CourseRegistration() {
     toast.success('Doğrulama SMS kodu gönderildi.')
   }
 
+  // sms kodunu doğrula
   const handleVerifySms = async (e) => {
     e.preventDefault()
     if (smsCode.trim().length >= 4) {
@@ -349,6 +360,7 @@ export default function CourseRegistration() {
     }
   }
 
+  // ders kaydını aktif et
   const handleUnlockRegistration = async () => {
     setIsTuitionPaid(true)
     if (user?.id) {
@@ -364,17 +376,20 @@ export default function CourseRegistration() {
 
   // Harç hesaplamaları
   const totalTuition = 120000
+  // aylık taksit tutarını al
   const getMonthlyAmount = (inst) => {
     return Math.round(totalTuition / inst).toLocaleString('tr-TR')
   }
 
   // Sanal kart simülasyon yardımcıları
+  // kart numarasını maskele
   const formatCardNumberDisplay = (num) => {
     const clean = num.replace(/\s/g, '')
     const padded = clean.padEnd(16, '•')
     return `${padded.slice(0, 4)} ${padded.slice(4, 8)} ${padded.slice(8, 12)} ${padded.slice(12, 16)}`
   }
 
+  // son kullanma tarihini maskele
   const formatExpiryDisplay = () => {
     const mm = cardExpiryMonth.padEnd(2, '•')
     const yy = cardExpiryYear.padEnd(2, '•')
@@ -382,6 +397,7 @@ export default function CourseRegistration() {
   }
 
   // SMS zamanlayıcı biçimlendirici
+  // zamanlayıcıyı biçimlendir
   const formatTimer = (seconds) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
@@ -415,13 +431,11 @@ export default function CourseRegistration() {
   return (
     <section className={`flex-1 p-4 md:p-6 bg-[#f6f9ff] dark:bg-slate-900 transition-colors duration-200 pb-12 relative text-slate-800 dark:text-white ${!isTuitionPaid ? 'h-[calc(100vh-80px)] overflow-hidden' : 'overflow-y-auto min-h-screen'}`}>
 
-      {/* Harç ödeme katmanı */}
       {!isTuitionPaid && (
         <div className="absolute inset-0 bg-[#f6f9ff] dark:bg-slate-900 z-50 overflow-y-auto animate-fade-in">
           <div className="w-full min-h-full flex justify-center items-start p-4 md:p-8 pt-16 md:pt-32">
             <div className="max-w-4xl w-full">
 
-              {/* Aşama 1: Harç Bilgileri */}
               {paymentStep === 'overview' && (
                 <div className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
                   <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-700/60 pb-5">
@@ -472,7 +486,6 @@ export default function CourseRegistration() {
                 </div>
               )}
 
-              {/* Aşama 2: Taksit Seçenekleri */}
               {paymentStep === 'installments' && (
                 <div className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
                   <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
@@ -529,7 +542,6 @@ export default function CourseRegistration() {
                 </div>
               )}
 
-              {/* Aşama 3: Kart Detayları */}
               {paymentStep === 'card' && (
                 <form onSubmit={handleSendSms} className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
                   <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
@@ -539,7 +551,6 @@ export default function CourseRegistration() {
 
                   <div className="grid grid-cols-12 gap-6">
 
-                    {/* Sol Sütun: Simülasyon */}
                     <div className="col-span-12 md:col-span-5 flex flex-col justify-between space-y-6">
                       <div className="w-full h-48 [perspective:1000px] shrink-0">
                         <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${isCvvFocused ? '[transform:rotateY(180deg)]' : ''}`}>
@@ -625,7 +636,6 @@ export default function CourseRegistration() {
                       </div>
                     </div>
 
-                    {/* Sağ Sütun: Form */}
                     <div className="col-span-12 md:col-span-7 space-y-4">
                       <div className="space-y-1">
                         <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Kart Sahibi</label>
@@ -715,7 +725,6 @@ export default function CourseRegistration() {
                 </form>
               )}
 
-              {/* Aşama 4: SMS */}
               {paymentStep === 'sms' && (
                 <form onSubmit={handleVerifySms} className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
                   <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
@@ -781,7 +790,6 @@ export default function CourseRegistration() {
                 </form>
               )}
 
-              {/* Aşama 5: Ödeme Başarılı */}
               {paymentStep === 'success' && (
                 <div className="flex flex-col items-center text-center space-y-6 py-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
                   <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-950/40 rounded-full flex items-center justify-center text-emerald-500 animate-success-bounce shadow-[0_0_20px_rgba(16,185,129,0.2)]">
@@ -813,7 +821,6 @@ export default function CourseRegistration() {
         </div>
       )}
 
-      {/* Başarılı Modalı */}
       {showSuccessModal && (
         <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-md flex items-center justify-center z-[100] p-4 transition-opacity duration-300">
           <div className="bg-white dark:bg-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-700/50 flex flex-col items-center text-center space-y-6 transform scale-100 animate-fade-in-up">
@@ -845,10 +852,8 @@ export default function CourseRegistration() {
         </div>
       )}
 
-      {/* Ana içerik */}
       <div className={`max-w-7xl mx-auto space-y-5 transition-all duration-1000 ease-in-out ${isTuitionPaid ? 'blur-none' : 'blur-[6px] pointer-events-none select-none'}`}>
 
-        {/* Başlık Bölümü */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
           <div>
             <h1 className="text-xl md:text-2xl font-extrabold text-slate-800 dark:text-white tracking-tight">
@@ -860,7 +865,6 @@ export default function CourseRegistration() {
           </div>
         </div>
 
-        {/* Durum Bandı */}
         <div className="p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-50 dark:bg-blue-950/40 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0">
@@ -906,7 +910,6 @@ export default function CourseRegistration() {
           </div>
         </div>
 
-        {/* Uyarı Bantları */}
         <div className="flex flex-col gap-2">
           {isLimitExceeded && (
             <div className="p-3 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 rounded-xl border border-red-200 dark:border-red-900/40 flex items-center gap-3 animate-bounce">
@@ -932,13 +935,10 @@ export default function CourseRegistration() {
           )}
         </div>
 
-        {/* Ana Izgara */}
         <div className="grid grid-cols-12 gap-5 h-auto">
 
-          {/* Sol Sütun: Açılan Dersler */}
           <div className="col-span-12 lg:col-span-7 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800/60 overflow-hidden flex flex-col h-auto">
 
-            {/* Başlık + Arama/Filtreleme */}
             <div className="p-4 border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-800/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <h3 className="font-bold text-sm text-slate-800 dark:white flex items-center gap-2 shrink-0">
                 <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">list_alt</span>
@@ -972,7 +972,6 @@ export default function CourseRegistration() {
               </div>
             </div>
 
-            {/* Dersler Tablosu */}
             <div className="overflow-y-auto max-h-[600px] lg:max-h-[800px]">
               {isLoading ? (
                 <div className="flex items-center justify-center py-12 text-slate-400 dark:text-slate-500">
@@ -1054,10 +1053,8 @@ export default function CourseRegistration() {
             </div>
           </div>
 
-          {/* Sağ Sütun: Seçilen Dersler */}
           <div className="col-span-12 lg:col-span-5 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800/60 overflow-hidden flex flex-col h-auto">
 
-            {/* Başlık */}
             <div className="p-4 border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-between">
               <h3 className="font-bold text-sm text-slate-800 dark:text-white flex items-center gap-2">
                 <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">checklist</span>
@@ -1068,7 +1065,6 @@ export default function CourseRegistration() {
               </span>
             </div>
 
-            {/* Liste */}
             <div className="flex-grow overflow-y-auto p-4 space-y-3 max-h-[500px] lg:max-h-[700px]">
               {selectedCourses.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-500 text-center p-6">
@@ -1121,7 +1117,6 @@ export default function CourseRegistration() {
               )}
             </div>
 
-            {/* Özet Alanı */}
             <div className="p-4 bg-slate-50/50 dark:bg-slate-900/40 border-t border-slate-100 dark:border-slate-800">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Dönemlik Toplam</span>
@@ -1147,14 +1142,11 @@ export default function CourseRegistration() {
 
       </div>
 
-      {/* Aksiyon Altlığı */}
       <div className={`mt-8 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 md:p-6 flex items-center transition-all duration-1000 ease-in-out shadow-sm ${isTuitionPaid ? 'blur-none' : 'blur-[6px] pointer-events-none select-none'}`}>
         <div className="max-w-7xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-3">
 
-          {/* İstatistik Bilgileri (Sol) */}
           <div className="flex flex-wrap items-center justify-between sm:justify-start gap-4 sm:gap-5 w-full sm:w-auto">
 
-            {/* AKTS Gösterimi */}
             <div className="shrink-0">
               <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-0.5">
                 Toplam Seçilen AKTS
@@ -1177,7 +1169,6 @@ export default function CourseRegistration() {
 
             <div className="hidden sm:block border-l border-slate-200 dark:border-slate-800 h-8"></div>
 
-            {/* Durum Göstergesi */}
             <div className="shrink-0">
               <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-0.5">
                 Kayıt Durumu
@@ -1216,7 +1207,6 @@ export default function CourseRegistration() {
 
             <div className="hidden sm:block border-l border-slate-200 dark:border-slate-800 h-8"></div>
 
-            {/* Seçmeli Ders Sayıları */}
             <div className="shrink-0">
               <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mb-0.5">
                 Seçmeli Ders Sayısı
@@ -1230,7 +1220,6 @@ export default function CourseRegistration() {
 
           </div>
 
-          {/* Butonlar */}
           <div className="flex items-center gap-2 shrink-0 justify-end w-full sm:w-auto mt-2 sm:mt-0">
             {statusState === 'Onaylandı' ? (
               <div className="w-full sm:w-auto px-5 py-2 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 border border-emerald-200 dark:border-emerald-900/30">

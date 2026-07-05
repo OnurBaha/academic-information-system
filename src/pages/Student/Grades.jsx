@@ -15,7 +15,6 @@ export default function StudentGrades() {
 
   const [selectedSemester, setSelectedSemester] = useState('current')
 
-  // GANO Robotu simülasyon state'leri
   const [simCourseCode, setSimCourseCode] = useState('')
   const [simTargetScore, setSimTargetScore] = useState('')
   const [simTargetAkts, setSimTargetAkts] = useState('')
@@ -117,14 +116,12 @@ export default function StudentGrades() {
     }
   }, [dispatch, currentUser])
 
-  // Notlar yüklendiğinde simülatör ilk değerlerini ata
   useEffect(() => {
     if (studentGrades.length > 0) {
       const firstCourse = studentGrades[0]
       setSimCourseCode(firstCourse.courseCode)
       setSimTargetAkts(firstCourse.ects || firstCourse.akts)
 
-      // Varsayılan kümülatif GANO'yu hesapla
       const defaultGano = simulateGano(studentGrades, null, 0, homeworkAverages)
       setEstimatedGano(defaultGano)
     }
@@ -177,7 +174,7 @@ export default function StudentGrades() {
           textColor: [51, 65, 85]
         },
         headStyles: {
-          fillColor: [30, 58, 138], // Dark navy
+          fillColor: [30, 58, 138],
           textColor: 255,
           fontStyle: 'bold'
         },
@@ -221,7 +218,6 @@ export default function StudentGrades() {
       const splitText = doc.splitTextToSize(text, 180)
       doc.text(splitText, 14, 50)
 
-      // Form Fields Box
       doc.rect(14, 70, 182, 60)
       doc.setFont('Helvetica', 'bold')
       doc.text('Ogrenci No:', 20, 80)
@@ -237,7 +233,6 @@ export default function StudentGrades() {
       doc.text('[  ] Vize  /  [  ] Final  /  [  ] Proje', 60, 110)
       doc.text('...........................................................................', 60, 120)
 
-      // Date and Signature
       doc.text('Tarih: ...../...../2026', 130, 145)
       doc.text('Imza: ....................', 130, 155)
 
@@ -267,7 +262,6 @@ export default function StudentGrades() {
       doc.text(`Akademik GANO: ${grades.length ? calculateGano(studentGrades, homeworkAverages).toFixed(2) : '3.42'} | Toplam AKTS: 215`, 14, 44)
       doc.text(`Yazdirilma Tarihi: ${new Date().toLocaleDateString('tr-TR')}`, 14, 50)
 
-      // Render all student courses across all semesters
       const allGradesBody = studentGrades.map(g => {
         const hasFinal = g.final !== null && g.final !== undefined
         const score = hasFinal ? calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project, homeworkAverages[g.courseCode]) : null
@@ -320,7 +314,6 @@ export default function StudentGrades() {
     }
   }
 
-  // FAZ 2.3 — Resmi Transkript Talebi → DB'ye POST at (Dekan görebilsin)
   const [isRequestingTranscript, setIsRequestingTranscript] = useState(false)
 
   const handleTranscriptRequest = async () => {
@@ -343,7 +336,6 @@ export default function StudentGrades() {
       setIsRequestingTranscript(false)
     }
   }
-  // Ders seçildiğinde AKTS alanını güncelle
   const handleSimCourseChange = (code) => {
     setSimCourseCode(code)
     const selected = studentGrades.find(g => g.courseCode === code)
@@ -352,7 +344,6 @@ export default function StudentGrades() {
     }
   }
 
-  // Simülasyon hesaplama
   const handleSimulate = (e) => {
     e.preventDefault()
     if (!simTargetScore) {
@@ -370,7 +361,6 @@ export default function StudentGrades() {
     toast.success(`Simülasyon hesaplandı. Tahmini GANO: ${nextGano}`)
   }
 
-  // Not tablosu dönem filtresi
   const filteredGrades = studentGrades.filter(g => {
     let matchesSemester = true
     if (selectedSemester === 'current') matchesSemester = g.semester === '2025-2026 Bahar'
@@ -380,7 +370,6 @@ export default function StudentGrades() {
     return matchesSemester
   })
 
-  // Mevcut kümülatif GANO hesabı
   const currentGano = studentGrades.length > 0
     ? simulateGano(studentGrades, null, 0, homeworkAverages)
     : 0
@@ -470,7 +459,6 @@ export default function StudentGrades() {
       <div className="grades-main-layout">
         <div className="grades-left-column">
 
-          {/* Not Çizelgesi Tablosu */}
           <div className="grades-table-wrapper">
             <div className="grades-table-header">
               <h4 className="grades-table-title">Dönem Not Çizelgesi</h4>

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiFetch } from '../../services/api';
 import { calculateScore, getLetterGrade } from '../../utils/studentCalc';
 
-// Async Thunks
+// asenkron thunklar
 export const fetchTeacherStudentsGradesAsync = createAsyncThunk(
     'teacher/fetchTeacherStudentsGradesAsync',
     async (_, { rejectWithValue }) => {
@@ -29,7 +29,7 @@ export const updateStudentGradeAsync = createAsyncThunk(
 
             if (updatedMidterm !== null && updatedFinal !== null && updatedMidterm !== undefined && updatedFinal !== undefined) {
                 const hw = homeworkAverage !== undefined ? Number(homeworkAverage) : 0;
-                // Use shared calculateScore + getLetterGrade so teacher & student see identical result
+                // ortak hesaplama fonksiyonunu kullan
                 const score = calculateScore(updatedMidterm, updatedFinal, updatedProject, hw);
                 average = Math.round(score);
                 letterGrade = getLetterGrade(score);
@@ -56,19 +56,19 @@ export const updateAttendanceAsync = createAsyncThunk(
     async ({ gradeId, attendanceStatus }, { rejectWithValue }) => {
         try {
             const currentGrade = await apiFetch(`/studentGrades/${gradeId}`);
-            const totalWeeks = 14; // Toplam ders haftası
+            const totalWeeks = 14; // toplam ders haftası
 
             let absentDates = Array.isArray(currentGrade.absentDates) ? [...currentGrade.absentDates] : [];
 
             if (attendanceStatus === 'Yok') {
-                // Bugünün tarihini dd.mm.yyyy formatında ekle (tekrar ekleme)
+                // bugünün tarihini dd mm yyyy formatında ekle tekrar ekleme
                 const now = new Date();
                 const todayStr = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
                 if (!absentDates.includes(todayStr)) {
                     absentDates.push(todayStr);
                 }
             } else if (attendanceStatus === 'Mevcut') {
-                // Mevcut işaretlenirse bugünü listeden kaldır
+                // mevcut işaretlenirse bugünü listeden kaldır
                 const now = new Date();
                 const todayStr = `${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()}`;
                 absentDates = absentDates.filter(d => d !== todayStr);
@@ -204,7 +204,7 @@ export const evaluateHomework = createAsyncThunk(
                 });
             }
 
-            // Sync with studentGrades!
+            // öğrenci notlarıyla senkronize et
             try {
                 const [allReviews, allCourses, allGrades] = await Promise.all([
                     apiFetch('/homeworkReviews'),
@@ -350,7 +350,7 @@ export const submitTeacherCourseRequestAsync = createAsyncThunk(
     }
 );
 
-// Teacher Slice
+// öğretmen slice dosyası
 const teacherSlice = createSlice({
     name: 'teacher',
     initialState: {
@@ -391,7 +391,7 @@ const teacherSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // fetchTeacherStudentsGradesAsync
+            // öğretmen öğrenci notlarını çek
             .addCase(fetchTeacherStudentsGradesAsync.pending, (state) => {
                 state.status = 'loading';
                 state.error = null;
@@ -405,7 +405,7 @@ const teacherSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // updateStudentGradeAsync
+            // öğrenci notunu güncelle
             .addCase(updateStudentGradeAsync.pending, (state) => {
                 state.actionStatus = 'loading';
                 state.error = null;
@@ -422,7 +422,7 @@ const teacherSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // updateAttendanceAsync
+            // devamsızlığı güncelle
             .addCase(updateAttendanceAsync.pending, (state) => {
                 state.actionStatus = 'loading';
                 state.error = null;
@@ -441,7 +441,7 @@ const teacherSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // fetchTeacherDashboardDataAsync
+            // öğretmen paneli verilerini çek
             .addCase(fetchTeacherDashboardDataAsync.pending, (state) => {
                 state.status = 'loading';
                 state.error = null;
@@ -464,12 +464,12 @@ const teacherSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // addAnnouncement
+            // duyuru ekle
             .addCase(addAnnouncement.fulfilled, (state, action) => {
                 state.announcements.unshift(action.payload);
             })
 
-            // updateAnnouncement
+            // duyuruyu güncelle
             .addCase(updateAnnouncement.fulfilled, (state, action) => {
                 const index = state.announcements.findIndex(ann => ann.id === action.payload.id);
                 if (index !== -1) {
@@ -477,12 +477,12 @@ const teacherSlice = createSlice({
                 }
             })
 
-            // deleteAnnouncement
+            // duyuruyu sil
             .addCase(deleteAnnouncement.fulfilled, (state, action) => {
                 state.announcements = state.announcements.filter(ann => ann.id !== action.payload);
             })
 
-            // evaluateHomework
+            // ödevi değerlendir
             .addCase(evaluateHomework.fulfilled, (state, action) => {
                 const index = state.homeworkReviews.findIndex(rev => rev.id === action.payload.id);
                 if (index !== -1) {
@@ -492,7 +492,7 @@ const teacherSlice = createSlice({
                 }
             })
 
-            // addHomework
+            // ödev ekle
             .addCase(addHomework.fulfilled, (state, action) => {
                 const index = state.courses.findIndex(c => c.id === action.payload.id);
                 if (index !== -1) {
@@ -500,7 +500,7 @@ const teacherSlice = createSlice({
                 }
             })
 
-            // updateHomeworkWeights
+            // ödev ağırlıklarını güncelle
             .addCase(updateHomeworkWeights.fulfilled, (state, action) => {
                 const index = state.courses.findIndex(c => c.id === action.payload.id);
                 if (index !== -1) {

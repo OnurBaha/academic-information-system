@@ -14,14 +14,12 @@ export default function ExamCalendar() {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('currentUser')) || { id: 'u7' }
     
-    // Fetch student's registered courses first
     fetch(`http://localhost:3001/studentCourses?studentId=${user.id}`)
       .then(res => res.json())
       .then(courses => {
         const codes = courses.map(c => c.code)
         setRegisteredCourseCodes(codes)
         
-        // Fetch all exams
         return fetch('http://localhost:3001/studentExams')
       })
       .then(res => res.json())
@@ -109,7 +107,6 @@ export default function ExamCalendar() {
   return (
     <div className="flex flex-col gap-6 p-6 max-w-[1440px] mx-auto w-full exams-calendar-page-canvas animate-fade-in">
 
-      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
         <div>
           <h2 className="student-page-title flex items-center gap-2">
@@ -136,7 +133,6 @@ export default function ExamCalendar() {
         </div>
       </div>
 
-      {/* Term Switcher + PDF */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#111827] p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/80 shadow-sm">
         <div className="flex gap-1.5 flex-wrap">
           {[
@@ -167,7 +163,6 @@ export default function ExamCalendar() {
         </button>
       </div>
 
-      {/* Exams Table */}
       {activeSemester === 'yaz' ? (
         <div className="bg-white dark:bg-[#111827] rounded-3xl p-8 shadow-sm border border-slate-200/50 dark:border-slate-800/80 transition-all duration-300 flex items-center gap-4">
           <span className="material-symbols-outlined text-3xl text-blue-650 shrink-0">info</span>

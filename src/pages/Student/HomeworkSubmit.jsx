@@ -5,7 +5,6 @@ import { toast } from 'react-hot-toast'
 import { submitStudentHomeworkAsync, fetchStudentGradesAsync } from '../../store/student/studentSlice'
 import { initialHomeworks } from '../../store/student/studentData'
 
-// initialHomeworks → src/data/studentData.js'ten import edilir
 
 export default function HomeworkSubmit() {
   const navigate = useNavigate()
@@ -14,35 +13,31 @@ export default function HomeworkSubmit() {
   const { courses: teacherCourses = [] } = useSelector((state) => state.teacher || {})
   const { grades = [] } = useSelector((state) => state.student || {})
 
-  // Sayfa Durumları
   const [homeworks, setHomeworks] = useState(initialHomeworks)
-  const [activeFilter, setActiveFilter] = useState('all') // 'all' | 'pending'
+  const [activeFilter, setActiveFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
-  const [expandedRow, setExpandedRow] = useState(null) // Açık olan ödev teslim satırı
-  const [studentNotes, setStudentNotes] = useState({}) // Ödev notları
-  const [uploadedFiles, setUploadedFiles] = useState({}) // Yüklenen dosya isimleri
-  const [confirmingRowId, setConfirmingRowId] = useState(null) // Onaylama durumundaki ödev
+  const [expandedRow, setExpandedRow] = useState(null)
+  const [studentNotes, setStudentNotes] = useState({})
+  const [uploadedFiles, setUploadedFiles] = useState({})
+  const [confirmingRowId, setConfirmingRowId] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     setCurrentPage(1)
   }, [activeFilter, searchQuery])
 
-  // Öğrenci not bilgilerini getirme (ödevlerin ait olduğu dersleri eşleştirmek için)
   useEffect(() => {
     if (user?.id) {
       dispatch(fetchStudentGradesAsync(user.id))
     }
   }, [dispatch, user])
 
-  // Öğretmenin verdiği yeni ödevleri öğrenci listesine dahil et
   useEffect(() => {
     if (!teacherCourses.length) return
     const dynamicHws = []
     teacherCourses.forEach(course => {
       if (!Array.isArray(course.homeworks)) return
       course.homeworks.forEach(hw => {
-        // initialHomeworks'te aynı başlık yoksa ekle
         const alreadyExists = initialHomeworks.some(ih => ih.title === hw.title && ih.courseCode === course.code)
         if (!alreadyExists) {
           dynamicHws.push({
@@ -67,7 +62,6 @@ export default function HomeworkSubmit() {
     }
   }, [teacherCourses])
 
-  // İstatistikleri hesapla (Dinamik ve canlı tepki veren sayaçlar)
   const pendingCount = homeworks.filter(h => h.status === 'Bekliyor').length
   const completedCount = homeworks.filter(h => h.status === 'Teslim Edildi').length
   const approachingCount = homeworks.filter(h => h.status === 'Bekliyor' && h.daysLeft !== null && h.daysLeft <= 5).length
@@ -75,7 +69,6 @@ export default function HomeworkSubmit() {
 
 
 
-  // Tablo satırını aç/kapat
   const toggleRow = (rowId) => {
     if (expandedRow === rowId) {
       setExpandedRow(null)
@@ -86,7 +79,6 @@ export default function HomeworkSubmit() {
     }
   }
 
-  // Bilgisayardan dosya seçildiğinde tetiklenen fonksiyon
   const handleFileChange = (e, hwId) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
@@ -95,7 +87,6 @@ export default function HomeworkSubmit() {
     }
   }
 
-  // Ödev Gönderimini Tamamla (Dinamik DB Senkronizasyonu)
   const handleSubmissionComplete = async (rowId, courseName) => {
     const fileName = uploadedFiles[rowId] || `${user?.name || 'Ahmet'}_${courseName.replace(/\s+/g, '_')}_Odev.pdf`
     const comment = studentNotes[rowId] || ''
@@ -106,7 +97,6 @@ export default function HomeworkSubmit() {
     const finalGradeId = gradeRecord ? gradeRecord.id : rowId
 
     try {
-      // Redux / DB update (studentGrades endpointi üzerinden)
       await dispatch(submitStudentHomeworkAsync({
         gradeId: finalGradeId,
         homeworkPayload: {
@@ -122,7 +112,6 @@ export default function HomeworkSubmit() {
         }
       })).unwrap()
 
-      // Local state güncelle
       setHomeworks(prev => prev.map(h => {
         if (h.id === rowId) {
           return {
@@ -146,7 +135,6 @@ export default function HomeworkSubmit() {
     }
   }
 
-  // Arama ve filtreleme mantığı
   const filteredList = homeworks.filter(h => {
     const matchesSearch = h.courseName.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           h.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -154,7 +142,6 @@ export default function HomeworkSubmit() {
     return matchesSearch && matchesTab
   })
 
-  // Bekleyen ödevler listede 1. sırada (en üstte) olmalı, ardından teslim edilenler (en yeniden en eskiye) gelmeli
   const sortedList = [...filteredList].sort((a, b) => {
     if (a.status === 'Bekliyor' && b.status !== 'Bekliyor') return -1
     if (a.status !== 'Bekliyor' && b.status === 'Bekliyor') return 1
@@ -197,7 +184,6 @@ export default function HomeworkSubmit() {
   return (
     <section className="flex-grow p-4 md:p-8 max-w-7xl mx-auto space-y-6 text-slate-800 dark:text-white">
       
-      {/* Üst Menü ve Arama Çubuğu */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div>
           <nav className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
@@ -210,7 +196,6 @@ export default function HomeworkSubmit() {
           </h1>
         </div>
 
-        {/* Ödev Arama Barı */}
         <div className="relative w-full md:w-64">
           <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-base pointer-events-none">
             search
@@ -225,10 +210,8 @@ export default function HomeworkSubmit() {
         </div>
       </div>
 
-      {/* Özet Durum Kartları */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         
-        {/* Kart 1: Bekleyen */}
         <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
             <span className="material-symbols-outlined text-2xl font-bold">pending_actions</span>
@@ -241,7 +224,6 @@ export default function HomeworkSubmit() {
           </div>
         </div>
 
-        {/* Kart 2: Tamamlanan */}
         <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
             <span className="material-symbols-outlined text-2xl font-bold">check_circle</span>
@@ -254,7 +236,6 @@ export default function HomeworkSubmit() {
           </div>
         </div>
 
-        {/* Kart 3: Yaklaşan Tarih */}
         <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
             <span className="material-symbols-outlined text-2xl font-bold">timer</span>
@@ -267,7 +248,6 @@ export default function HomeworkSubmit() {
           </div>
         </div>
 
-        {/* Kart 4: Geciken */}
         <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-450 flex items-center justify-center shrink-0">
             <span className="material-symbols-outlined text-2xl font-bold">release_alert</span>
@@ -282,10 +262,8 @@ export default function HomeworkSubmit() {
 
       </div>
 
-      {/* Güncel Ödev ve Sınav Listesi (Ana Tablo Alanı) */}
       <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm overflow-hidden">
         
-        {/* Üst Filtre Barı */}
         <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/40 border-b border-slate-100 dark:border-slate-800/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h2 className="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2">
             <span className="material-symbols-outlined">assignment_late</span>
@@ -316,7 +294,6 @@ export default function HomeworkSubmit() {
           </div>
         </div>
 
-        {/* Tablo Yapısı */}
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -337,7 +314,6 @@ export default function HomeworkSubmit() {
                 return (
                   <React.Fragment key={hw.id}>
                     <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors group">
-                      {/* Ders Adı */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1.5">
                           <span className={`px-2 py-0.5 rounded font-bold text-[10px] shrink-0 ${hw.colorClass} mr-2`}>
@@ -349,12 +325,10 @@ export default function HomeworkSubmit() {
                         </div>
                       </td>
 
-                      {/* Ödev Başlığı */}
                       <td className="px-6 py-4 text-slate-700 dark:text-slate-300 font-semibold">
                         {cleanTitle}
                       </td>
 
-                      {/* Son Teslim Tarihi */}
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
                           <span className="font-bold text-slate-800 dark:text-white">{hw.dueDate}</span>
@@ -372,7 +346,6 @@ export default function HomeworkSubmit() {
                         </div>
                       </td>
 
-                      {/* Durum Rozeti */}
                       <td className="px-6 py-4">
                         {isCompleted ? (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30">
@@ -384,7 +357,6 @@ export default function HomeworkSubmit() {
                           </span>
                         )}</td>
 
-                      {/* Eylem */}
                       <td className="px-6 py-4 text-right">
                         {isCompleted ? (
                           <button
@@ -410,7 +382,6 @@ export default function HomeworkSubmit() {
                       </td>
                     </tr>
 
-                    {/* Çekmece - Dosya Teslim Paneli veya Gönderim Detayları */}
                     {isOpened && (
                       <tr className="bg-slate-50/40 dark:bg-slate-900/20 overflow-hidden animate-fade-in">
                         <td className="p-0" colSpan={5}>
@@ -442,7 +413,6 @@ export default function HomeworkSubmit() {
                               </div>
                             ) : (
                               <>
-                                {/* Dosya yükleme için gizli input */}
                                 <input
                                   type="file"
                                   accept=".pdf,.docx,.zip"
@@ -453,7 +423,6 @@ export default function HomeworkSubmit() {
 
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                                   
-                                  {/* Dosya yükleme alanı */}
                                   <div className="flex flex-col gap-2 text-left">
                                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                                       Ödev Dosyası
@@ -478,10 +447,8 @@ export default function HomeworkSubmit() {
                                     </label>
                                   </div>
 
-                                  {/* Not & Gönderim Butonları (Onaylama Aşaması Dahil) */}
                                   <div className="flex flex-col gap-2 justify-between">
                                     {confirmingRowId === hw.id ? (
-                                      /* Emin Misiniz? Onay Kutusu */
                                       <div className="flex flex-col justify-center items-center text-center p-5 bg-amber-500/5 border border-amber-500/20 rounded-xl gap-3.5 flex-1 min-h-[160px]">
                                         <span className="material-symbols-outlined text-amber-500 text-3xl animate-bounce">help</span>
                                         <div>
@@ -510,7 +477,6 @@ export default function HomeworkSubmit() {
                                         </div>
                                       </div>
                                     ) : (
-                                      /* Normal Form ve Gönderim Butonları */
                                       <>
                                         <div className="flex flex-col gap-1.5 text-left">
                                           <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
@@ -562,7 +528,6 @@ export default function HomeworkSubmit() {
           </table>
         </div>
 
-        {/* Tablo Alt Sayfalama */}
         <div className="px-6 py-4 bg-slate-50/50 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800/60 flex justify-between items-center text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase">
           <p>
             Toplam {sortedList.length} ödevden{' '}
@@ -617,10 +582,8 @@ export default function HomeworkSubmit() {
 
       </div>
 
-      {/* Alt Bilgilendirme ve Yan Alanlar Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
         
-        {/* Önemli Hatırlatma Kutusu (Sol - Geniş) */}
         <div className="md:col-span-2 bg-blue-955 dark:bg-slate-900 border border-slate-900 dark:border-slate-800 p-8 rounded-2xl relative overflow-hidden bg-blue-950 text-white shadow-lg">
           <div className="relative z-10 space-y-4">
             <h4 className="text-lg font-black tracking-tight text-white">Ödev Teslim Kuralları</h4>
@@ -631,11 +594,9 @@ export default function HomeworkSubmit() {
               <li>Son Teslim Tarihi: Süresi geçen ödevlerin sisteme yüklenmesi engellenmektedir.</li>
             </ul>
           </div>
-          {/* Dekoratif Gradient Çember */}
           <div className="absolute -right-10 -bottom-10 w-48 h-48 bg-blue-800/30 rounded-full blur-3xl"></div>
         </div>
 
-        {/* Akademik Takvim Yönlendirme (Sağ - Dar) */}
         <div className="bg-slate-50 dark:bg-slate-800/40 p-8 rounded-2xl border border-slate-200/50 dark:border-slate-800 flex flex-col items-center justify-center text-center shadow-sm">
           <div className="w-14 h-14 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 shadow-md border border-slate-100 dark:border-slate-700">
             <span className="material-symbols-outlined text-2xl font-bold">calendar_today</span>

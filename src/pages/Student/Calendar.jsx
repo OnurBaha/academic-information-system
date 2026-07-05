@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { miniCalendarWeeks } from '../../store/student/studentData'
 
 export default function Calendar() {
-  const [selectedDay, setSelectedDay] = useState({ day: 12, month: 'Haz' }) // Varsayılan seçili gün Cuma (12 Haziran 2026)
+  const [selectedDay, setSelectedDay] = useState({ day: 12, month: 'Haz' })
   const [weeklyLessonsByWeek, setWeeklyLessonsByWeek] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -79,7 +79,6 @@ export default function Calendar() {
   const isThursdayActive = selectedWeekday === 4
   const isFridayActive = selectedWeekday === 5
 
-  // FAZ 7.2 — schedules (dekan onaylı ders planları) ile haftalık programı birleştir
   const getSelectedDaySchedule = () => {
     if (!weeklyLessonsByWeek) return []
     const dayOfWeek = getWeekdayIndex(selectedDay.day, selectedDay.month)
@@ -92,20 +91,15 @@ export default function Calendar() {
     else if (dayOfWeek === 4) dayLessons = [...(currentWeekLessons.thursday || [])]
     else if (dayOfWeek === 5) dayLessons = [...(currentWeekLessons.friday || [])]
 
-    // Kayıtlı olunan derslere göre filtrele
     dayLessons = dayLessons.filter(lesson => isRegistered(lesson, studentCourses))
 
-    // Bu güne denk gelen onaylı dekan programlarını ekle
     const dayNames = [null, 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma']
     const currentDayName = dayNames[dayOfWeek]
     
     if (currentDayName && weekIndex !== 5 && weekIndex !== 8) {
       const activeSchedules = schedules.filter(s => s.day === currentDayName && isRegistered(s, studentCourses))
       activeSchedules.forEach(s => {
-        // Çakışmayı önlemek için eğer zaten aynı isimde ders varsa ekleme
         if (!dayLessons.some(l => (l.name || '').toLowerCase().trim() === (s.courseName || '').toLowerCase().trim())) {
-          // Saat aralığına göre top piksel hesaplama simülasyonu
-          // '09:00 - 10:30' -> 09:00 (top: 0), 10:30 (height: 120)
           const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
           const topVal = (startHour - 9) * 80
           
@@ -152,7 +146,6 @@ export default function Calendar() {
   return (
     <div className="flex flex-col gap-6 p-6 max-w-[1440px] mx-auto w-full calendar-page-canvas animate-fade-in">
 
-      {/* Sayfa Başlığı */}
       <div className="flex items-start gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
         <div>
           <h2 className="student-page-title flex items-center gap-2">
@@ -163,14 +156,11 @@ export default function Calendar() {
         </div>
       </div>
 
-      {/* Satır: Haftalık Ders Programı (Sol) + Mini Takvim (Sağ) */}
       <div className="flex gap-5 items-start">
 
-        {/* Haftalık Ders Programı */}
         <div className="flex-1 min-w-0">
           <div className="glass-card rounded-3xl overflow-hidden shadow-sm">
 
-            {/* Haftalık Başlık Günleri (Pazartesi - Cuma, aktif günü seçmek için tıklanabilir) */}
             <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_1fr] bg-table-header border-b border-outline-variant/30 py-4 text-center">
               <div className="font-label-sm text-on-surface-variant flex items-center justify-center font-bold">SAAT</div>
 
@@ -230,10 +220,8 @@ export default function Calendar() {
               </button>
             </div>
 
-            {/* Izgara Gövdesi */}
             <div className="schedule-grid relative">
 
-              {/* Saat Satırları */}
               {['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'].map((hour, idx) => (
                 <div key={idx} className="contents">
                   <div className="border-r border-outline-variant/20 flex items-center justify-center font-label-sm text-outline">
@@ -247,7 +235,6 @@ export default function Calendar() {
                 </div>
               ))}
 
-              {/* Seçili gün için dikey vurgu katmanı */}
               {selectedWeekday >= 1 && selectedWeekday <= 5 && (
                 <div
                   className="absolute top-0 bottom-0 bg-secondary/5 border-l border-r border-secondary/20 pointer-events-none transition-all duration-500 ease-out"
@@ -258,7 +245,6 @@ export default function Calendar() {
                 />
               )}
 
-              {/* Pazartesi Ders Gösterimi */}
               {((() => {
                 const lessons = [...(weeklyLessonsByWeek[weekIndex]?.monday || [])].filter(l => isRegistered(l, studentCourses))
                 const approvedSchedules = (weekIndex === 5 || weekIndex === 8)
@@ -307,7 +293,6 @@ export default function Calendar() {
                 </div>
               ))}
 
-              {/* Salı Ders Gösterimi */}
               {((() => {
                 const lessons = [...(weeklyLessonsByWeek[weekIndex]?.tuesday || [])].filter(l => isRegistered(l, studentCourses))
                 const approvedSchedules = (weekIndex === 5 || weekIndex === 8)
@@ -356,7 +341,6 @@ export default function Calendar() {
                 </div>
               ))}
 
-              {/* Çarşamba Ders Gösterimi */}
               {((() => {
                 const lessons = [...(weeklyLessonsByWeek[weekIndex]?.wednesday || [])].filter(l => isRegistered(l, studentCourses))
                 const approvedSchedules = (weekIndex === 5 || weekIndex === 8)
@@ -405,7 +389,6 @@ export default function Calendar() {
                 </div>
               ))}
 
-              {/* Perşembe Ders Gösterimi */}
               {((() => {
                 const lessons = [...(weeklyLessonsByWeek[weekIndex]?.thursday || [])].filter(l => isRegistered(l, studentCourses))
                 const approvedSchedules = (weekIndex === 5 || weekIndex === 8)
@@ -454,7 +437,6 @@ export default function Calendar() {
                 </div>
               ))}
 
-              {/* Cuma Ders Gösterimi */}
               {((() => {
                 const lessons = [...(weeklyLessonsByWeek[weekIndex]?.friday || [])].filter(l => isRegistered(l, studentCourses))
                 const approvedSchedules = (weekIndex === 5 || weekIndex === 8)
@@ -506,10 +488,8 @@ export default function Calendar() {
             </div>
           </div>
         </div>
-        {/* ── Mini Takvim ── Haftalık ders programının sağında ── */}
         <div className="w-64 shrink-0 bg-white dark:bg-[#111827] rounded-3xl p-5 shadow-sm border border-outline-variant/30 flex flex-col gap-4 sticky top-6">
 
-          {/* Başlık */}
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
               <span className="material-symbols-outlined text-secondary text-lg">calendar_month</span>
@@ -518,14 +498,12 @@ export default function Calendar() {
             <span className="text-[10px] font-bold text-secondary bg-secondary/10 px-2 py-0.5 rounded-lg">{weekIndex}. Hafta</span>
           </div>
 
-          {/* Gün etiketleri */}
           <div className="grid grid-cols-7 text-center">
             {['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'].map((d, i) => (
               <div key={d} className={`text-[9px] font-extrabold uppercase tracking-wider py-1 ${i >= 5 ? 'text-slate-300 dark:text-slate-600' : 'text-slate-400 dark:text-slate-500'}`}>{d}</div>
             ))}
           </div>
 
-          {/* Hafta satırları */}
           <div className="flex flex-col gap-1">
             {miniCalendarWeeks.map((week, rowIdx) => {
               const actualWeekNum = rowIdx + 1
@@ -557,7 +535,6 @@ export default function Calendar() {
             })}
           </div>
 
-          {/* Hafta açıklamaları */}
           <div className="border-t border-slate-100 dark:border-slate-800 pt-3 flex flex-col gap-1">
             <p className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">Hafta Özeti</p>
             {[
@@ -577,11 +554,10 @@ export default function Calendar() {
               </div>
             ))}
           </div>
-        </div>{/* end Mini Calendar */}
+        </div>
 
-      </div>{/* end ROW: grid + mini cal */}
+      </div>
 
-      {/* Günlük Ders Akışı */}
       <div className="bg-white dark:bg-[#111827] rounded-3xl p-6 shadow-sm border border-outline-variant/30 transition-all duration-300">
         <div className="flex justify-between items-center mb-4 border-b border-slate-100 dark:border-slate-800 pb-3">
           <h3 className="font-title-lg text-title-lg text-primary dark:text-white flex items-center gap-2">

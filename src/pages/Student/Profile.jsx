@@ -9,7 +9,6 @@ import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { academicBadges, fallbackCertificates } from '../../store/student/studentData'
 
-// academicBadges ve fallbackCertificates → src/data/studentData.js'ten import edilir
 
 export default function Profile() {
   const dispatch = useDispatch()
@@ -20,14 +19,11 @@ export default function Profile() {
   const role = currentUser?.role || 'student'
   const certificates = (documents || []).filter(d => d.type === 'certificate')
 
-  // İletişim Bilgileri Durumu (E-posta Kilitli)
   const [email] = useState(currentUser?.email || 'n.basak@university.edu.tr')
   const [phone, setPhone] = useState(currentUser?.phone || '+90 (555) 000 00 00')
 
-  // Adres Bilgileri Durumu (Ayrı Kutu)
   const [address, setAddress] = useState(currentUser?.address || 'Kadıköy, İstanbul')
 
-  // Sertifika Listesi Durumu (Silme/Güncelleme için dinamik state)
   const [certificatesList, setCertificatesList] = useState([])
 
   const mockTeacherCourses = [
@@ -59,13 +55,11 @@ export default function Profile() {
     navigate('/')
   }
 
-  // Harici Yükleme Dosya Durumu
   const [selectedCertFile, setSelectedCertFile] = useState(null)
   const [newCertName, setNewCertName] = useState('')
 
-  // Kayıt Animasyon Durumu
   const [isSaving, setIsSaving] = useState(false)
-  const [saveStatus, setSaveStatus] = useState('idle') // 'idle' | 'saving' | 'success'
+  const [saveStatus, setSaveStatus] = useState('idle')
 
   useEffect(() => {
     if (currentUser?.id && role === 'student') {
@@ -73,7 +67,6 @@ export default function Profile() {
     }
   }, [dispatch, currentUser, role])
 
-  // Redux sertifikalarını state'e eşitle
   useEffect(() => {
     if (certificates && certificates.length > 0) {
       setCertificatesList(certificates)
@@ -82,7 +75,6 @@ export default function Profile() {
     }
   }, [documents])
 
-  // İletişim bilgilerini güncelle
   const handleUpdateInfo = async (e) => {
     e.preventDefault()
     if (!phone) {
@@ -106,21 +98,18 @@ export default function Profile() {
       toast.error('Bilgiler güncellenirken bir hata oluştu.')
     } finally {
       setIsSaving(false)
-      // Butonu 2 saniye sonra normale döndür
       setTimeout(() => {
         setSaveStatus('idle')
       }, 2000)
     }
   }
 
-  // Adres bilgilerini güncelle
   const handleUpdateAddress = async (e) => {
     e.preventDefault()
     if (!address.trim()) {
       toast.error('Lütfen adres alanını boş bırakmayın.')
       return
     }
-    // Adres içindeki şehri otomatik yakala
     const parts = address.split(',')
     if (parts.length > 1) {
       setCity(parts[parts.length - 1].trim())
@@ -138,18 +127,15 @@ export default function Profile() {
     }
   }
 
-  // Sertifika dosya seçimi tetikleyicisi
   const handleCertFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
       setSelectedCertFile(file)
-      // Dosya adını uzantısız olarak varsayılan sertifika adı yap
       const baseName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
       setNewCertName(baseName)
     }
   }
 
-  // Sertifikayı profile kaydetme
   const handleSaveUploadedCert = () => {
     if (!newCertName.trim()) {
       toast.error('Lütfen sertifika adı girin.')
@@ -172,7 +158,6 @@ export default function Profile() {
     toast.success('Sertifikanız başarıyla kaydedildi!')
   }
 
-  // Sertifikayı silme
   const handleRemoveCert = (certId) => {
     setCertificatesList(prev => prev.filter(c => c.id !== certId))
     toast.success('Sertifika kaldırıldı.')
@@ -238,7 +223,6 @@ export default function Profile() {
   return (
     <section className="flex-grow p-4 md:p-8 max-w-7xl mx-auto space-y-6 text-slate-800 dark:text-white">
       
-      {/* Sertifika yükleme için gizli input */}
       <input
         type="file"
         accept=".pdf,.png,.jpg,.jpeg"
@@ -247,19 +231,14 @@ export default function Profile() {
         className="hidden"
       />
 
-      {/* 12 Kolonlu Responsive Izgara Yapısı */}
       <div className="grid grid-cols-12 gap-6 items-start">
         
-        {/* Sol Kolon (4 Kolon Genişliği): Profil Kartı, İletişim Formu, Adres Kartı */}
         <div className="col-span-12 lg:col-span-4 space-y-6">
           
-          {/* Profil Kartı */}
           <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm overflow-hidden bento-card">
             
-            {/* Lacivert/Mavi Kapak Resmi Görünümü */}
             <div className="h-28 bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 relative">
               
-              {/* Profil Fotoğrafı - Kapağa taşan negatif margin */}
               <div className="absolute -bottom-10 left-6">
                 <div className="w-20 h-20 rounded-2xl border-4 border-white dark:border-slate-800 shadow-md overflow-hidden bg-white">
                   <img
@@ -271,7 +250,6 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* İsim ve Bölüm Bilgisi */}
             <div className="pt-14 px-6 pb-6 space-y-4">
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
@@ -287,7 +265,6 @@ export default function Profile() {
                 </p>
               </div>
 
-              {/* İletişim Detayları */}
               <div className="space-y-2.5 pt-4 border-t border-slate-50 dark:border-slate-800/40 text-xs font-semibold text-slate-600 dark:text-slate-300">
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-lg shrink-0">mail</span>
@@ -315,7 +292,6 @@ export default function Profile() {
 
           </div>
 
-          {/* İletişim Bilgilerini Güncelleme Kartı */}
           <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6 space-y-5">
             <h4 className="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2 border-b border-slate-50 dark:border-slate-800/40 pb-3">
               <span className="material-symbols-outlined text-lg">contact_emergency</span>
@@ -373,7 +349,6 @@ export default function Profile() {
             </form>
           </div>
 
-          {/* Adres Bilgilerim Kartı */}
           <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6 space-y-5">
             <h4 className="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2 border-b border-slate-50 dark:border-slate-800/40 pb-3">
               <span className="material-symbols-outlined text-lg">home</span>
@@ -404,12 +379,10 @@ export default function Profile() {
 
         </div>
 
-        {/* Sağ Kolon (8 Kolon Genişliği) */}
         <div className="col-span-12 lg:col-span-8 space-y-6">
           
           {role === 'student' ? (
             <>
-              {/* Sertifikalar Bölümü */}
               <div className="space-y-4">
                 
                 <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
@@ -537,7 +510,6 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* Akademik Rozetler Bölümü */}
               <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6 space-y-4">
                 <h4 className="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2 border-l-4 border-blue-600 pl-3">
                   Akademik Rozetler
@@ -567,7 +539,6 @@ export default function Profile() {
             </>
           ) : role === 'teacher' ? (
             <>
-              {/* Verilen Dersler Bölümü */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                   <h3 className="text-base font-extrabold text-blue-900 dark:text-blue-400">Verilen Canlı / Sorumlu Olunan Dersler</h3>
@@ -611,7 +582,6 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* Akademik Yayınlar Bölümü */}
               <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6 space-y-4">
                 <h4 className="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2 border-l-4 border-blue-600 pl-3">
                   Akademik Yayınlar & Bildiriler
@@ -647,7 +617,6 @@ export default function Profile() {
             </>
           ) : (
             <>
-              {/* Dekan Bölümü */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                   <h3 className="text-base font-extrabold text-blue-900 dark:text-blue-400">Yönetilen Bölümler (Mühendislik Fakültesi)</h3>
@@ -691,7 +660,6 @@ export default function Profile() {
                 </div>
               </div>
 
-              {/* Dekan Görevleri Bölümü */}
               <div className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6 space-y-4">
                 <h4 className="text-sm font-extrabold text-blue-900 dark:text-blue-400 flex items-center gap-2 border-l-4 border-blue-600 pl-3">
                   Fakülte Koordinasyon & Görev Takibi

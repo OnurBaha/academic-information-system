@@ -14,13 +14,11 @@ export default function Courses() {
   const { currentUser } = useSelector((state) => state.auth || {})
   const { studentCourses = [], status } = useSelector((state) => state.student || {})
 
-  // Sayfa durumları
   const [selectedCourseCode, setSelectedCourseCode] = useState('')
   const [activeLecture, setActiveLecture] = useState(null)
-  const [activeTab, setActiveTab] = useState('notes') // 'notes' | 'code' | 'forum'
-  const [viewMode, setViewMode] = useState('list') // 'list' | 'detail'
+  const [activeTab, setActiveTab] = useState('notes')
+  const [viewMode, setViewMode] = useState('list')
 
-  // Etkileşim durumları
   const [likes, setLikes] = useState(148)
   const [hasLiked, setHasLiked] = useState(false)
   const [forumPosts, setForumPosts] = useState(defaultForumPosts)
@@ -28,24 +26,20 @@ export default function Courses() {
   const [expandedSections, setExpandedSections] = useState({ 0: true, 1: true })
   const [expandedPosts, setExpandedPosts] = useState({ 1: true, 2: true })
 
-  // Kurs verilerini getirme
   useEffect(() => {
     if (currentUser?.id) {
       dispatch(fetchStudentCourses(currentUser.id))
     }
   }, [dispatch, currentUser])
 
-  // Tüm dersleri filtrele
   const onlineCourses = studentCourses
 
-  // İlk dersi seçme
   useEffect(() => {
     if (onlineCourses.length > 0 && (!selectedCourseCode || !onlineCourses.some(c => c.code === selectedCourseCode))) {
       setSelectedCourseCode(onlineCourses[0].code)
     }
   }, [onlineCourses, selectedCourseCode])
 
-  // Dönem ders kayıtları listesi (sadece online derslerde gösterilecek)
   const courseLectures = [
     { id: "dQw4w9WgXcQ", title: "1. Hafta Ders Tekrar Kaydı", duration: "45:10", completed: true },
     { id: "84WUGpO5HU4", title: "2. Hafta Ders Tekrar Kaydı", duration: "50:15", completed: true },
@@ -62,7 +56,6 @@ export default function Courses() {
     }
   }, [selectedCourseCode])
 
-  // Genel ders beğenisi
   const handleLike = () => {
     if (hasLiked) {
       setLikes(prev => prev - 1)
@@ -74,7 +67,6 @@ export default function Courses() {
     }
   }
 
-  // Paylaş butonu (YouTube video bağlantısını kopyalar)
   const handleShare = () => {
     if (activeLecture) {
       const videoUrl = `https://www.youtube.com/watch?v=${activeLecture.id}`
@@ -86,7 +78,6 @@ export default function Courses() {
     }
   }
 
-  // Forum sorusunu beğenme
   const handleLikePost = (postId) => {
     setForumPosts(prev => prev.map(post => {
       if (post.id === postId) {
@@ -101,7 +92,6 @@ export default function Courses() {
     }))
   }
 
-  // Forum sorusuna yanıt/cevap yazma
   const handleAddReply = (postId, replyText) => {
     setForumPosts(prev => prev.map(post => {
       if (post.id === postId) {
@@ -123,7 +113,6 @@ export default function Courses() {
     toast.success('Cevabınız eklendi!')
   }
 
-  // Forumda yeni soru sorma
   const handleSendQuestion = (e) => {
     e.preventDefault()
     if (!newQuestion.trim()) {
@@ -146,21 +135,18 @@ export default function Courses() {
     toast.success('Sorunuz foruma gönderildi!')
   }
 
-  // Kopyalama işlemi (GitHub kodu)
   const codeSnippet = `import React, { useState, useEffect } from 'react';
 
 const Timer = () => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    // Sayacı başlat
     const interval = setInterval(() => {
       setCount(prev => prev + 1);
     }, 1000);
 
-    // Temizleme: Bileşen kaldırıldığında sayacı durdur
     return () => clearInterval(interval);
-  }, []); // Boş dizi = Sadece bileşen yüklendiğinde çalışır
+  }, []);
 
   return (
     <div>Sayaç: {count}</div>
@@ -211,7 +197,6 @@ const Timer = () => {
         startY += 18
       })
       
-      // Footer
       doc.line(14, 260, 196, 260)
       doc.setFontSize(8)
       doc.text('Bu belge Academic Information System uzerinden otomatik olarak uretilmistir.', 14, 268)
@@ -273,7 +258,6 @@ const Timer = () => {
                   setViewMode('detail')
                 }}
               >
-                {/* Modern subtle badge color bar based on type */}
                 <div className={`absolute top-0 left-0 w-full h-1.5 ${isCourseOnline ? 'bg-amber-500' : 'bg-blue-600'}`}></div>
 
                 <div>
@@ -327,7 +311,6 @@ const Timer = () => {
   return (
     <section className="flex-grow p-4 md:p-8 max-w-7xl mx-auto space-y-6 text-slate-800 dark:text-white animate-fade-in">
 
-      {/* Üst Ders Başlığı ve Seçici */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div>
           <nav className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
@@ -353,7 +336,6 @@ const Timer = () => {
           <p className="text-xs text-slate-405 mt-1 pl-7">Eğitmen: {currentCourse?.instructor}</p>
         </div>
 
-        {/* Ders Seçim Dropdown */}
         <div className="shrink-0 w-full md:w-64">
           <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
             Hızlı Ders Değiştir
@@ -372,15 +354,12 @@ const Timer = () => {
         </div>
       </div>
 
-      {/* Ana Arayüz Grid (Online: Video + VOD list; Fakülte: Info Panel) */}
       <div className="grid grid-cols-12 gap-6 items-start">
 
         {isOnline ? (
           <>
-            {/* Sol Kolon: Video ve Detaylar */}
             <div className="col-span-12 lg:col-span-8 space-y-4">
 
-              {/* Video Player */}
               <div className="relative w-full aspect-video bg-slate-900 rounded-2xl overflow-hidden shadow-lg border border-slate-200/50 dark:border-slate-800">
                 {activeLecture ? (
                   <iframe
@@ -399,7 +378,6 @@ const Timer = () => {
                 )}
               </div>
 
-              {/* Oynatılan Video Detayları ve Beğen/Paylaş Butonları */}
               <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                 <div>
                   <span className="bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-extrabold text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
@@ -413,7 +391,6 @@ const Timer = () => {
                   </p>
                 </div>
 
-                {/* Beğen / Paylaş */}
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={handleLike}
@@ -437,11 +414,9 @@ const Timer = () => {
               </div>
             </div>
 
-            {/* Sağ Kolon: Ders VOD Listesi */}
             <aside className="col-span-12 lg:col-span-4">
               <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm overflow-hidden flex flex-col min-h-[400px]">
 
-                {/* Müfredat Başlık */}
                 <div className="p-4 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-amber-500">video_library</span>
@@ -454,7 +429,6 @@ const Timer = () => {
                   </span>
                 </div>
 
-                {/* Liste */}
                 <div className="divide-y divide-slate-100 dark:divide-slate-700/50 overflow-y-auto max-h-[350px]">
                   {courseLectures.map((lecture, index) => {
                     const isActive = activeLecture?.id === lecture.id
@@ -533,7 +507,6 @@ const Timer = () => {
                 </div>
               </div>
 
-              {/* Ders Açıklaması ve Müfredat Akışı */}
               <div className="bg-slate-50 dark:bg-slate-900/40 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 space-y-6">
                 <div>
                   <h4 className="text-sm font-extrabold text-slate-800 dark:text-white flex items-center gap-1.5 mb-2">
@@ -595,10 +568,8 @@ const Timer = () => {
 
       </div>
 
-      {/* Alt Bölüm: 3 Sekmeli Ders Materyali & Forum (Tüm Derslerde Gösterilir) */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm overflow-hidden">
 
-          {/* Sekme Butonları */}
           <div className="flex border-b border-slate-200 dark:border-slate-700/60 px-4 overflow-x-auto whitespace-nowrap scrollbar-none bg-slate-50/50 dark:bg-slate-800/40">
             <button
               onClick={() => setActiveTab('notes')}
@@ -637,7 +608,6 @@ const Timer = () => {
             )}
           </div>
 
-          {/* Sekme İçerikleri */}
           <div className="p-6">
             {activeTab === 'notes' && (
               <div className="space-y-4">
@@ -732,7 +702,6 @@ const Timer = () => {
                   <span className="text-[10px] text-slate-400 dark:text-slate-500">{forumPosts.length} Gönderi</span>
                 </div>
 
-                {/* Soru Listesi */}
                 <div className="space-y-4">
                   {forumPosts.map(post => (
                     <div key={post.id} className="p-4 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-100 dark:border-slate-800/80 flex gap-3 items-start">
@@ -755,7 +724,6 @@ const Timer = () => {
 
                         <p className="text-xs text-slate-600 dark:text-slate-300 mt-2 font-medium leading-relaxed">{post.text}</p>
 
-                        {/* Alt Butonlar */}
                         <div className="flex gap-4 items-center mt-3 pt-3 border-t border-slate-100 dark:border-slate-800/40 text-[10px] text-slate-400 font-bold">
                           <button
                             onClick={() => handleLikePost(post.id)}
@@ -774,7 +742,6 @@ const Timer = () => {
                           </button>
                         </div>
 
-                        {/* Yanıtlar listesi ve cevap yazma alanı */}
                         {expandedPosts[post.id] && (
                           <div className="mt-4 pl-4 border-l-2 border-slate-200 dark:border-slate-700 space-y-3.5">
                             {post.repliesList && post.repliesList.map(reply => (
@@ -799,7 +766,6 @@ const Timer = () => {
                               </div>
                             ))}
 
-                            {/* Cevap yazma formu */}
                             <form
                               onSubmit={(e) => {
                                 e.preventDefault();
@@ -833,7 +799,6 @@ const Timer = () => {
                   ))}
                 </div>
 
-                {/* Soru Gönderme Alanı */}
                 <div className="pt-5 border-t border-slate-100 dark:border-slate-800/80">
                   <form onSubmit={handleSendQuestion} className="flex gap-3 items-start">
                     <div className="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0">

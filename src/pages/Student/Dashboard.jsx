@@ -15,7 +15,6 @@ export default function StudentDashboard() {
   const [bulletins, setBulletins] = useState([])
   const [overviewLoading, setOverviewLoading] = useState(true)
 
-  // Advisor state
   const [advisorUser, setAdvisorUser] = useState(null)
 
   const currentGrades = studentGrades || grades || []
@@ -24,7 +23,6 @@ export default function StudentDashboard() {
   useEffect(() => {
     if (currentUser?.id) {
       dispatch(fetchStudentGradesAsync(currentUser.id))
-      // FAZ 3.3 — advisorId'yi dinamik olarak kullanıcıdan çek, yoksa u20'ye düş
       const advisorId = currentUser.advisorId || 'u20'
       fetch(`http://localhost:3001/users/${advisorId}`)
         .then(res => res.json())
@@ -78,7 +76,6 @@ export default function StudentDashboard() {
 
 
 
-  // GANO Calculations (consistent with studentCalc)
   const semesterGano = currentGrades.length > 0
     ? calculateGano(currentGrades)
     : 0.0
@@ -87,7 +84,6 @@ export default function StudentDashboard() {
     ? simulateGano(currentGrades, null, 0)
     : (currentUser?.gpa || 3.42)
 
-  // AKTS Progress Calculation
   const baseCompletedEcts = currentUser?.completedEcts || 180
   const currentSemesterCompletedEcts = currentGrades
     .filter(g => g.final !== null && g.final !== undefined && g.final !== 'Açıklanmadı' && g.letterGrade !== 'FF')
@@ -95,18 +91,16 @@ export default function StudentDashboard() {
   const totalCompletedEcts = baseCompletedEcts + currentSemesterCompletedEcts
   const totalEctsRequirement = currentUser?.totalEcts || 240
 
-  // Devamsızlık Oranı Calculation
   const overallAbsencePercentage = currentGrades.length > 0
     ? Math.round(currentGrades.reduce((sum, g) => sum + (g.absencePercentage || 0), 0) / currentGrades.length)
     : 0
 
-  // Today's lessons filter
   const getTodayLessons = () => {
     if (!weeklySchedule) return []
     const todayName = getDayKeyEnglish()
     const today = getSystemToday()
     const day = today.getDate()
-    const month = today.getMonth() // 4 = May, 5 = June
+    const month = today.getMonth()
 
     let weekIndex = 1
     if (month === 4) {
@@ -129,9 +123,7 @@ export default function StudentDashboard() {
 
   const todayLessons = getTodayLessons()
 
-  // getDayNameTurkish → src/utils/studentCalc.js'ten import edilir
 
-  // Academic Calendar sorting and filtering
   const parseDateStr = (dateStr) => {
     if (!dateStr) return getSystemToday()
     const parts = dateStr.split('.')
@@ -156,7 +148,6 @@ export default function StudentDashboard() {
 
   const upcomingEvents = getUpcomingEvents()
 
-  // Critical absences warning (>= 25% absence rate is close to 30% limit)
   const warningAbsenceLimit = 25
   const criticalAbsenceCourses = currentGrades.filter(g =>
     g.semester === '2025-2026 Bahar' && (g.absencePercentage || 0) >= warningAbsenceLimit
@@ -185,7 +176,6 @@ export default function StudentDashboard() {
             );
           })()}
 
-          {/* Kurumsal Karşılama Banner'ı */}
           <div className="student-hero-banner mb-6">
             <div className="z-10 max-w-2xl">
               <h2 className="text-xl md:text-2xl font-extrabold tracking-tight">Sayın {currentUser?.name || 'Öğrenci'},</h2>
@@ -198,10 +188,8 @@ export default function StudentDashboard() {
             </div>
           </div>
 
-          {/* Üst Akademik Durum Kartları */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
 
-            {/* Genel GANO */}
             <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-800/60 shadow-sm flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-900 dark:text-blue-400 flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-2xl">school</span>
@@ -214,7 +202,6 @@ export default function StudentDashboard() {
               </div>
             </div>
 
-            {/* Dönem GANO */}
             <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-800/60 shadow-sm flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-900 dark:text-indigo-400 flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-2xl">grade</span>
@@ -227,7 +214,6 @@ export default function StudentDashboard() {
               </div>
             </div>
 
-            {/* Kayıtlı Ders Sayısı */}
             <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-800/60 shadow-sm flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-900 dark:text-purple-400 flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-2xl">collections_bookmark</span>
@@ -240,7 +226,6 @@ export default function StudentDashboard() {
               </div>
             </div>
 
-            {/* Toplam/Tamamlanan Kredi */}
             <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-800/60 shadow-sm flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-450 flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-2xl">task_alt</span>
@@ -253,7 +238,6 @@ export default function StudentDashboard() {
               </div>
             </div>
 
-            {/* Genel Devamsızlık Oranı */}
             <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-800/60 shadow-sm flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-450 flex items-center justify-center shrink-0">
                 <span className="material-symbols-outlined text-2xl">event_busy</span>
@@ -268,13 +252,10 @@ export default function StudentDashboard() {
 
           </div>
 
-          {/* Dashboard Bento Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            {/* Sol Sütun - 2 Kolon Kaplar (Bugünün Dersleri & Akademik Takvim Özeti) */}
             <div className="lg:col-span-2 space-y-6">
 
-              {/* Bugünün Dersleri */}
               <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6">
                 <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-700/60 mb-5">
                   <h3 className="text-sm font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
@@ -324,7 +305,6 @@ export default function StudentDashboard() {
                 )}
               </div>
 
-              {/* Akademik Takvim Özeti */}
               <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6">
                 <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-700/60 mb-5">
                   <h3 className="text-sm font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
@@ -368,10 +348,8 @@ export default function StudentDashboard() {
 
             </div>
 
-            {/* Sağ Sütun - 1 Kolon Kaplar (Devamsızlık Uyarısı, Danışmanlık & Takip) */}
             <div className="space-y-6">
 
-              {/* Devamsızlık Uyarısı */}
               <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6">
                 <h3 className="text-sm font-extrabold text-slate-800 dark:text-white flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-slate-700/60 mb-5">
                   <span className="material-symbols-outlined text-rose-500">warning</span>
@@ -421,7 +399,6 @@ export default function StudentDashboard() {
                 )}
               </div>
 
-              {/* Akademik Danışman Bilgisi */}
               <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-800/60 shadow-sm p-6">
                 <h3 className="text-sm font-extrabold text-slate-800 dark:text-white flex items-center gap-2 pb-3 border-b border-slate-100 dark:border-slate-700/60 mb-5">
                   <span className="material-symbols-outlined text-slate-500">support_agent</span>
@@ -477,7 +454,6 @@ export default function StudentDashboard() {
         </footer>
       </main>
 
-      {/* Mobil Alt Navigasyon Barı */}
       <nav className="student-mobile-nav">
         <Link to="/student/dashboard" className="student-mobile-active">
           <span className="material-symbols-outlined">dashboard</span>
@@ -497,7 +473,6 @@ export default function StudentDashboard() {
         </Link>
       </nav>
 
-      {/* Mobil Canlı Yardım Destek FAB Butonu */}
       <button className="student-fab-btn" onClick={() => toast.success('Canlı destek talebiniz alınmıştır.')}>
         <span className="material-symbols-outlined">chat_bubble</span>
         <span className="student-fab-tooltip">Canlı Yardım</span>

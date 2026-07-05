@@ -480,25 +480,25 @@ const deanSlice = createSlice({
                     state.users[index] = action.payload;
                 }
             })
-            // updateStudentAdvisorAsync
+            // öğrenci danışmanını güncelle
             .addCase(updateStudentAdvisorAsync.fulfilled, (state, action) => {
                 const index = state.users.findIndex(x => x.id === action.payload.id);
                 if (index !== -1) {
                     state.users[index] = action.payload;
                 }
             })
-            // addInstructorAsync
+            // akademisyen ekle
             .addCase(addInstructorAsync.fulfilled, (state, action) => {
                 state.instructors.push(action.payload);
             })
-            // updateInstructorAsync
+            // akademisyen bilgilerini güncelle
             .addCase(updateInstructorAsync.fulfilled, (state, action) => {
                 const index = state.instructors.findIndex(i => i.id === action.payload.id);
                 if (index !== -1) {
                     state.instructors[index] = action.payload;
                 }
             })
-            // deleteInstructorAsync
+            // akademisyeni sil
             .addCase(deleteInstructorAsync.fulfilled, (state, action) => {
                 state.instructors = state.instructors.filter(i => i.id !== action.payload);
             })

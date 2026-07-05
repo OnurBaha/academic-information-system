@@ -12,9 +12,8 @@ export default function StudentAttendance() {
 
   const [selectedSemester, setSelectedSemester] = useState('current')
 
-  // Modal states for Sağlık Raporu & Özel İzin Dilekçesi
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [modalType, setModalType] = useState('rapor') // 'rapor' | 'izin'
+  const [modalType, setModalType] = useState('rapor')
   const [explanation, setExplanation] = useState('')
   const [fileName, setFileName] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -33,13 +32,11 @@ export default function StudentAttendance() {
 
     setIsSubmitting(true)
 
-    // Simulate upload delay (cidden bekle yüklensin!)
     setTimeout(async () => {
       try {
         const title = modalType === 'rapor' ? 'Sağlık Raporu' : 'Özel İzin Dilekçesi'
         const description = explanation
 
-        // FAZ 2.5 — Belge talebi (Oversight'ta görünür)
         await dispatch(requestOfficialDocumentAsync({
           studentId: currentUser.id,
           title: title,
@@ -50,7 +47,6 @@ export default function StudentAttendance() {
           studentName: currentUser.name || 'Öğrenci'
         }))
 
-        // FAZ 2.5 — Aynı zamanda ApprovalCenter'a da talep gönder (Dekan görebilsin)
         await dispatch(submitStudentRequestAsync({
           studentName: currentUser.name || 'Öğrenci',
           studentNumber: currentUser.studentNumber || currentUser.id,
@@ -78,7 +74,6 @@ export default function StudentAttendance() {
     }
   }, [dispatch, currentUser])
 
-  // Dönem filtresi
   const filteredGrades = studentGrades.filter(g => {
     let matchesSemester = true
     if (selectedSemester === 'current') matchesSemester = g.semester === '2025-2026 Bahar'
@@ -88,15 +83,12 @@ export default function StudentAttendance() {
     return matchesSemester
   })
 
-  // Sadece devamsızlığı olan dersler listelenecek
   const displayGrades = filteredGrades.filter(g => g.absentDates && g.absentDates.length > 0)
 
-  // Genel İstatistiklerin Hesaplanması (Tüm dönem dersleri üzerinden)
   const totalAbsentDays = filteredGrades.reduce((sum, g) => sum + (g.absentDates ? g.absentDates.length : 0), 0)
   const coursesWithAbsences = filteredGrades.filter(g => g.absentDates && g.absentDates.length > 0).length
   const criticalCourses = filteredGrades.filter(g => (g.absencePercentage || 0) >= 30).length
 
-  // Genel katılım yüzdesi (Her devamsızlık günü için %5 azalır)
   const attendanceRate = Math.max(0, 100 - (totalAbsentDays * 5))
   const strokeCircumference = 364
   const strokeOffset = strokeCircumference - (strokeCircumference * attendanceRate) / 100
@@ -172,7 +164,6 @@ export default function StudentAttendance() {
   return (
     <section className="grades-page-canvas text-slate-850 dark:text-white">
 
-      {/* Sayfa Başlığı ve Filtre */}
       <div className="grades-page-header">
         <div>
           <h2 className="grades-page-title">Ders Devamsızlık Durumu</h2>
@@ -196,7 +187,6 @@ export default function StudentAttendance() {
         </div>
       </div>
 
-      {/* İstatistik Kartları */}
       <div className="grades-stats-row mb-6">
         <div className="grades-stat-card">
           <div className="grades-card-header">
@@ -255,11 +245,9 @@ export default function StudentAttendance() {
         </div>
       </div>
 
-      {/* Devamsızlık Ana Bölümü */}
       <div className="grades-main-layout">
         <div className="grades-left-column">
 
-          {/* Devamsızlık Detay Tablosu */}
           <div className="grades-table-wrapper">
             <div className="grades-table-header">
               <h4 className="grades-table-title">Ders Bazlı Devamsızlık Çizelgesi</h4>
@@ -304,19 +292,16 @@ export default function StudentAttendance() {
 
                       return (
                         <tr className="grades-table-row" key={g.id}>
-                          {/* Ders Kodu */}
                           <td className="grades-td-score">
                             <p className="grades-course-code font-bold text-slate-800 dark:text-white text-center">
                               {g.courseCode}
                             </p>
                           </td>
-                          {/* Ders Adı */}
                           <td className="grades-td-score">
                             <p className="font-semibold text-slate-800 dark:text-slate-200 text-center">
                               {g.courseName}
                             </p>
                           </td>
-                          {/* Devamsızlık Yüzdesi */}
                           <td className="grades-td-score font-bold">
                             <span
                               className={isCritical ? 'text-red-650 dark:text-red-400 font-extrabold text-base' : 'text-slate-700 dark:text-slate-350 text-sm font-semibold'}
@@ -330,7 +315,6 @@ export default function StudentAttendance() {
                               </span>
                             )}
                           </td>
-                          {/* Devamsızlık Yapılan Tarihler (gg/aa/yyyy formatında, alt alta listelenmiş) */}
                           <td className="grades-td-score">
                             <div className="flex flex-wrap gap-1 items-center justify-center max-w-[200px] mx-auto">
                               {dates.map((d, index) => (
@@ -343,7 +327,6 @@ export default function StudentAttendance() {
                               ))}
                             </div>
                           </td>
-                          {/* Toplam Devamsızlık */}
                           <td className="grades-td-score font-semibold text-slate-700 dark:text-slate-200">
                             {totalCount} Gün
                           </td>
@@ -357,7 +340,6 @@ export default function StudentAttendance() {
           </div>
         </div>
 
-        {/* Yan Sütun: Dairesel Görsel ve Hızlı Bilgiler */}
         <div className="grades-right-column">
 
           <div className="grades-attendance-card flex flex-col gap-6 w-full">
@@ -455,12 +437,10 @@ export default function StudentAttendance() {
 
       </div>
 
-      {/* Rapor / İzin Yükleme Modalı */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 transition-all">
           <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl p-6 relative flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-200">
 
-            {/* Modal Header */}
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-base font-extrabold text-slate-850 dark:text-white flex items-center gap-1.5">
@@ -483,7 +463,6 @@ export default function StudentAttendance() {
               </button>
             </div>
 
-            {/* Modal Body */}
             {isSubmitted ? (
               <div className="flex flex-col items-center justify-center py-6 text-center gap-4">
                 <span className="material-symbols-outlined text-6xl text-emerald-500 animate-bounce">check_circle</span>

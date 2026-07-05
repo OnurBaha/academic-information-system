@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiFetch } from '../../services/api';
 
-// New Thunks used by CourseRegistration, StudentDashboard and Courses
+// ders kaydı öğrenci paneli ve dersler için yeni thunklar
 export const fetchStudentCourses = createAsyncThunk(
     'student/fetchStudentCourses',
     async (studentId, { rejectWithValue }) => {
@@ -47,7 +47,7 @@ export const fetchUpcomingClasses = createAsyncThunk(
     }
 );
 
-// Course Registration Thunks
+// ders kaydı thunkları
 export const fetchAllCourses = createAsyncThunk(
     'student/fetchAllCourses',
     async (_, { rejectWithValue }) => {
@@ -110,7 +110,6 @@ export const submitStudentHomeworkAsync = createAsyncThunk(
     'student/submitHomeworkAsync',
     async ({ gradeId, homeworkPayload }, { rejectWithValue }) => {
         try {
-            // 1. Update the student's grade record
             const gradeResult = await apiFetch(`/studentGrades/${gradeId}`, {
                 method: 'PATCH',
                 body: JSON.stringify({
@@ -122,7 +121,6 @@ export const submitStudentHomeworkAsync = createAsyncThunk(
                 }),
             });
 
-            // 2. Create or update the homework review entry so the teacher sees it
             try {
                 const reviews = await apiFetch('/homeworkReviews');
                 const existing = reviews.find(r => 
@@ -196,7 +194,7 @@ export const requestOfficialDocumentAsync = createAsyncThunk(
     }
 );
 
-// FAZ 2.4 — Dekan ApprovalCenter'a öğrenci talebi gönder
+// dekan onay merkezine öğrenci talebi gönder
 export const submitStudentRequestAsync = createAsyncThunk(
     'student/submitStudentRequestAsync',
     async (requestPayload, { rejectWithValue }) => {
@@ -216,7 +214,7 @@ export const submitStudentRequestAsync = createAsyncThunk(
     }
 );
 
-// FAZ 4.1 — Ders Kaydı Yap (studentCourses koleksiyonuna ekle)
+// ders kaydı yap studentcourses koleksiyonuna ekle
 export const registerStudentCoursesAsync = createAsyncThunk(
     'student/registerStudentCoursesAsync',
     async ({ studentId, coursesList }, { rejectWithValue }) => {
@@ -243,7 +241,7 @@ export const registerStudentCoursesAsync = createAsyncThunk(
     }
 );
 
-// FAZ 6.1 — Forum Sorularını Çek
+// forum sorularını çek
 export const fetchForumQuestionsAsync = createAsyncThunk(
     'student/fetchForumQuestionsAsync',
     async (courseCode, { rejectWithValue }) => {
@@ -255,7 +253,7 @@ export const fetchForumQuestionsAsync = createAsyncThunk(
     }
 );
 
-// FAZ 6.2 — Forumda Yeni Soru Sor
+// forumda yeni soru sor
 export const postForumQuestionAsync = createAsyncThunk(
     'student/postForumQuestionAsync',
     async (questionPayload, { rejectWithValue }) => {
@@ -284,11 +282,11 @@ const studentSlice = createSlice({
         studentGrades: [],
         attendance: null,
         upcomingClasses: [],
-        courses: [], // Course registration offered courses
+        courses: [],
         grades: [],
         documents: [],
         dashboardData: null,
-        forumQuestions: [], // FAZ 6.1
+        forumQuestions: [],
         status: {
             studentCourses: 'idle',
             studentGrades: 'idle',
@@ -327,7 +325,6 @@ const studentSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // New Thunk: fetchStudentCourses
             .addCase(fetchStudentCourses.pending, (state) => {
                 state.status.studentCourses = 'loading';
                 state.error = null;
@@ -341,7 +338,6 @@ const studentSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // New Thunk: fetchStudentGrades
             .addCase(fetchStudentGrades.pending, (state) => {
                 state.status.studentGrades = 'loading';
                 state.error = null;
@@ -356,7 +352,6 @@ const studentSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // New Thunk: fetchAttendance
             .addCase(fetchAttendance.pending, (state) => {
                 state.status.attendance = 'loading';
                 state.error = null;
@@ -370,7 +365,6 @@ const studentSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // New Thunk: fetchUpcomingClasses
             .addCase(fetchUpcomingClasses.pending, (state) => {
                 state.status.upcomingClasses = 'loading';
                 state.error = null;
@@ -384,7 +378,6 @@ const studentSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // Course Registration: fetchAllCourses
             .addCase(fetchAllCourses.pending, (state) => {
                 state.status.courses = 'loading';
                 state.error = null;
@@ -398,7 +391,6 @@ const studentSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // Old Thunk: fetchStudentGradesAsync
             .addCase(fetchStudentGradesAsync.pending, (state) => {
                 state.status.global = 'loading';
                 state.error = null;
@@ -413,7 +405,6 @@ const studentSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // Old Thunk: fetchStudentDocumentsAsync
             .addCase(fetchStudentDocumentsAsync.pending, (state) => {
                 state.status.documents = 'loading';
                 state.error = null;
@@ -427,7 +418,6 @@ const studentSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // Old Thunk: fetchStudentDashboardAsync
             .addCase(fetchStudentDashboardAsync.pending, (state) => {
                 state.status.global = 'loading';
                 state.error = null;
@@ -441,7 +431,6 @@ const studentSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // Submit Homework
             .addCase(submitStudentHomeworkAsync.pending, (state) => {
                 state.actionStatus = 'loading';
                 state.error = null;
@@ -462,7 +451,6 @@ const studentSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // Request Document
             .addCase(requestOfficialDocumentAsync.pending, (state) => {
                 state.actionStatus = 'loading';
                 state.error = null;
@@ -476,7 +464,6 @@ const studentSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // FAZ 2.4 — Submit Student Request (Dekan ApprovalCenter için)
             .addCase(submitStudentRequestAsync.pending, (state) => {
                 state.actionStatus = 'loading';
                 state.error = null;
@@ -488,7 +475,6 @@ const studentSlice = createSlice({
                 state.actionStatus = 'failed';
                 state.error = action.payload;
             })
-            // FAZ 4.1 — Register Student Courses
             .addCase(registerStudentCoursesAsync.pending, (state) => {
                 state.actionStatus = 'loading';
                 state.error = null;
@@ -501,7 +487,6 @@ const studentSlice = createSlice({
                 state.actionStatus = 'failed';
                 state.error = action.payload;
             })
-            // FAZ 6.1 — Fetch Forum Questions
             .addCase(fetchForumQuestionsAsync.pending, (state) => {
                 state.status.forumQuestions = 'loading';
                 state.error = null;
@@ -515,7 +500,6 @@ const studentSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // FAZ 6.2 — Post Forum Question
             .addCase(postForumQuestionAsync.pending, (state) => {
                 state.actionStatus = 'loading';
                 state.error = null;

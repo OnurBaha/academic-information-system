@@ -8,13 +8,12 @@ const ITEMS_PER_PAGE = 30
 
 export default function AcademicCalendar() {
   const navigate = useNavigate()
-  const [view, setView] = useState('selection') // 'selection' | 'academic' | 'exams'
+  const [view, setView] = useState('selection')
   const [academicSemesterFilter, setAcademicSemesterFilter] = useState('all')
   const [examSemesterFilter, setExamSemesterFilter] = useState('bahar')
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Filtre veya arama değiştiğinde 1. sayfaya sıfırla
   useEffect(() => {
     setCurrentPage(1)
   }, [academicSemesterFilter, searchTerm])
@@ -50,7 +49,6 @@ export default function AcademicCalendar() {
       })
   }, [])
 
-  // ── PDF İndirme ───────────────────
   const downloadExamSchedulePDF = () => {
     if (examSemesterFilter === 'yaz') {
       toast.error('Yaz okulu sınav takvimi henüz açıklanmadığı için PDF indirilemez.')
@@ -63,7 +61,6 @@ export default function AcademicCalendar() {
         examSemesterFilter === 'guz' ? 'Guz Donemi' :
           examSemesterFilter === 'bahar' ? 'Bahar Donemi' : 'Yaz Ogretimi'
 
-      // Title
       doc.setFont('Helvetica', 'bold')
       doc.setFontSize(15)
       doc.text('SoftIto OBIS - Sinav Takvimi', 14, 18)
@@ -73,7 +70,6 @@ export default function AcademicCalendar() {
       doc.text(`2025-2026 ${semesterLabel} Sinav Programi`, 14, 26)
       doc.text('Yazdirilma Tarihi: ' + new Date().toLocaleDateString('tr-TR'), 14, 32)
 
-      // Bordered table
       autoTable(doc, {
         startY: 40,
         head: [['Tarih', 'Saat', 'Sinav Turu', 'Ders Kodu', 'Ders Adi', 'Sinif / Lab / Blok', 'Gozlemci']],
@@ -115,7 +111,6 @@ export default function AcademicCalendar() {
     }
   }
 
-  // ── Filtreleme ve Sayfalama ─────────────────────────────────────────────
   const parseDateString = (dateStr) => {
     const parts = dateStr.split('.')
     if (parts.length === 3) {
@@ -131,11 +126,9 @@ export default function AcademicCalendar() {
     return matchesSearch && matchesTab
   }).sort((a, b) => parseDateString(a.date) - parseDateString(b.date)) : []
 
-  // Sayfalama artık tek liste halinde gösterildiği için etkisizdir
   const totalPages = 1
   const pagedEvents = sortedAcademicEvents
 
-  // Sayfalama yardımcısı — en fazla 7 sayfa butonu göster
   const getPageNumbers = () => {
     return [1]
   }
@@ -148,9 +141,6 @@ export default function AcademicCalendar() {
     )
   }
 
-  // ──────────────────────────────────────────────────────────────────────
-  // GÖRÜNÜM: SEÇİM
-  // ──────────────────────────────────────────────────────────────────────
   if (view === 'selection') {
     return (
       <div className="flex flex-col items-center justify-center min-h-[75vh] p-6 max-w-[1440px] mx-auto w-full animate-fade-in">
@@ -165,7 +155,6 @@ export default function AcademicCalendar() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
-          {/* Kart 1 — Akademik Takvim */}
           <div
             onClick={() => setView('academic')}
             className="group relative cursor-pointer overflow-hidden rounded-3xl bg-white dark:bg-[#111827] p-8 border border-slate-200/60 dark:border-slate-800/80 shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col justify-between"
@@ -188,7 +177,6 @@ export default function AcademicCalendar() {
             </div>
           </div>
 
-          {/* Kart 2 — Sınav Takvimi */}
           <div
             onClick={() => setView('exams')}
             className="group relative cursor-pointer overflow-hidden rounded-3xl bg-white dark:bg-[#111827] p-8 border border-slate-200/60 dark:border-slate-800/80 shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col justify-between"
@@ -215,14 +203,10 @@ export default function AcademicCalendar() {
     )
   }
 
-  // ──────────────────────────────────────────────────────────────────────
-  // GÖRÜNÜM: AKADEMİK TAKVİM
-  // ──────────────────────────────────────────────────────────────────────
   if (view === 'academic') {
     return (
       <div className="flex flex-col gap-6 p-6 max-w-[1440px] mx-auto w-full academic-calendar-page-canvas animate-fade-in">
 
-        {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
           <div>
             <h2 className="student-page-title flex items-center gap-2">
@@ -251,7 +235,6 @@ export default function AcademicCalendar() {
           </div>
         </div>
 
-        {/* Filtreleme ve Arama */}
         <div className="flex flex-col md:flex-row justify-between gap-4 items-center bg-white dark:bg-[#111827] p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/80 shadow-sm">
           <div className="flex flex-wrap gap-1.5 w-full md:w-auto">
             {[
@@ -286,7 +269,6 @@ export default function AcademicCalendar() {
           </div>
         </div>
 
-        {/* Tablo */}
         <div className="bg-white dark:bg-[#111827] rounded-3xl shadow-sm border border-slate-200/50 dark:border-slate-800/80 transition-all duration-300 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
@@ -315,7 +297,6 @@ export default function AcademicCalendar() {
             </table>
           </div>
 
-          {/* Tablo içindeki sayfalama alt alanı */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/20">
               <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
@@ -323,7 +304,6 @@ export default function AcademicCalendar() {
                 sayfa <span className="font-bold text-slate-600 dark:text-slate-300">{currentPage}</span> / {totalPages}
               </p>
               <div className="flex items-center gap-1">
-                {/* Geri */}
                 <button
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
@@ -349,7 +329,6 @@ export default function AcademicCalendar() {
                   )
                 )}
 
-                {/* İleri */}
                 <button
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
@@ -366,16 +345,12 @@ export default function AcademicCalendar() {
     )
   }
 
-  // ──────────────────────────────────────────────────────────────────────
-  // GÖRÜNÜM: SINAV TAKVİMİ
-  // ──────────────────────────────────────────────────────────────────────
   if (view === 'exams') {
     const currentExams = studentExams[examSemesterFilter] || []
 
     return (
       <div className="flex flex-col gap-6 p-6 max-w-[1440px] mx-auto w-full exams-calendar-page-canvas animate-fade-in">
 
-        {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
           <div>
             <h2 className="student-page-title flex items-center gap-2">
@@ -402,7 +377,6 @@ export default function AcademicCalendar() {
           </div>
         </div>
 
-        {/* Dönem Seçimi ve PDF Butonu */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#111827] p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/80 shadow-sm">
           <div className="flex gap-1.5 flex-wrap">
             {[
@@ -432,7 +406,6 @@ export default function AcademicCalendar() {
           </button>
         </div>
 
-        {/* Sınavlar Tablosu */}
         {examSemesterFilter === 'yaz' ? (
           <div className="bg-white dark:bg-[#111827] rounded-3xl p-8 shadow-sm border border-slate-200/50 dark:border-slate-800/80 transition-all duration-300 flex items-center gap-4">
             <span className="material-symbols-outlined text-3xl text-blue-650 shrink-0">info</span>
