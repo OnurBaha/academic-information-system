@@ -73,6 +73,8 @@ export default function TopAppBar() {
 
   const unreadCount = filteredAnnouncements.length
 
+  const { termStatus } = useSelector((state) => state.dean || {})
+
   const handleLogout = () => {
     dispatch(logout())
     toast.success('Başarıyla çıkış yapıldı')
@@ -80,7 +82,14 @@ export default function TopAppBar() {
   }
 
   return (
-    <header className="topbar-container relative">
+    <>
+      {termStatus?.emergencyAlertActive && (
+        <div className="w-full bg-red-600 text-white text-xs font-black py-1.5 px-4 flex items-center justify-between overflow-hidden select-none border-b border-red-700 shadow-sm z-50">
+          <marquee className="flex-1 font-bold text-center uppercase tracking-wider">{termStatus.emergencyAlertText}</marquee>
+          <span className="material-symbols-outlined text-[16px] ml-2">warning</span>
+        </div>
+      )}
+      <header className="topbar-container relative">
       <div className="topbar-left-side">
         <button className="topbar-btn-menu">
           <span className="material-symbols-outlined">menu</span>
@@ -187,5 +196,6 @@ export default function TopAppBar() {
         </div>
       </div>
     </header>
+    </>
   )
 }

@@ -30,7 +30,8 @@
       "role": "teacher",
       "departmentId": "d1",
       "phone": "+90 555 333 4455",
-      "address": "Beşiktaş, İstanbul"
+      "address": "Beşiktaş, İstanbul",
+      "status": "active"
     },
     {
       "id": "u4",
@@ -41,7 +42,8 @@
       "role": "teacher",
       "departmentId": "d1",
       "phone": "+90 555 444 5566",
-      "address": "Şişli, İstanbul"
+      "address": "Şişli, İstanbul",
+      "status": "active"
     },
     {
       "id": "u5",
@@ -52,7 +54,8 @@
       "role": "teacher",
       "departmentId": "d1",
       "phone": "+90 555 555 6677",
-      "address": "Üsküdar, İstanbul"
+      "address": "Üsküdar, İstanbul",
+      "status": "active"
     },
     {
       "id": "u6",
@@ -63,7 +66,8 @@
       "role": "teacher",
       "departmentId": "d1",
       "phone": "+90 555 666 7788",
-      "address": "Ataşehir, İstanbul"
+      "address": "Ataşehir, İstanbul",
+      "status": "active"
     },
     {
       "id": "u7",
@@ -81,7 +85,9 @@
       "attendanceRate": 92,
       "advisor": "Prof. Dr. Selçuk Yılmaz",
       "phone": "+90 555 777 8899",
-      "address": "Sarıyer, İstanbul"
+      "address": "Sarıyer, İstanbul",
+      "tuitionPaid": true,
+      "status": "active"
     },
     {
       "id": "u10",
@@ -95,7 +101,9 @@
       "classLevel": 3,
       "gpa": 3.12,
       "phone": "+90 555 888 9900",
-      "address": "Maltepe, İstanbul"
+      "address": "Maltepe, İstanbul",
+      "tuitionPaid": true,
+      "status": "active"
     },
     {
       "id": "u11",
@@ -109,7 +117,9 @@
       "classLevel": 3,
       "gpa": 2.95,
       "phone": "+90 555 999 0011",
-      "address": "Fatih, İstanbul"
+      "address": "Fatih, İstanbul",
+      "tuitionPaid": true,
+      "status": "active"
     },
     {
       "id": "u12",
@@ -123,7 +133,9 @@
       "classLevel": 3,
       "gpa": 2.78,
       "phone": "+90 555 111 4455",
-      "address": "Kartal, İstanbul"
+      "address": "Kartal, İstanbul",
+      "tuitionPaid": true,
+      "status": "active"
     },
     {
       "id": "u13",
@@ -137,7 +149,9 @@
       "classLevel": 3,
       "gpa": 3.85,
       "phone": "+90 555 222 5566",
-      "address": "Pendik, İstanbul"
+      "address": "Pendik, İstanbul",
+      "tuitionPaid": true,
+      "status": "active"
     },
     {
       "id": "u14",
@@ -163,7 +177,7 @@
       "departmentId": "d1",
       "studentNumber": "20211024006",
       "classLevel": 3,
-      "gpa": 3.20,
+      "gpa": 3.2,
       "phone": "+90 555 444 7788",
       "address": "Avcılar, İstanbul"
     },
@@ -229,7 +243,8 @@
       "capacity": 30,
       "enrolled": 15,
       "type": "Zorunlu",
-      "isFailed": false
+      "isFailed": false,
+      "gradesApproved": true
     },
     {
       "id": "DATA-204",
@@ -295,7 +310,8 @@
       "capacity": 20,
       "enrolled": 9,
       "type": "Seçmeli",
-      "isFailed": false
+      "isFailed": false,
+      "gradesApproved": true
     },
     {
       "id": "SEC-103",
@@ -334,43 +350,54 @@
   "curriculum": [
     {
       "id": "c1",
-      "code": "MOB401",
-      "name": "Mobil Geliştirme (Flutter)",
+      "code": "TIP101",
+      "name": "Temel Anatomi ve Fizyoloji",
       "ects": 6,
-      "semester": 4,
+      "semester": 1,
       "status": "Aktif"
     },
     {
       "id": "c2",
-      "code": "CYB302",
-      "name": "Cyber Security 101",
+      "code": "TAR202",
+      "name": "Osmanlı Müesseseleri Tarihi",
       "ects": 4,
       "semester": 3,
       "status": "Taslak"
     },
     {
       "id": "c3",
-      "code": "AI501",
-      "name": "Python & Machine Learning",
+      "code": "EDB301",
+      "name": "Klasik Türk Edebiyatı",
       "ects": 7,
       "semester": 5,
       "status": "Aktif"
     },
     {
       "id": "c4",
-      "code": "UX201",
-      "name": "UI/UX Tasarım Temelleri",
+      "code": "HUK404",
+      "name": "Ceza Hukuku Genel Hükümler",
       "ects": 3,
-      "semester": 2,
+      "semester": 7,
       "status": "Pasif"
     },
     {
       "id": "c5",
-      "code": "BLK601",
-      "name": "Blockchain & Web3",
+      "code": "ING101",
+      "name": "Temel Akademik İngilizce",
       "ects": 5,
-      "semester": 6,
+      "semester": 1,
       "status": "Taslak"
+    },
+    {
+      "id": "1rODbMSs8fY",
+      "code": "TIP150",
+      "name": "aaaa",
+      "ects": 10,
+      "semester": 1,
+      "status": "Taslak",
+      "instructor": "Doç. Dr. Mert Akın",
+      "hours": 48,
+      "quota": 50
     }
   ],
   "documents": [
@@ -407,16 +434,34 @@
       "title": "Askerlik Tecil Belgesi",
       "desc": "Askerlik tecil işlemleri için belge",
       "requestDate": "10.06.2024",
-      "status": "pending",
+      "status": "rejected",
       "verificationCode": "QR-104958"
+    },
+    {
+      "id": "doc-req-5",
+      "studentId": "u10",
+      "title": "Öğrenci Belgesi",
+      "desc": "E-imzalı resmi öğrenci belgesi",
+      "requestDate": "04.07.2026",
+      "status": "pending",
+      "verificationCode": "QR-123456"
+    },
+    {
+      "id": "doc-req-6",
+      "studentId": "u11",
+      "title": "Transkript",
+      "desc": "Resmi Türkçe Not Döküm Belgesi (E-İmzalı)",
+      "requestDate": "05.07.2026",
+      "status": "pending",
+      "verificationCode": "QR-654321"
     }
   ],
   "facultyWorkloads": [
     {
       "id": "fw-1",
-      "avatar": "S",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&q=80",
       "name": "Dr. Elif Soylu",
-      "dept": "Yazılım Mühendisliği",
+      "dept": "Tarih Bölümü",
       "coursesCount": 3,
       "studentCount": 96,
       "rating": 4.9,
@@ -424,9 +469,9 @@
     },
     {
       "id": "fw-2",
-      "avatar": "A",
+      "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&q=80",
       "name": "Doç. Dr. Mert Akın",
-      "dept": "Veri Bilimi",
+      "dept": "Tıp Fakültesi (Genel Cerrahi)",
       "coursesCount": 2,
       "studentCount": 64,
       "rating": 4.7,
@@ -434,9 +479,9 @@
     },
     {
       "id": "fw-3",
-      "avatar": "K",
+      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&q=80",
       "name": "Dr. Cem Kaya",
-      "dept": "Mobil Geliştirme",
+      "dept": "Hukuk Fakültesi",
       "coursesCount": 2,
       "studentCount": 48,
       "rating": 4.6,
@@ -444,13 +489,23 @@
     },
     {
       "id": "fw-4",
-      "avatar": "D",
+      "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&q=80",
       "name": "Prof. Seda Demir",
-      "dept": "Siber Güvenlik",
+      "dept": "Türk Dili ve Edebiyatı",
       "coursesCount": 1,
       "studentCount": 32,
       "rating": 4.5,
       "workload": 40
+    },
+    {
+      "id": "fw-5",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80",
+      "name": "Dr. Ahmet Yılmaz",
+      "dept": "Mühendislik Fakültesi",
+      "coursesCount": 4,
+      "studentCount": 120,
+      "rating": 4.8,
+      "workload": 90
     }
   ],
   "bulletins": [
@@ -469,6 +524,14 @@
       "content": "Final sınav tarihleri 1 hafta öne çekilmiştir, detaylı takvim ekte yer almaktadır.",
       "target": "Öğrenci, Eğitmen",
       "date": "08.10.2023"
+    },
+    {
+      "id": "JgpovDoR3y0",
+      "date": "04.07.2026",
+      "priority": "Normal",
+      "title": "AAA",
+      "content": "AA",
+      "target": "Sistem"
     }
   ],
   "announcements": [
@@ -1028,14 +1091,34 @@
       }
     ],
     "companies": [
-      "Microsoft",
-      "Google",
-      "Amazon",
-      "Trendyol",
-      "Getir",
-      "Logo Software",
-      "Aselsan",
-      "Netaş"
+      "Haseki Hastanesi",
+      "Osmanlı Arşivi",
+      "Türk Dil Kurumu",
+      "ASELSAN",
+      "TÜBİTAK"
+    ],
+    "successStories": [
+      {
+        "name": "Elif Yılmaz",
+        "title": "Pratisyen Hekim @ Haseki Eğitim ve Araştırma Hastanesi",
+        "time": "2 GÜN ÖNCE",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&q=80",
+        "quote": "Tıp Fakültesi'nde aldığım kapsamlı teorik eğitim ve hastane pratikleri sayesinde uzmanlık öncesi ilk görevime başarıyla kabul edildim."
+      },
+      {
+        "name": "Caner Şahin",
+        "title": "Arşiv Uzmanı @ Başbakanlık Osmanlı Arşivi",
+        "time": "4 GÜN ÖNCE",
+        "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80",
+        "quote": "Tarih Bölümü'nün sunduğu paleografya dersleri ve arşiv stajı imkanları, kariyer yolculuğumda bana eşsiz bir yön verdi."
+      },
+      {
+        "name": "Selin Aktaş",
+        "title": "Edebiyat Araştırmacısı @ Türk Dil Kurumu",
+        "time": "1 HAFTA ÖNCE",
+        "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&q=80",
+        "quote": "Edebiyat ve dil bilim derslerindeki akademik birikimimi kurumsal projelerle taçlandırdığım verimli bir süreç geçirdim."
+      }
     ]
   },
   "deanOverview": {
@@ -1046,22 +1129,22 @@
     },
     "branchPopularity": [
       {
-        "label": "React / Frontend",
+        "label": "Tıp ve Sağlık Bilimleri",
         "count": 482,
         "percentage": 85
       },
       {
-        "label": ".NET / Backend",
+        "label": "Mühendislik ve Teknoloji",
         "count": 394,
         "percentage": 70
       },
       {
-        "label": "SQL / Database",
+        "label": "Tarih ve Sosyal Bilimler",
         "count": 286,
         "percentage": 55
       },
       {
-        "label": "Python / AI",
+        "label": "Edebiyat ve Dil Bilimi",
         "count": 185,
         "percentage": 40
       }
@@ -1069,17 +1152,17 @@
     "curriculum": [
       {
         "id": "c-o-1",
-        "name": "Mobil Geliştirme (Flutter)",
+        "name": "Temel Anatomi ve Fizyoloji",
         "ects": 6
       },
       {
         "id": "c-o-2",
-        "name": "Cyber Security 101",
+        "name": "Osmanlı Müesseseleri Tarihi",
         "ects": 4
       },
       {
         "id": "c-o-3",
-        "name": "Full-Stack .NET & React",
+        "name": "Klasik Türk Edebiyatı",
         "ects": 8
       }
     ],
@@ -1110,55 +1193,55 @@
   },
   "academicEvents": [
     {
-      "id": 1,
+      "id": "1",
       "title": "Güz Dönemi Ders Kayıtları",
       "date": "15.09.2025",
       "semester": "guz"
     },
     {
-      "id": 2,
+      "id": "2",
       "title": "Güz Dönemi Derslerinin Başlaması",
       "date": "22.09.2025",
       "semester": "guz"
     },
     {
-      "id": 3,
+      "id": "3",
       "title": "Güz Dönemi Ara Sınav (Vize) Haftası",
       "date": "10.11.2025",
       "semester": "guz"
     },
     {
-      "id": 4,
+      "id": "4",
       "title": "Yılbaşı Resmi Tatili",
       "date": "01.01.2026",
       "semester": "guz"
     },
     {
-      "id": 5,
+      "id": "5",
       "title": "Güz Dönemi Dönem Sonu (Final) Sınavları",
       "date": "05.01.2026",
       "semester": "guz"
     },
     {
-      "id": 6,
+      "id": "6",
       "title": "Bahar Dönemi Ders Kayıtları",
       "date": "09.02.2026",
       "semester": "bahar"
     },
     {
-      "id": 7,
+      "id": "7",
       "title": "Bahar Dönemi Derslerinin Başlaması",
       "date": "16.02.2026",
       "semester": "bahar"
     },
     {
-      "id": 8,
+      "id": "8",
       "title": "Bahar Dönemi Ara Sınav (Vize) Haftası",
       "date": "13.04.2026",
       "semester": "bahar"
     },
     {
-      "id": 9,
+      "id": "9",
       "title": "Bahar Dönemi Dönem Sonu (Final) Sınavları",
       "date": "08.06.2026",
       "semester": "bahar"
@@ -1321,5 +1404,325 @@
         }
       ]
     }
-  ]
+  ],
+  "courseAssignments": [
+    {
+      "id": "ca-1",
+      "instructorName": "Dr. Elif Soylu",
+      "courseName": "TAR202 - Osmanlı Müesseseleri Tarihi",
+      "dept": "Tarih Bölümü",
+      "status": "pending"
+    },
+    {
+      "id": "ca-2",
+      "instructorName": "Doç. Dr. Mert Akın",
+      "courseName": "TIP101 - Temel Anatomi ve Fizyoloji",
+      "dept": "Tıp Fakültesi",
+      "status": "pending"
+    },
+    {
+      "id": "ca-3",
+      "instructorName": "Prof. Seda Demir",
+      "courseName": "EDB301 - Klasik Türk Edebiyatı",
+      "dept": "Türk Dili ve Edebiyatı",
+      "status": "pending"
+    }
+  ],
+  "studentRequests": [
+    {
+      "id": "sr-1",
+      "studentName": "Ahmet Yılmaz",
+      "studentNumber": "20211024100",
+      "requestType": "Kayıt Dondurma",
+      "details": "Sağlık raporuna istinaden FYK kararı ile kayıt dondurma talebi",
+      "status": "pending"
+    },
+    {
+      "id": "sr-2",
+      "studentName": "Can Demir",
+      "studentNumber": "20211024001",
+      "requestType": "Not Değişikliği",
+      "details": "TAR202 sınav maddi hatası düzeltmesi: CB -> BB (Kurul Kararlı)",
+      "status": "pending"
+    },
+    {
+      "id": "sr-3",
+      "studentName": "Seda Kaya",
+      "studentNumber": "20211024002",
+      "requestType": "Ders Muafiyeti",
+      "details": "Yatay Geçiş Muafiyet Raporu: İNG101 ve FİZ101 derslerinden muafiyet",
+      "status": "pending"
+    }
+  ],
+  "termStatus": {
+    "isTermClosed": false,
+    "isGradeLocksActive": true,
+    "emergencyAlertActive": false,
+    "emergencyAlertText": "Hava muhalefeti nedeniyle bugün tüm dersler online (Zoom) yapılacaktır."
+  },
+  "systemLogs": [
+    {
+      "id": "log-1",
+      "operator": "Dr. Elif Soylu",
+      "action": "Harf Notu Güncellendi",
+      "details": "Can Demir (20211024001) - TAR202 notu güncellendi",
+      "timestamp": "12.10.2023, 14:32"
+    },
+    {
+      "id": "log-2",
+      "operator": "Öğrenci İşleri",
+      "action": "Kayıt Donduruldu",
+      "details": "Ahmet Yılmaz (20211024100) - Bahar Dönemi kayıt donduruldu",
+      "timestamp": "11.10.2023, 09:15"
+    },
+    {
+      "id": "log-3",
+      "operator": "Sistem",
+      "action": "Müfredat Değişikliği",
+      "details": "TIP101 Temel Anatomi ve Fizyoloji dersi müfredata eklendi",
+      "timestamp": "08.10.2023, 11:00"
+    },
+    {
+      "id": "aswCga36jb8",
+      "timestamp": "04.07.2026 21:21:15",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Mezuniyet Onaylandı",
+      "details": "Buse Korkmaz isimli öğrencinin mezuniyet belgesi onaylandı."
+    },
+    {
+      "id": "3qwm9PR6u1Q",
+      "timestamp": "04.07.2026 21:44:32",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Yayında",
+      "details": "Sistem geneli acil durum mesajı yayınlandı: \"Hava muhalefeti nedeniyle bugün tüm dersler online (Zoom) yapılacaktır.\""
+    },
+    {
+      "id": "9PUN-mK9mVQ",
+      "timestamp": "04.07.2026 21:44:35",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Kaldırıldı",
+      "details": "Sistem geneli acil durum mesajı yayından kaldırıldı."
+    },
+    {
+      "id": "F03p3EaQKHs",
+      "timestamp": "04.07.2026 21:44:53",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Hesap Askıya Alındı",
+      "details": "Doç. Dr. Mert Akın (Eğitmen) hesabı askıya alındı."
+    },
+    {
+      "id": "cCEc6ZkRQA0",
+      "timestamp": "04.07.2026 21:44:55",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Hesap Aktifleştirildi",
+      "details": "Doç. Dr. Mert Akın (Eğitmen) hesabı aktif edildi."
+    },
+    {
+      "id": "6N_dpBeSgjU",
+      "timestamp": "04.07.2026 21:45:01",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Şifre Sıfırlama",
+      "details": "Doç. Dr. Mert Akın kullanıcısının şifresi sıfırlandı."
+    },
+    {
+      "id": "gql1wX-ukDg",
+      "timestamp": "05.07.2026 09:50:35",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Bora Ak isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
+    },
+    {
+      "id": "DI0QwIqzgZg",
+      "timestamp": "05.07.2026 09:50:36",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Bora Ak isimli öğrencinin harç ödeme durumu ÖDENMEDİ olarak güncellendi."
+    },
+    {
+      "id": "x4xAvnUTF2c",
+      "timestamp": "05.07.2026 09:50:37",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Bora Ak isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
+    },
+    {
+      "id": "6kVJsFEPuow",
+      "timestamp": "05.07.2026 09:50:39",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Can Demir isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
+    },
+    {
+      "id": "W9CIma68L9M",
+      "timestamp": "05.07.2026 09:50:40",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Seda Kaya isimli öğrencinin harç ödeme durumu ÖDENMEDİ olarak güncellendi."
+    },
+    {
+      "id": "xEg8WuVObuE",
+      "timestamp": "05.07.2026 09:50:41",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Seda Kaya isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
+    },
+    {
+      "id": "3HwM6mNj6as",
+      "timestamp": "05.07.2026 10:01:33",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Askerlik Tecil Belgesi\" talebi reddedildi."
+    },
+    {
+      "id": "miSZ9A4Q1gw",
+      "timestamp": "05.07.2026 10:34:50",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Eğitmene Soru Uyarısı",
+      "details": "Dr. Elif Soylu isimli eğitmene, SOFT-302 dersindeki yanıtsız soru için bildirim gönderildi."
+    }
+  ],
+  "graduationApprovals": [
+    {
+      "id": "ga-1",
+      "studentName": "Buse Korkmaz",
+      "studentNumber": "20211024005",
+      "gpa": 3.42,
+      "ects": 240,
+      "status": "approved"
+    },
+    {
+      "id": "ga-2",
+      "studentName": "Mert Yılmaz",
+      "studentNumber": "20211024006",
+      "gpa": 3.1,
+      "ects": 242,
+      "status": "pending"
+    }
+  ],
+  "forumQuestions": [
+    {
+      "id": "fq-1",
+      "courseCode": "SOFT-302",
+      "courseName": "React Redux Advanced",
+      "studentName": "Can Demir",
+      "instructorName": "Dr. Elif Soylu",
+      "questionText": "Redux Toolkit'te createAsyncThunk ile thunkAPI parametresinden dispatch yaparken rejectWithValue kullanmak en iyi yöntem midir?",
+      "createdAt": "05.07.2026, 09:30",
+      "status": "unanswered",
+      "responseTimeHours": null,
+      "reportedReason": null
+    },
+    {
+      "id": "fq-2",
+      "courseCode": "SOFT-302",
+      "courseName": "React Redux Advanced",
+      "studentName": "Seda Kaya",
+      "instructorName": "Dr. Elif Soylu",
+      "questionText": "Ders videosundaki useEffect bağımlılık dizisinde nesne karşılaştırması yaparken neden sonsuz döngüye giriyor?",
+      "createdAt": "04.07.2026, 15:45",
+      "status": "answered",
+      "responseTimeHours": 3,
+      "reportedReason": null
+    },
+    {
+      "id": "fq-3",
+      "courseCode": "DATA-204",
+      "courseName": "Big Data Analytics",
+      "studentName": "Bora Ak",
+      "instructorName": "Doç. Dr. Mert Akın",
+      "questionText": "Sınavda çıkacak soruyu bana önceden söyleyin yoksa çok kötü olur.",
+      "createdAt": "03.07.2026, 11:20",
+      "status": "reported",
+      "responseTimeHours": null,
+      "reportedReason": "Sınav güvenliğini ihlal edici / tehditkar dil kullanımı"
+    },
+    {
+      "id": "fq-4",
+      "courseCode": "MATH-102",
+      "courseName": "Discrete Mathematics",
+      "studentName": "Elif Şahin",
+      "instructorName": "Prof. Mert Can",
+      "questionText": "Graph Theory kısmındaki Euler Path ve Hamiltonian Path arasındaki farkları örneklerle açıklayabilir misiniz?",
+      "createdAt": "02.07.2026, 10:00",
+      "status": "answered",
+      "responseTimeHours": 1,
+      "reportedReason": null
+    }
+  ],
+  "liveStreams": [
+    {
+      "id": "ls-1",
+      "courseCode": "SOFT-302",
+      "courseName": "React Redux Advanced",
+      "instructorName": "Dr. Elif Soylu",
+      "startTime": "09:15",
+      "viewerCount": 42,
+      "status": "live"
+    },
+    {
+      "id": "ls-2",
+      "courseCode": "DATA-204",
+      "courseName": "Big Data Analytics",
+      "instructorName": "Doç. Dr. Mert Akın",
+      "startTime": "10:00",
+      "viewerCount": 28,
+      "status": "live"
+    },
+    {
+      "id": "ls-3",
+      "courseCode": "MATH-102",
+      "courseName": "Discrete Mathematics",
+      "instructorName": "Prof. Mert Can",
+      "startTime": "08:30",
+      "viewerCount": 0,
+      "status": "ended"
+    }
+  ],
+  "schedules": [
+    {
+      "id": "sch-1",
+      "courseCode": "SOFT-302",
+      "courseName": "React Redux Advanced",
+      "instructorName": "Dr. Elif Soylu",
+      "day": "Pazartesi",
+      "timeSlot": "09:00 - 10:30",
+      "room": "LAB-B3",
+      "type": "ders",
+      "status": "approved"
+    },
+    {
+      "id": "sch-2",
+      "courseCode": "DATA-204",
+      "courseName": "Big Data Analytics",
+      "instructorName": "Doç. Dr. Mert Akın",
+      "day": "Salı",
+      "timeSlot": "11:00 - 12:30",
+      "room": "Amfi-1",
+      "type": "ders",
+      "status": "approved"
+    },
+    {
+      "id": "sch-3",
+      "courseCode": "SOFT-302",
+      "courseName": "React Redux Advanced Vize",
+      "instructorName": "Dr. Elif Soylu",
+      "day": "Çarşamba",
+      "timeSlot": "14:00 - 15:30",
+      "room": "LAB-B3",
+      "type": "sinav",
+      "status": "pending"
+    },
+    {
+      "id": "sch-4",
+      "courseCode": "MATH-102",
+      "courseName": "Discrete Mathematics Final",
+      "instructorName": "Prof. Mert Can",
+      "day": "Cuma",
+      "timeSlot": "10:00 - 12:00",
+      "room": "Amfi-2",
+      "type": "sinav",
+      "status": "pending"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

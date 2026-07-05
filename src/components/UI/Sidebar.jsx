@@ -98,23 +98,31 @@ export default function Sidebar({ role = 'student' }) {
           <>
             <Link to="/dean/overview" className={location.pathname === '/dean/overview' ? 'sidebar-item-active' : 'sidebar-item'}>
               <span className="material-symbols-outlined">dashboard</span>
-              <span>Panel</span>
+              <span>Genel Bakış</span>
             </Link>
             <Link to="/dean/curriculum" className={location.pathname === '/dean/curriculum' ? 'sidebar-item-active' : 'sidebar-item'}>
               <span className="material-symbols-outlined">menu_book</span>
-              <span>Müfredat</span>
+              <span>Müfredat Yönetimi</span>
             </Link>
             <Link to="/dean/faculty" className={location.pathname === '/dean/faculty' ? 'sidebar-item-active' : 'sidebar-item'}>
               <span className="material-symbols-outlined">groups</span>
-              <span>Kadro</span>
+              <span>Akademik Kadro</span>
             </Link>
             <Link to="/dean/analytics" className={location.pathname === '/dean/analytics' ? 'sidebar-item-active' : 'sidebar-item'}>
               <span className="material-symbols-outlined">analytics</span>
-              <span>Analitik</span>
+              <span>Öğrenci Analitiği</span>
             </Link>
             <Link to="/dean/approvals" className={location.pathname === '/dean/approvals' ? 'sidebar-item-active' : 'sidebar-item'}>
               <span className="material-symbols-outlined">approval</span>
-              <span>Onaylar</span>
+              <span>Onay Merkezi</span>
+            </Link>
+            <Link to="/dean/system-control" className={location.pathname === '/dean/system-control' ? 'sidebar-item-active' : 'sidebar-item'}>
+              <span className="material-symbols-outlined">settings_suggest</span>
+              <span>Sistem Kontrolü</span>
+            </Link>
+            <Link to="/dean/oversight" className={location.pathname === '/dean/oversight' ? 'sidebar-item-active' : 'sidebar-item'}>
+              <span className="material-symbols-outlined">visibility</span>
+              <span>Denetim & Gözetim</span>
             </Link>
           </>
         )}

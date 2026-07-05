@@ -27,6 +27,8 @@ import Curriculum        from './pages/Dean/Curriculum'
 import Faculty           from './pages/Dean/Faculty'
 import StudentAnalytics  from './pages/Dean/StudentAnalytics'
 import ApprovalCenter    from './pages/Dean/ApprovalCenter'
+import SystemControl     from './pages/Dean/SystemControl'
+import DeanOversight     from './pages/Dean/Oversight'
 
 export default function App() {
   return (
@@ -56,11 +58,13 @@ export default function App() {
           <Route path="/teacher/homework"      element={<HomeworkReview />} />
           <Route path="/teacher/announcements" element={<Announcements />} />
 
-          <Route path="/dean/overview"   element={<DeanOverview />} />
-          <Route path="/dean/curriculum" element={<Curriculum />} />
-          <Route path="/dean/faculty"    element={<Faculty />} />
-          <Route path="/dean/analytics"  element={<StudentAnalytics />} />
-          <Route path="/dean/approvals"  element={<ApprovalCenter />} />
+          <Route path="/dean/overview"       element={<DeanOverview />} />
+          <Route path="/dean/curriculum"     element={<Curriculum />} />
+          <Route path="/dean/faculty"        element={<Faculty />} />
+          <Route path="/dean/analytics"      element={<StudentAnalytics />} />
+          <Route path="/dean/approvals"      element={<ApprovalCenter />} />
+          <Route path="/dean/system-control" element={<SystemControl />} />
+          <Route path="/dean/oversight"      element={<DeanOversight />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />
