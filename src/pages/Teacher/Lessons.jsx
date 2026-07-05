@@ -1,13 +1,106 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { miniCalendarWeeks } from '../../store/student/studentData'
 import { jsPDF } from 'jspdf'
 import { toast } from 'react-hot-toast'
+import { fetchTeacherDashboardDataAsync, submitTeacherCourseRequestAsync } from '../../store/teacher/teacherSlice'
 
 export default function TeacherLessons() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { currentUser } = useSelector((state) => state.auth || {})
+  const { courses: COURSES = [] } = useSelector((state) => state.teacher || {})
+
+  const [schedules, setSchedules] = useState([])
+  const [allCoursesCatalog, setAllCoursesCatalog] = useState([])
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
+
+  // Course Request States
+  const [reqCourseCode, setReqCourseCode] = useState('')
+  const [reqDay, setReqDay] = useState('Pazartesi')
+  const [reqTimeSlot, setReqTimeSlot] = useState('09:00 - 10:30')
+  const [reqRoom, setReqRoom] = useState('LAB-B3')
+  const [reqGroup, setReqGroup] = useState('Grup A')
+
+  const fetchScheduleAndCatalog = () => {
+    fetch('http://localhost:3001/schedules')
+      .then(res => res.json())
+      .then(data => setSchedules(data))
+      .catch(err => console.error(err))
+
+    fetch('http://localhost:3001/courses')
+      .then(res => res.json())
+      .then(data => {
+        setAllCoursesCatalog(data)
+        if (data.length > 0) {
+          setReqCourseCode(data[0].code)
+        }
+      })
+      .catch(err => console.error(err))
+  }
+
+  useEffect(() => {
+    dispatch(fetchTeacherDashboardDataAsync())
+    fetchScheduleAndCatalog()
+  }, [dispatch])
+
+  // Map schedules to initialLessons format
+  const initialLessons = schedules
+    .filter(s => s.instructorName === currentUser?.name && s.status === 'approved')
+    .map(s => {
+      const dayIndexMap = { 'Pazartesi': 1, 'Salı': 2, 'Çarşamba': 3, 'Perşembe': 4, 'Cuma': 5 }
+      const duration = s.timeSlot.includes('-')
+        ? (() => {
+            const [start, end] = s.timeSlot.split('-').map(x => x.trim())
+            const [sh, sm] = start.split(':').map(Number)
+            const [eh, em] = end.split(':').map(Number)
+            return String((eh * 60 + em) - (sh * 60 + sm)) + " Dakika"
+          })()
+        : '90 Dakika'
+
+      return {
+        id: s.id,
+        code: s.courseCode,
+        name: s.courseName,
+        instructor: s.instructorName,
+        day: s.day,
+        dayIndex: dayIndexMap[s.day] || 1,
+        time: s.timeSlot,
+        duration: duration,
+        type: s.room === 'Online / Zoom' ? 'online' : 'school',
+        classroom: s.room,
+        group: s.group || 'Grup A',
+        grade: '3. Sınıf',
+        studentCount: s.studentCount || 40,
+        topic: s.type === 'sinav' ? 'Sınav Değerlendirmesi' : 'Ders Konusu Detayları',
+        color: s.type === 'sinav' ? 'rose' : s.room === 'Online / Zoom' ? 'indigo' : 'emerald',
+        isLiveNow: false
+      }
+    })
+
+  const handleRequestCourse = (e) => {
+    e.preventDefault()
+    const selectedCourseObj = allCoursesCatalog.find(c => c.code === reqCourseCode)
+    if (!selectedCourseObj) return
+
+    dispatch(submitTeacherCourseRequestAsync({
+      instructorName: currentUser?.name || 'Öğretim Üyesi',
+      courseName: `${selectedCourseObj.code} - ${selectedCourseObj.name}`,
+      dept: selectedCourseObj.category || 'Mühendislik Fakültesi',
+      day: reqDay,
+      timeSlot: reqTimeSlot,
+      room: reqRoom,
+      group: reqGroup,
+      courseCode: selectedCourseObj.code
+    })).unwrap().then(() => {
+      toast.success('Ders görevlendirme talebiniz Dekan onayına sunuldu!')
+      setIsRequestModalOpen(false)
+      fetchScheduleAndCatalog()
+    }).catch(() => {
+      toast.error('Talep gönderilemedi.')
+    })
+  }
 
   const downloadDocPDF = (title, courseName, courseCode) => {
     try {
@@ -74,100 +167,6 @@ export default function TeacherLessons() {
   const [selectedLesson, setSelectedLesson] = useState(null)
   // Seçili gün durumu (Varsayılan olarak Cuma, 12 Haziran 2026 seçili)
   const [selectedDay, setSelectedDay] = useState({ day: 12, month: 'Haz' })
-  
-  // Ders Programı Mock Verisi
-  const initialLessons = [
-    {
-      id: 'l1',
-      code: 'WEB 307',
-      name: 'Modern Web Geliştirme',
-      instructor: currentUser?.name || 'Dr. Nazlı BAŞAK',
-      day: 'Pazartesi',
-      dayIndex: 1,
-      time: '14:00 - 16:30',
-      duration: '150 Dakika',
-      type: 'online', // 'online' veya 'school'
-      classroom: 'Online / Zoom',
-      group: 'Grup A',
-      grade: '3. Sınıf',
-      studentCount: 58,
-      topic: 'React Redux & Context API State Yönetimi',
-      color: 'indigo', // indigo, emerald, amber, rose
-      isLiveNow: true // Şu an aktif canlı ders
-    },
-    {
-      id: 'l2',
-      code: 'WEB 307',
-      name: 'Modern Web Geliştirme',
-      instructor: currentUser?.name || 'Dr. Nazlı BAŞAK',
-      day: 'Salı',
-      dayIndex: 2,
-      time: '10:00 - 12:30',
-      duration: '150 Dakika',
-      type: 'online',
-      classroom: 'Online / Zoom',
-      group: 'Grup B',
-      grade: '3. Sınıf',
-      studentCount: 42,
-      topic: 'React Hooks & Custom Hook Geliştirme',
-      color: 'indigo',
-      isLiveNow: false
-    },
-    {
-      id: 'l3',
-      code: 'DBM 301',
-      name: 'Veri Tabanı Yönetim Sistemleri',
-      instructor: currentUser?.name || 'Dr. Nazlı BAŞAK',
-      day: 'Çarşamba',
-      dayIndex: 3,
-      time: '09:00 - 11:30',
-      duration: '150 Dakika',
-      type: 'school',
-      classroom: 'LAB-B2',
-      group: 'Grup A',
-      grade: '3. Sınıf',
-      studentCount: 38,
-      topic: 'İndeksleme, Sorgu Optimizasyonu ve Performans Analizi',
-      color: 'emerald',
-      isLiveNow: false
-    },
-    {
-      id: 'l4',
-      code: 'DBM 301',
-      name: 'Veri Tabanı Yönetim Sistemleri',
-      instructor: currentUser?.name || 'Dr. Nazlı BAŞAK',
-      day: 'Perşembe',
-      dayIndex: 4,
-      time: '13:00 - 15:30',
-      duration: '150 Dakika',
-      type: 'school',
-      classroom: 'LAB-B2',
-      group: 'Grup B',
-      grade: '3. Sınıf',
-      studentCount: 40,
-      topic: 'SQL DDL/DML ve İleri Düzey Join İşlemleri',
-      color: 'emerald',
-      isLiveNow: false
-    },
-    {
-      id: 'l5',
-      code: 'OPS 302',
-      name: 'İşletim Sistemleri',
-      instructor: currentUser?.name || 'Dr. Nazlı BAŞAK',
-      day: 'Cuma',
-      dayIndex: 5,
-      time: '14:00 - 16:30',
-      duration: '150 Dakika',
-      type: 'school',
-      classroom: 'LAB-B3',
-      group: 'Tüm Gruplar',
-      grade: '3. Sınıf',
-      studentCount: 95,
-      topic: 'Süreç (Process) Zamanlama Algoritmaları & Paging Simülasyonu',
-      color: 'amber',
-      isLiveNow: false
-    }
-  ]
 
   // ESC tuşuyla modal kapatma
   useEffect(() => {
@@ -314,7 +313,7 @@ export default function TeacherLessons() {
   return (
     <section className="teacher-page-canvas animate-fade-in flex flex-col gap-6">
       {/* Sayfa Başlığı */}
-      <div className="flex items-start gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
+      <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-5">
         <div>
           <h2 className="text-xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
             <span className="material-symbols-outlined text-secondary text-2xl">view_week</span>
@@ -322,6 +321,13 @@ export default function TeacherLessons() {
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">2025-2026 Bahar Dönemi — gün seçmek için sağdaki takvimi veya kolon başlıklarını kullanın.</p>
         </div>
+        <button
+          onClick={() => setIsRequestModalOpen(true)}
+          className="px-4 py-2 bg-gradient-to-r from-blue-750 to-blue-900 hover:from-blue-800 hover:to-blue-950 text-white rounded-xl text-xs font-bold flex items-center gap-2 border-none cursor-pointer shadow-sm hover:shadow-md transition-all duration-300"
+        >
+          <span className="material-symbols-outlined text-sm">add_circle</span>
+          <span>Ders Görevlendirmesi Talep Et</span>
+        </button>
       </div>
 
       {/* İstatistik Özet Kartları */}
@@ -1070,7 +1076,123 @@ export default function TeacherLessons() {
           </div>
         </div>
       )}
+      {/* YENİ DERS GÖREVLENDİRME TALEBİ MODALI */}
+      {isRequestModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in" onClick={() => setIsRequestModalOpen(false)}>
+          <div
+            className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl max-w-md w-full overflow-hidden flex flex-col border border-slate-100 dark:border-slate-700/50 animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex justify-between items-center px-6 py-5 border-b border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-900/20">
+              <div>
+                <h3 className="text-base font-extrabold text-slate-800 dark:text-white">Ders Görevlendirme Talebi</h3>
+                <p className="text-[10px] text-slate-400 mt-0.5">Talep onaylandığında haftalık ders programınıza otomatik eklenir.</p>
+              </div>
+              <button
+                className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:bg-slate-200/60 dark:hover:bg-slate-900 hover:text-slate-600 dark:hover:text-slate-300 transition-colors border-none bg-transparent cursor-pointer"
+                onClick={() => setIsRequestModalOpen(false)}
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
 
+            {/* Form */}
+            <form onSubmit={handleRequestCourse} className="p-6 flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Talep Edilecek Ders</label>
+                <select
+                  value={reqCourseCode}
+                  onChange={(e) => setReqCourseCode(e.target.value)}
+                  className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-250 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  {allCoursesCatalog.map(c => (
+                    <option key={c.id} value={c.code}>{c.code} - {c.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Haftalık Gün</label>
+                  <select
+                    value={reqDay}
+                    onChange={(e) => setReqDay(e.target.value)}
+                    className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-250 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="Pazartesi">Pazartesi</option>
+                    <option value="Salı">Salı</option>
+                    <option value="Çarşamba">Çarşamba</option>
+                    <option value="Perşembe">Perşembe</option>
+                    <option value="Cuma">Cuma</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sınıf / Şube</label>
+                  <select
+                    value={reqGroup}
+                    onChange={(e) => setReqGroup(e.target.value)}
+                    className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-250 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="Sınıf A">Sınıf A</option>
+                    <option value="Sınıf B">Sınıf B</option>
+                    <option value="Tüm Sınıflar">Tüm Sınıflar</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Saat Dilimi</label>
+                  <select
+                    value={reqTimeSlot}
+                    onChange={(e) => setReqTimeSlot(e.target.value)}
+                    className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-250 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="09:00 - 10:30">09:00 - 10:30</option>
+                    <option value="11:00 - 12:30">11:00 - 12:30</option>
+                    <option value="13:00 - 14:30">13:00 - 14:30</option>
+                    <option value="14:00 - 16:30">14:00 - 16:30</option>
+                    <option value="15:00 - 16:30">15:00 - 16:30</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Derslik / Konum</label>
+                  <select
+                    value={reqRoom}
+                    onChange={(e) => setReqRoom(e.target.value)}
+                    className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-slate-800 dark:text-slate-250 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="Online / Zoom">Online / Zoom</option>
+                    <option value="LAB-B3">LAB-B3</option>
+                    <option value="LAB-B2">LAB-B2</option>
+                    <option value="Amfi-1">Amfi-1</option>
+                    <option value="Amfi-2">Amfi-2</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700/50 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsRequestModalOpen(false)}
+                  className="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold border-none cursor-pointer transition-colors"
+                >
+                  İptal
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 px-4 bg-[#00236f] hover:bg-blue-900 text-white rounded-xl text-xs font-bold border-none cursor-pointer transition-colors shadow-sm"
+                >
+                  Talebi Gönder
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   )
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { createNotification, fetchAllCourses } from '../../store/student/studentSlice'
+import { createNotification, fetchAllCourses, registerStudentCoursesAsync } from '../../store/student/studentSlice'
+import { updateProfileAsync } from '../../store/auth/authSlice'
 import { toast } from 'react-hot-toast'
 
 export default function CourseRegistration() {
@@ -183,11 +184,17 @@ export default function CourseRegistration() {
 
     setIsSubmitting(true)
 
-    // API isteği simülasyonu
-    setTimeout(() => {
+    try {
+      // FAZ 4.2 — Dersleri db.json /studentCourses koleksiyonuna kaydet
+      if (user?.id) {
+        await dispatch(registerStudentCoursesAsync({
+          studentId: user.id,
+          coursesList: selectedCourses
+        })).unwrap()
+      }
+
       setStatusState('Onay Bekliyor')
       saveState(selectedCourses, 'Onay Bekliyor')
-      setIsSubmitting(false)
       setShowSuccessModal(true) // Show success overlay modal
 
       // Öğrenci bildirimi oluşturma
@@ -207,7 +214,12 @@ export default function CourseRegistration() {
           })
         )
       }
-    }, 1500)
+    } catch (err) {
+      console.error(err)
+      toast.error('Ders kaydı gönderilirken bir hata oluştu.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   // İşlem: Gönderimi iptal et ve taslağa dön
@@ -253,10 +265,15 @@ export default function CourseRegistration() {
     }
   }
 
-  const handleUnlockRegistration = () => {
+  const handleUnlockRegistration = async () => {
     setIsTuitionPaid(true)
     if (user?.id) {
       localStorage.setItem(`tuition_paid_2026_2027_${user.id}`, 'true')
+      try {
+        await dispatch(updateProfileAsync({ id: user.id, tuitionPaid: true })).unwrap()
+      } catch (err) {
+        console.error('Error saving tuition status to DB', err)
+      }
     }
     toast.success('Ders kayıt ekranı başarıyla aktif hale getirildi!')
   }
@@ -286,13 +303,17 @@ export default function CourseRegistration() {
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
   }
 
-  // Arama ve filtreleme mantığı
+  // Arama ve filtreleme mantığı (FAZ 4: Bölüm Derslerini Filtreleme)
   const filteredOffered = courses.filter((c) => {
     const matchesSearch =
       (c.id && c.id.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (c.name && c.name.toLowerCase().includes(searchQuery.toLowerCase()))
     const matchesCategory = categoryFilter === 'All' || c.category === categoryFilter
-    return matchesSearch && matchesCategory
+    
+    // Öğrenci sadece kendi bölüm derslerini veya genel seçmeli dersleri görebilir
+    const isDeptMatch = !c.departmentId || c.departmentId === user?.departmentId;
+
+    return matchesSearch && matchesCategory && isDeptMatch;
   })
 
   // Sıralama: Öncelikle alttan kalınan başarısız dersler

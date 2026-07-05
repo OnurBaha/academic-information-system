@@ -58,6 +58,32 @@ export const approveGradeSheetAsync = createAsyncThunk(
     }
 );
 
+export const updateCurriculumCourseAsync = createAsyncThunk(
+    'courses/updateCurriculumCourseAsync',
+    async ({ id, status }, { rejectWithValue }) => {
+        try {
+            return await apiFetch(`/curriculum/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ status }),
+            });
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const deleteCurriculumCourseAsync = createAsyncThunk(
+    'courses/deleteCurriculumCourseAsync',
+    async (id, { rejectWithValue }) => {
+        try {
+            await apiFetch(`/curriculum/${id}`, { method: 'DELETE' });
+            return id;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 export const uploadCourseMaterialAsync = createAsyncThunk(
     'courses/uploadCourseMaterialAsync',
     async ({ courseId, materialPayload }, { rejectWithValue }) => {
@@ -160,6 +186,19 @@ const courseSlice = createSlice({
             .addCase(uploadCourseMaterialAsync.rejected, (state, action) => {
                 state.actionStatus = 'failed';
                 state.error = action.payload;
+            })
+            
+            // updateCurriculumCourseAsync
+            .addCase(updateCurriculumCourseAsync.fulfilled, (state, action) => {
+                const index = state.curriculum.findIndex((c) => c.id === action.payload.id);
+                if (index !== -1) {
+                    state.curriculum[index] = action.payload;
+                }
+            })
+            
+            // deleteCurriculumCourseAsync
+            .addCase(deleteCurriculumCourseAsync.fulfilled, (state, action) => {
+                state.curriculum = state.curriculum.filter((c) => c.id !== action.payload);
             });
     },
 });

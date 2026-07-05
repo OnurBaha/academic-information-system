@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
+import { submitStudentHomeworkAsync } from '../../store/student/studentSlice'
 import { initialHomeworks } from '../../store/student/studentData'
 
 // initialHomeworks → src/data/studentData.js'ten import edilir
 
 export default function HomeworkSubmit() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { user } = useSelector((state) => state.auth)
 
   // Sayfa Durumları
@@ -47,25 +49,44 @@ export default function HomeworkSubmit() {
     }
   }
 
-  // Ödev Gönderimini Tamamla (Canlı Simülasyon)
-  const handleSubmissionComplete = (rowId, courseName) => {
+  // Ödev Gönderimini Tamamla (Dinamik DB Senkronizasyonu)
+  const handleSubmissionComplete = async (rowId, courseName) => {
     const fileName = uploadedFiles[rowId] || `${user?.name || 'Ahmet'}_${courseName.replace(/\s+/g, '_')}_Odev.pdf`
+    const comment = studentNotes[rowId] || ''
     
-    // Ödev durumunu güncelle
-    setHomeworks(prev => prev.map(h => {
-      if (h.id === rowId) {
-        return {
-          ...h,
-          status: 'Teslim Edildi',
-          daysLeft: null
+    try {
+      // Redux / DB update (studentGrades endpointi üzerinden)
+      await dispatch(submitStudentHomeworkAsync({
+        gradeId: rowId,
+        homeworkPayload: {
+          fileName,
+          studentComment: comment,
+          githubLink: `https://github.com/${user?.username || 'ogrenci'}/${courseName.toLowerCase().replace(/\s+/g, '-')}`
         }
-      }
-      return h
-    }))
+      })).unwrap()
 
-    toast.success(`'${fileName}' başarıyla sisteme yüklendi!`)
-    setExpandedRow(null)
-    setConfirmingRowId(null)
+      // Local state güncelle
+      setHomeworks(prev => prev.map(h => {
+        if (h.id === rowId) {
+          return {
+            ...h,
+            status: 'Teslim Edildi',
+            daysLeft: null,
+            submittedFileName: fileName,
+            studentNote: comment,
+            submittedAt: new Date().toLocaleString('tr-TR')
+          }
+        }
+        return h
+      }))
+
+      toast.success(`'${fileName}' başarıyla sisteme yüklendi!`)
+      setExpandedRow(null)
+      setConfirmingRowId(null)
+    } catch (err) {
+      console.error(err)
+      toast.error('Ödev gönderilirken bir hata oluştu.')
+    }
   }
 
   // Arama ve filtreleme mantığı

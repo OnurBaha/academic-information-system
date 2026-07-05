@@ -23,6 +23,33 @@ export default function Documents() {
     }
   }, [dispatch, currentUser])
 
+  // FAZ 2.2 — Belge durumu badge yardımcısı (Dekan onayını göster)
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'ready':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/40">
+            <span className="material-symbols-outlined text-[10px]">check_circle</span>
+            Hazır
+          </span>
+        )
+      case 'rejected':
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-900/40">
+            <span className="material-symbols-outlined text-[10px]">cancel</span>
+            Reddedildi
+          </span>
+        )
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900/40">
+            <span className="material-symbols-outlined text-[10px]">hourglass_empty</span>
+            Bekliyor
+          </span>
+        )
+    }
+  }
+
   // PDF İndirme Fonksiyonu (Gerçek indirme simülasyonu)
   const handleDownloadPdf = (title) => {
     try {
@@ -70,7 +97,7 @@ export default function Documents() {
       doc.text('Fakulte / Bolum:', 25, 115)
       
       doc.setFont('Helvetica', 'normal')
-      doc.text(currentUser?.id || '2021007', 70, 85)
+      doc.text(currentUser?.id || '20211024007', 70, 85)
       doc.text(currentUser?.name || 'Ogrenci', 70, 95)
       doc.text('102*********', 70, 105)
       doc.text('Muhendislik Fakultesi / Bilgisayar Muhendisligi', 70, 115)
@@ -325,6 +352,7 @@ export default function Documents() {
                   <th className="px-6 py-3.5">Talep No</th>
                   <th className="px-6 py-3.5">Belge Tipi</th>
                   <th className="px-6 py-3.5">Tarih</th>
+                  <th className="px-6 py-3.5">Durum</th>
                   <th className="px-6 py-3.5 text-right">İşlem</th>
                 </tr>
               </thead>
@@ -338,17 +366,25 @@ export default function Documents() {
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
                           <span className="font-bold text-slate-800 dark:text-white">{req.title}</span>
-                          <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{req.description || 'Türkçe'}</span>
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{req.description || req.desc || 'Belge Talebi'}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-slate-500 dark:text-slate-400 font-semibold">{req.requestDate}</td>
+                      <td className="px-6 py-4">
+                        {getStatusBadge(req.status)}
+                      </td>
                       <td className="px-6 py-4 text-right">
                         <button
                           onClick={() => handleDownloadPdf(req.title)}
-                          className="inline-flex items-center gap-1.5 text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:underline font-bold cursor-pointer"
+                          disabled={req.status !== 'ready'}
+                          className={`inline-flex items-center gap-1.5 font-bold cursor-pointer ${
+                            req.status === 'ready'
+                              ? 'text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:underline'
+                              : 'text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                          }`}
                         >
                           <span className="material-symbols-outlined text-base">picture_as_pdf</span>
-                          PDF İndir
+                          {req.status === 'ready' ? 'PDF İndir' : 'Hazır Değil'}
                         </button>
                       </td>
                     </tr>

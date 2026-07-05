@@ -1,16 +1,6 @@
 {
   "users": [
     {
-      "id": "u1",
-      "username": "admin",
-      "email": "admin@university.edu.tr",
-      "password": "password123",
-      "name": "Ahmet Yılmaz",
-      "role": "admin",
-      "phone": "+90 555 111 2233",
-      "address": "İstanbul, Türkiye"
-    },
-    {
       "id": "u2",
       "username": "dean.mehmet",
       "email": "m.kaya@university.edu.tr",
@@ -26,11 +16,11 @@
       "username": "teacher.nazli",
       "email": "n.basak@university.edu.tr",
       "password": "password123",
-      "name": "Dr. Nazlı BAŞAK",
+      "name": "Dr. Nazlı Başak",
       "role": "teacher",
       "departmentId": "d1",
-      "phone": "+90 555 333 4455",
-      "address": "Beşiktaş, İstanbul",
+      "phone": "+90 555 111 2233",
+      "address": "Kadıköy, İstanbul",
       "photo": "/nazli_basak.png",
       "status": "active"
     },
@@ -78,124 +68,20 @@
       "name": "Ahmet Yılmaz",
       "role": "student",
       "departmentId": "d1",
-      "studentNumber": "2021100",
+      "studentNumber": "20211024100",
       "classLevel": 3,
       "gpa": 3.42,
       "completedEcts": 180,
       "totalEcts": 240,
       "attendanceRate": 92,
-      "advisor": "Prof. Dr. Selçuk Yılmaz",
-      "phone": "+90 555 777 8899",
+      "advisor": "Dr. Nazlı Başak",
+      "phone": "+90 555 777 8898",
       "address": "Sarıyer, İstanbul",
       "tuitionPaid": true,
-      "status": "active"
-    },
-    {
-      "id": "u10",
-      "username": "student.can",
-      "email": "can.demir@std.university.edu.tr",
-      "password": "password123",
-      "name": "Can Demir",
-      "role": "student",
-      "departmentId": "d1",
-      "studentNumber": "2021001",
-      "classLevel": 3,
-      "gpa": 3.12,
-      "phone": "+90 555 888 9900",
-      "address": "Maltepe, İstanbul",
-      "tuitionPaid": true,
-      "status": "active"
-    },
-    {
-      "id": "u11",
-      "username": "student.seda",
-      "email": "seda.kaya@std.university.edu.tr",
-      "password": "password123",
-      "name": "Seda Kaya",
-      "role": "student",
-      "departmentId": "d1",
-      "studentNumber": "2021002",
-      "classLevel": 3,
-      "gpa": 2.95,
-      "phone": "+90 555 999 0011",
-      "address": "Fatih, İstanbul",
-      "tuitionPaid": true,
-      "status": "active"
-    },
-    {
-      "id": "u12",
-      "username": "student.bora",
-      "email": "bora.ak@std.university.edu.tr",
-      "password": "password123",
-      "name": "Bora Ak",
-      "role": "student",
-      "departmentId": "d1",
-      "studentNumber": "2021003",
-      "classLevel": 3,
-      "gpa": 2.78,
-      "phone": "+90 555 111 4455",
-      "address": "Kartal, İstanbul",
-      "tuitionPaid": true,
-      "status": "active"
-    },
-    {
-      "id": "u13",
-      "username": "student.elif",
-      "email": "elif.sahin@std.university.edu.tr",
-      "password": "password123",
-      "name": "Elif Şahin",
-      "role": "student",
-      "departmentId": "d1",
-      "studentNumber": "2021004",
-      "classLevel": 3,
-      "gpa": 3.85,
-      "phone": "+90 555 222 5566",
-      "address": "Pendik, İstanbul",
-      "tuitionPaid": true,
-      "status": "active"
-    },
-    {
-      "id": "u14",
-      "username": "student.murat",
-      "email": "murat.yildiz@std.university.edu.tr",
-      "password": "password123",
-      "name": "Murat Yıldız",
-      "role": "student",
-      "departmentId": "d1",
-      "studentNumber": "2021005",
-      "classLevel": 3,
-      "gpa": 2.64,
-      "phone": "+90 555 333 6677",
-      "address": "Bakırköy, İstanbul"
-    },
-    {
-      "id": "u15",
-      "username": "student.ayse",
-      "email": "ayse.toprak@std.university.edu.tr",
-      "password": "password123",
-      "name": "Ayşe Toprak",
-      "role": "student",
-      "departmentId": "d1",
-      "studentNumber": "2021006",
-      "classLevel": 3,
-      "gpa": 3.2,
-      "gpa": 3.2,
-      "phone": "+90 555 444 7788",
-      "address": "Avcılar, İstanbul"
-    },
-    {
-      "id": "u16",
-      "username": "student.kemal",
-      "email": "kemal.arslan@std.university.edu.tr",
-      "password": "password123",
-      "name": "Kemal Arslan",
-      "role": "student",
-      "departmentId": "d1",
-      "studentNumber": "2021007",
-      "classLevel": 3,
-      "gpa": 2.45,
-      "phone": "+90 555 555 8899",
-      "address": "Beylikdüzü, İstanbul"
+      "status": "active",
+      "advisorId": "u3",
+      "internshipCompany": "Aselsan A.Ş.",
+      "internshipStatus": "approved"
     },
     {
       "id": "u20",
@@ -235,6 +121,425 @@
           "isBooked": false
         }
       ]
+    },
+    {
+      "id": "u30",
+      "username": "alumni.hakan",
+      "email": "hakan.yılmaz@alumni.edu.tr",
+      "password": "password123",
+      "name": "Hakan Yılmaz",
+      "role": "student",
+      "departmentId": "d2",
+      "studentNumber": "20191024001",
+      "classLevel": 4,
+      "gpa": 3.65,
+      "status": "graduated",
+      "internshipCompany": "Netcad",
+      "internshipStatus": "approved",
+      "employmentCompany": "Aselsan"
+    },
+    {
+      "id": "u31",
+      "username": "alumni.melis",
+      "email": "melis.sari@alumni.edu.tr",
+      "password": "password123",
+      "name": "Melis Sarı",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20191024002",
+      "classLevel": 4,
+      "gpa": 3.48,
+      "status": "graduated",
+      "internshipCompany": "Siemens",
+      "internshipStatus": "approved",
+      "employmentCompany": "Trendyol"
+    },
+    {
+      "id": "u3b",
+      "username": "teacher.ahmet",
+      "email": "a.yilmaz@university.edu.tr",
+      "password": "password123",
+      "name": "Dr. Ahmet Yılmaz",
+      "role": "teacher",
+      "departmentId": "d1",
+      "phone": "+90 555 333 4455",
+      "address": "Beşiktaş, İstanbul",
+      "status": "active"
+    },
+    {
+      "id": "u100",
+      "username": "student.can0",
+      "email": "can.yılmaz0@std.university.edu.tr",
+      "password": "password123",
+      "name": "Can Yılmaz",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024100",
+      "classLevel": 3,
+      "gpa": 2.68,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u101",
+      "username": "student.deniz1",
+      "email": "deniz.kaya1@std.university.edu.tr",
+      "password": "password123",
+      "name": "Deniz Kaya",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024101",
+      "classLevel": 3,
+      "gpa": 3.83,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u102",
+      "username": "student.ege2",
+      "email": "ege.demir2@std.university.edu.tr",
+      "password": "password123",
+      "name": "Ege Demir",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024102",
+      "classLevel": 3,
+      "gpa": 3.49,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u103",
+      "username": "student.mert3",
+      "email": "mert.şahin3@std.university.edu.tr",
+      "password": "password123",
+      "name": "Mert Şahin",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024103",
+      "classLevel": 3,
+      "gpa": 3.13,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u104",
+      "username": "student.burak4",
+      "email": "burak.çelik4@std.university.edu.tr",
+      "password": "password123",
+      "name": "Burak Çelik",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024104",
+      "classLevel": 3,
+      "gpa": 2.62,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u105",
+      "username": "student.oğuz5",
+      "email": "oğuz.yıldız5@std.university.edu.tr",
+      "password": "password123",
+      "name": "Oğuz Yıldız",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024105",
+      "classLevel": 3,
+      "gpa": 3.54,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u106",
+      "username": "student.yiğit6",
+      "email": "yiğit.öztürk6@std.university.edu.tr",
+      "password": "password123",
+      "name": "Yiğit Öztürk",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024106",
+      "classLevel": 3,
+      "gpa": 3.16,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u107",
+      "username": "student.onur7",
+      "email": "onur.aydın7@std.university.edu.tr",
+      "password": "password123",
+      "name": "Onur Aydın",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024107",
+      "classLevel": 3,
+      "gpa": 3.35,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u108",
+      "username": "student.gökhan8",
+      "email": "gökhan.özdemir8@std.university.edu.tr",
+      "password": "password123",
+      "name": "Gökhan Özdemir",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024108",
+      "classLevel": 3,
+      "gpa": 2.87,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u109",
+      "username": "student.serkan9",
+      "email": "serkan.arslan9@std.university.edu.tr",
+      "password": "password123",
+      "name": "Serkan Arslan",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024109",
+      "classLevel": 3,
+      "gpa": 3.66,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1010",
+      "username": "student.elif10",
+      "email": "elif.doğan10@std.university.edu.tr",
+      "password": "password123",
+      "name": "Elif Doğan",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024110",
+      "classLevel": 3,
+      "gpa": 2.65,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1011",
+      "username": "student.zeynep11",
+      "email": "zeynep.kılıç11@std.university.edu.tr",
+      "password": "password123",
+      "name": "Zeynep Kılıç",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024111",
+      "classLevel": 3,
+      "gpa": 3.9,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1012",
+      "username": "student.seda12",
+      "email": "seda.aslan12@std.university.edu.tr",
+      "password": "password123",
+      "name": "Seda Aslan",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024112",
+      "classLevel": 3,
+      "gpa": 3.3,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1013",
+      "username": "student.buse13",
+      "email": "buse.tekin13@std.university.edu.tr",
+      "password": "password123",
+      "name": "Buse Tekin",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024113",
+      "classLevel": 3,
+      "gpa": 3.05,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1014",
+      "username": "student.damla14",
+      "email": "damla.polat14@std.university.edu.tr",
+      "password": "password123",
+      "name": "Damla Polat",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024114",
+      "classLevel": 3,
+      "gpa": 2.76,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1015",
+      "username": "student.ceren15",
+      "email": "ceren.bulut15@std.university.edu.tr",
+      "password": "password123",
+      "name": "Ceren Bulut",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024115",
+      "classLevel": 3,
+      "gpa": 2.79,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1016",
+      "username": "student.merve16",
+      "email": "merve.şen16@std.university.edu.tr",
+      "password": "password123",
+      "name": "Merve Şen",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024116",
+      "classLevel": 3,
+      "gpa": 3.9,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1017",
+      "username": "student.ebru17",
+      "email": "ebru.güler17@std.university.edu.tr",
+      "password": "password123",
+      "name": "Ebru Güler",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024117",
+      "classLevel": 3,
+      "gpa": 3,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1018",
+      "username": "student.selin18",
+      "email": "selin.yalçın18@std.university.edu.tr",
+      "password": "password123",
+      "name": "Selin Yalçın",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024118",
+      "classLevel": 3,
+      "gpa": 3.14,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1019",
+      "username": "student.gamze19",
+      "email": "gamze.koç19@std.university.edu.tr",
+      "password": "password123",
+      "name": "Gamze Koç",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024119",
+      "classLevel": 3,
+      "gpa": 2.78,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1020",
+      "username": "student.emir20",
+      "email": "emir.sarı20@std.university.edu.tr",
+      "password": "password123",
+      "name": "Emir Sarı",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024120",
+      "classLevel": 3,
+      "gpa": 3.61,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1021",
+      "username": "student.yağmur21",
+      "email": "yağmur.avcı21@std.university.edu.tr",
+      "password": "password123",
+      "name": "Yağmur Avcı",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024121",
+      "classLevel": 3,
+      "gpa": 2.99,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1022",
+      "username": "student.umut22",
+      "email": "umut.köse22@std.university.edu.tr",
+      "password": "password123",
+      "name": "Umut Köse",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024122",
+      "classLevel": 3,
+      "gpa": 3.1,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1023",
+      "username": "student.kaan23",
+      "email": "kaan.erdoğan23@std.university.edu.tr",
+      "password": "password123",
+      "name": "Kaan Erdoğan",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024123",
+      "classLevel": 3,
+      "gpa": 3.47,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
+    },
+    {
+      "id": "u1024",
+      "username": "student.arda24",
+      "email": "arda.karan24@std.university.edu.tr",
+      "password": "password123",
+      "name": "Arda Karan",
+      "role": "student",
+      "departmentId": "d1",
+      "studentNumber": "20211024124",
+      "classLevel": 3,
+      "gpa": 2.54,
+      "advisor": "Dr. Nazlı Başak",
+      "advisorId": "u3",
+      "status": "active"
     }
   ],
   "faculties": [
@@ -245,8 +550,13 @@
     },
     {
       "id": "f2",
-      "name": "İktisadi ve İdari Bilimler Fakültesi",
-      "code": "FEAS"
+      "name": "İşletme Fakültesi",
+      "code": "BUS"
+    },
+    {
+      "id": "f3",
+      "name": "Fen-Edebiyat Fakültesi",
+      "code": "SCI"
     }
   ],
   "departments": [
@@ -258,9 +568,33 @@
     },
     {
       "id": "d2",
-      "name": "Endüstri Mühendisliği",
-      "code": "IE",
+      "name": "Yazılım Mühendisliği",
+      "code": "SENG",
       "facultyId": "f1"
+    },
+    {
+      "id": "d3",
+      "name": "İşletme",
+      "code": "BUSA",
+      "facultyId": "f2"
+    },
+    {
+      "id": "d4",
+      "name": "Yönetim Bilişim Sistemleri",
+      "code": "MIS",
+      "facultyId": "f2"
+    },
+    {
+      "id": "d5",
+      "name": "Moleküler Biyoloji ve Genetik",
+      "code": "MBG",
+      "facultyId": "f3"
+    },
+    {
+      "id": "d6",
+      "name": "Matematik",
+      "code": "MATH",
+      "facultyId": "f3"
     }
   ],
   "courses": [
@@ -409,6 +743,274 @@
       "enrolled": 6,
       "type": "Seçmeli",
       "isFailed": false
+    },
+    {
+      "id": "SOFT-302",
+      "code": "SOFT 302",
+      "name": "React Redux Advanced",
+      "category": "Yazılım",
+      "instructor": "Dr. Elif Soylu",
+      "akts": 5,
+      "capacity": 50,
+      "enrolled": 24,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d2"
+    },
+    {
+      "id": "SE-305",
+      "code": "SE 305",
+      "name": "Software Engineering",
+      "category": "Yazılım",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
+      "akts": 5,
+      "capacity": 45,
+      "enrolled": 30,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d2"
+    },
+    {
+      "id": "WEB-307",
+      "code": "WEB 307",
+      "name": "Web Programming II",
+      "category": "Yazılım",
+      "instructor": "Dr. Nazlı Başak",
+      "akts": 4,
+      "capacity": 40,
+      "enrolled": 35,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d2"
+    },
+    {
+      "id": "CENG-301",
+      "code": "CENG 301",
+      "name": "Database Management Systems",
+      "category": "Veri Bilimi",
+      "instructor": "Doç. Dr. Mert Akın",
+      "akts": 4,
+      "capacity": 40,
+      "enrolled": 15,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d1"
+    },
+    {
+      "id": "CENG-306",
+      "code": "CENG 306",
+      "name": "Computer Networks",
+      "category": "Bilgisayar",
+      "instructor": "Dr. Cem Kaya",
+      "akts": 3,
+      "capacity": 30,
+      "enrolled": 8,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d1"
+    },
+    {
+      "id": "CENG-211",
+      "code": "CENG 211",
+      "name": "Discrete Mathematics",
+      "category": "Matematik",
+      "instructor": "Doç. Dr. Mert Akın",
+      "akts": 3,
+      "capacity": 50,
+      "enrolled": 45,
+      "type": "Zorunlu",
+      "isFailed": true,
+      "departmentId": "d1"
+    },
+    {
+      "id": "MIS-101",
+      "code": "MIS 101",
+      "name": "Introduction to Information Systems",
+      "category": "Bilişim",
+      "instructor": "Dr. Ahmet Yılmaz",
+      "akts": 4,
+      "capacity": 60,
+      "enrolled": 52,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d4"
+    },
+    {
+      "id": "MIS-302",
+      "code": "MIS 302",
+      "name": "Systems Analysis and Design",
+      "category": "Bilişim",
+      "instructor": "Dr. Ahmet Yılmaz",
+      "akts": 5,
+      "capacity": 45,
+      "enrolled": 42,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d4"
+    },
+    {
+      "id": "BUS-201",
+      "code": "BUS 201",
+      "name": "Principles of Marketing",
+      "category": "Pazarlama",
+      "instructor": "Dr. Ahmet Yılmaz",
+      "akts": 4,
+      "capacity": 70,
+      "enrolled": 65,
+      "type": "Seçmeli",
+      "isFailed": false,
+      "departmentId": "d3"
+    },
+    {
+      "id": "BUS-305",
+      "code": "BUS 305",
+      "name": "Strategic Management",
+      "category": "Yönetim",
+      "instructor": "Prof. Dr. Mehmet Kaya",
+      "akts": 5,
+      "capacity": 40,
+      "enrolled": 38,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d3"
+    },
+    {
+      "id": "BIO-101",
+      "code": "BIO 101",
+      "name": "General Biology I",
+      "category": "Biyoloji",
+      "instructor": "Dr. Cem Kaya",
+      "akts": 4,
+      "capacity": 50,
+      "enrolled": 47,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d5"
+    },
+    {
+      "id": "BIO-304",
+      "code": "BIO 304",
+      "name": "Genetics",
+      "category": "Biyoloji",
+      "instructor": "Dr. Cem Kaya",
+      "akts": 5,
+      "capacity": 30,
+      "enrolled": 29,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d5"
+    },
+    {
+      "id": "MATH-101",
+      "code": "MATH 101",
+      "name": "Calculus I",
+      "category": "Matematik",
+      "instructor": "Prof. Dr. Kerem Soylu",
+      "akts": 4,
+      "capacity": 80,
+      "enrolled": 78,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d6"
+    },
+    {
+      "id": "MATH-102",
+      "code": "MATH 102",
+      "name": "Calculus II",
+      "category": "Matematik",
+      "instructor": "Prof. Dr. Kerem Soylu",
+      "akts": 4,
+      "capacity": 75,
+      "enrolled": 72,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d6"
+    },
+    {
+      "id": "MATH-203",
+      "code": "MATH 203",
+      "name": "Linear Algebra",
+      "category": "Matematik",
+      "instructor": "Prof. Dr. Kerem Soylu",
+      "akts": 5,
+      "capacity": 50,
+      "enrolled": 48,
+      "type": "Zorunlu",
+      "isFailed": false,
+      "departmentId": "d6"
+    },
+    {
+      "id": "ENG-101",
+      "code": "ENG 101",
+      "name": "Academic English I",
+      "category": "Yabancı Dil",
+      "instructor": "Dr. Ahmet Yılmaz",
+      "akts": 2,
+      "capacity": 100,
+      "enrolled": 95,
+      "type": "Seçmeli",
+      "isFailed": false,
+      "departmentId": "d3"
+    },
+    {
+      "id": "HIST-201",
+      "code": "HIST 201",
+      "name": "Atatürk Principles I",
+      "category": "Tarih",
+      "instructor": "Dr. Cem Kaya",
+      "akts": 2,
+      "capacity": 120,
+      "enrolled": 115,
+      "type": "Seçmeli",
+      "isFailed": false,
+      "departmentId": "d5"
+    },
+    {
+      "id": "TURK-101",
+      "code": "TURK 101",
+      "name": "Turkish Language I",
+      "category": "Türkçe",
+      "instructor": "Dr. Elif Soylu",
+      "akts": 2,
+      "capacity": 120,
+      "enrolled": 118,
+      "type": "Seçmeli",
+      "isFailed": false,
+      "departmentId": "d2"
+    },
+    {
+      "id": "DBM-301",
+      "code": "DBM 301",
+      "name": "Database Management Systems",
+      "category": "Mühendislik",
+      "instructor": "Dr. Nazlı Başak",
+      "akts": 5,
+      "capacity": 50,
+      "enrolled": 38,
+      "type": "Fakülte",
+      "isFailed": false
+    },
+    {
+      "id": "OPS-302",
+      "code": "OPS 302",
+      "name": "Operating Systems",
+      "category": "Mühendislik",
+      "instructor": "Dr. Nazlı Başak",
+      "akts": 5,
+      "capacity": 60,
+      "enrolled": 40,
+      "type": "Fakülte",
+      "isFailed": false
+    },
+    {
+      "id": "d6w3Un0qV_M",
+      "name": "TURK-101 - Sınıf-A",
+      "instructor": "Dr. Nazlı Başak",
+      "capacity": 40,
+      "category": "Mühendislik",
+      "akts": 5,
+      "enrolled": 0,
+      "gradesApproved": false
     }
   ],
   "curriculum": [
@@ -426,7 +1028,7 @@
       "name": "Osmanlı Müesseseleri Tarihi",
       "ects": 4,
       "semester": 3,
-      "status": "Taslak"
+      "status": "Pasif"
     },
     {
       "id": "c3",
@@ -442,7 +1044,7 @@
       "name": "Ceza Hukuku Genel Hükümler",
       "ects": 3,
       "semester": 7,
-      "status": "Pasif"
+      "status": "Aktif"
     },
     {
       "id": "c5",
@@ -472,7 +1074,8 @@
       "desc": "E-imzalı resmi öğrenci belgesi",
       "requestDate": "02.06.2026",
       "status": "ready",
-      "verificationCode": "QR-942851"
+      "verificationCode": "QR-942851",
+      "description": "E-imzalı resmi öğrenci belgesi"
     },
     {
       "id": "doc-req-2",
@@ -480,8 +1083,9 @@
       "title": "Transkript",
       "desc": "Güncel dönem transkripti",
       "requestDate": "28.05.2026",
-      "status": "pending",
-      "verificationCode": "QR-710385"
+      "status": "rejected",
+      "verificationCode": "QR-710385",
+      "description": "Güncel dönem transkripti"
     },
     {
       "id": "doc-req-3",
@@ -490,7 +1094,8 @@
       "desc": "Yaz stajı onay belgesi",
       "requestDate": "15.05.2026",
       "status": "ready",
-      "verificationCode": "QR-638210"
+      "verificationCode": "QR-638210",
+      "description": "Yaz stajı onay belgesi"
     },
     {
       "id": "EtQ0n-yPcYM",
@@ -499,7 +1104,7 @@
       "description": "E-İmzalı, Türkçe",
       "type": "document",
       "requestDate": "05.07.2026",
-      "status": "pending",
+      "status": "rejected",
       "verificationCode": "QR-742694"
     },
     {
@@ -508,7 +1113,7 @@
       "title": "Özel İzin Dilekçesi",
       "description": "s",
       "type": "document",
-      "status": "pending",
+      "status": "rejected",
       "fileName": "Transkript_Belgesi.pdf",
       "studentName": "Ahmet Yılmaz",
       "requestDate": "05.07.2026",
@@ -521,7 +1126,8 @@
       "desc": "Askerlik tecil işlemleri için belge",
       "requestDate": "10.06.2024",
       "status": "rejected",
-      "verificationCode": "QR-104958"
+      "verificationCode": "QR-104958",
+      "description": "Askerlik tecil işlemleri için belge"
     },
     {
       "id": "doc-req-5",
@@ -529,8 +1135,9 @@
       "title": "Öğrenci Belgesi",
       "desc": "E-imzalı resmi öğrenci belgesi",
       "requestDate": "04.07.2026",
-      "status": "pending",
-      "verificationCode": "QR-123456"
+      "status": "rejected",
+      "verificationCode": "QR-123456",
+      "description": "E-imzalı resmi öğrenci belgesi"
     },
     {
       "id": "doc-req-6",
@@ -538,8 +1145,225 @@
       "title": "Transkript",
       "desc": "Resmi Türkçe Not Döküm Belgesi (E-İmzalı)",
       "requestDate": "05.07.2026",
+      "status": "rejected",
+      "verificationCode": "QR-654321",
+      "description": "Resmi Türkçe Not Döküm Belgesi (E-İmzalı)"
+    },
+    {
+      "id": "z0zcjRGah5k",
+      "studentId": "u7",
+      "title": "Öğrenci Belgesi",
+      "description": "Türkçe, Dijital",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "rejected",
+      "verificationCode": "QR-447053"
+    },
+    {
+      "id": "-w8moGnqQO8",
+      "studentId": "u7",
+      "title": "Transkript",
+      "description": "E-İmzalı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "rejected",
+      "verificationCode": "QR-976685"
+    },
+    {
+      "id": "XiZDcoVAywg",
+      "studentId": "u7",
+      "title": "Disiplin Durum Belgesi",
+      "description": "Resmi Onaylı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "ready",
+      "verificationCode": "QR-182058"
+    },
+    {
+      "id": "qI-5_p1CEiw",
+      "studentId": "u7",
+      "title": "Öğrenci Belgesi",
+      "description": "Türkçe, Dijital",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "rejected",
+      "verificationCode": "QR-729778"
+    },
+    {
+      "id": "6iUC_lG7reA",
+      "studentId": "u7",
+      "title": "Öğrenci Belgesi",
+      "description": "Türkçe, Dijital",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "rejected",
+      "verificationCode": "QR-736762"
+    },
+    {
+      "id": "JPDhwAhA154",
+      "studentId": "u7",
+      "title": "Transkript",
+      "description": "E-İmzalı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "rejected",
+      "verificationCode": "QR-544214"
+    },
+    {
+      "id": "pTmSV1MlVz8",
+      "studentId": "u7",
+      "title": "Öğrenci Belgesi",
+      "description": "Türkçe, Dijital",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "rejected",
+      "verificationCode": "QR-428999"
+    },
+    {
+      "id": "YR3XkwP_YVo",
+      "studentId": "u7",
+      "title": "Transkript",
+      "description": "E-İmzalı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "rejected",
+      "verificationCode": "QR-747275"
+    },
+    {
+      "id": "pz5dzV0cpSM",
+      "studentId": "u7",
+      "title": "Disiplin Durum Belgesi",
+      "description": "Resmi Onaylı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "rejected",
+      "verificationCode": "QR-682123"
+    },
+    {
+      "id": "wUtu-ZthkFA",
+      "studentId": "u7",
+      "title": "Staj Belgesi",
+      "description": "Resmi Onaylı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "ready",
+      "verificationCode": "QR-375837"
+    },
+    {
+      "id": "17BLupOnRU8",
+      "studentId": "u7",
+      "title": "Staj Belgesi",
+      "description": "Resmi Onaylı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "rejected",
+      "verificationCode": "QR-882683"
+    },
+    {
+      "id": "8eZQWATflMA",
+      "studentId": "u7",
+      "title": "Staj Belgesi",
+      "description": "Resmi Onaylı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
       "status": "pending",
-      "verificationCode": "QR-654321"
+      "verificationCode": "QR-371333"
+    },
+    {
+      "id": "8qyk_cmBs-w",
+      "studentId": "u7",
+      "title": "Staj Belgesi",
+      "description": "Resmi Onaylı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "pending",
+      "verificationCode": "QR-177027"
+    },
+    {
+      "id": "jnqMroeMsTs",
+      "studentId": "u7",
+      "title": "Staj Belgesi",
+      "description": "Resmi Onaylı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "pending",
+      "verificationCode": "QR-139661"
+    },
+    {
+      "id": "IuLS53cIVkM",
+      "studentId": "u7",
+      "studentName": "Ahmet Yılmaz",
+      "title": "Resmi Transkript",
+      "description": "Öğrenci Not Dökümü talebinde bulunulmuştur.",
+      "type": "document",
+      "status": "ready",
+      "requestDate": "05.07.2026",
+      "verificationCode": "QR-534839"
+    },
+    {
+      "id": "wodQlZYJoKs",
+      "studentId": "u7",
+      "studentName": "Ahmet Yılmaz",
+      "title": "Resmi Transkript",
+      "description": "Öğrenci Not Dökümü talebinde bulunulmuştur.",
+      "type": "document",
+      "status": "ready",
+      "requestDate": "05.07.2026",
+      "verificationCode": "QR-685927"
+    },
+    {
+      "id": "eEkuHdoGJFE",
+      "studentId": "u7",
+      "title": "Sağlık Raporu",
+      "description": "hhh",
+      "type": "document",
+      "status": "pending",
+      "fileName": "Universite_Mufredat_Raporu.pdf",
+      "studentName": "Ahmet Yılmaz",
+      "requestDate": "05.07.2026",
+      "verificationCode": "QR-766738"
+    },
+    {
+      "id": "eBMm4Btt0V8",
+      "studentId": "u7",
+      "title": "Özel İzin Dilekçesi",
+      "description": "hhh",
+      "type": "document",
+      "status": "pending",
+      "fileName": "Devamsizlik_Raporu_current_2025_2026 (2).pdf",
+      "studentName": "Ahmet Yılmaz",
+      "requestDate": "05.07.2026",
+      "verificationCode": "QR-347866"
+    },
+    {
+      "id": "3Kk1O_uYz1s",
+      "studentId": "u7",
+      "title": "Öğrenci Belgesi",
+      "description": "Türkçe, Dijital",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "pending",
+      "verificationCode": "QR-818929"
+    },
+    {
+      "id": "fzg_eRvQC9Y",
+      "studentId": "u7",
+      "title": "Transkript",
+      "description": "E-İmzalı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "pending",
+      "verificationCode": "QR-167203"
+    },
+    {
+      "id": "53HcnT0JJrE",
+      "studentId": "u7",
+      "title": "Staj Belgesi",
+      "description": "Resmi Onaylı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
+      "status": "pending",
+      "verificationCode": "QR-224961"
     }
   ],
   "facultyWorkloads": [
@@ -592,6 +1416,24 @@
       "studentCount": 120,
       "rating": 4.8,
       "workload": 90
+    },
+    {
+      "id": "Eev1flBGsrM",
+      "name": "Onur Baha",
+      "dept": "Moleküler Biyoloji",
+      "rating": 1,
+      "workload": 10,
+      "studentCount": 50,
+      "avatar": "https://images.unsplash.com/photo-1500000837436?w=150&q=80"
+    },
+    {
+      "id": "adtrwa9hU-E",
+      "name": "ssss",
+      "dept": "Yazılım Mühendisliği",
+      "rating": 4.8,
+      "workload": 80,
+      "studentCount": 90,
+      "avatar": "https://images.unsplash.com/photo-1500000518823?w=150&q=80"
     }
   ],
   "bulletins": [
@@ -617,6 +1459,14 @@
       "priority": "Normal",
       "title": "AAA",
       "content": "AA",
+      "target": "Sistem"
+    },
+    {
+      "id": "oVm_FauN_rA",
+      "date": "05.07.2026",
+      "priority": "Normal",
+      "title": "YAZ PARTİSİ",
+      "content": "WUHUUUUUUUUUU",
       "target": "Sistem"
     }
   ],
@@ -645,101 +1495,102 @@
       "body": "Bahar dönemi staj başvuruları için kariyer portalını ziyaret ediniz.",
       "date": "01.06.2026",
       "target": "global"
+    },
+    {
+      "id": "1ytBRo7Etkg",
+      "pinned": true,
+      "date": "05.07.2026",
+      "title": "SA",
+      "body": "AS",
+      "target": "Tüm Öğrenciler"
     }
   ],
   "studentGrades": [
     {
       "id": "g1",
       "studentId": "u7",
-      "courseCode": "DBM 301",
-      "courseName": "Database Management Systems",
-      "instructor": "Doç. Dr. Mert Akın",
+      "courseCode": "SOFT 302",
+      "courseName": "React Redux Advanced",
+      "instructor": "Dr. Elif Soylu",
       "midterm": 85,
       "final": 90,
       "project": 85,
       "letterGrade": "AA",
-      "ects": 6,
+      "ects": 5,
       "semester": "2025-2026 Bahar",
       "absentDates": [
-        "02/03/2026",
-        "09/03/2026",
-        "16/03/2026"
+        "12/03/2026"
       ],
-      "absencePercentage": 21
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut"
     },
     {
       "id": "g2",
       "studentId": "u7",
-      "courseCode": "OPS 302",
-      "courseName": "Operating Systems",
-      "instructor": "Dr. Elif Soylu",
+      "courseCode": "SE 305",
+      "courseName": "Software Engineering",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
       "midterm": 72,
       "final": null,
       "project": 80,
       "letterGrade": null,
-      "ects": 6,
+      "ects": 5,
       "semester": "2025-2026 Bahar",
-      "absentDates": [
-        "03/03/2026",
-        "10/03/2026",
-        "24/03/2026",
-        "07/04/2026",
-        "28/04/2026"
-      ],
-      "absencePercentage": 35,
+      "absentDates": [],
+      "absencePercentage": 0,
       "attendanceStatus": "Mevcut"
     },
     {
       "id": "g3",
       "studentId": "u7",
-      "courseCode": "SE 305",
-      "courseName": "Software Engineering",
-      "instructor": "Prof. Dr. Selçuk Yılmaz",
-      "midterm": 55,
-      "final": 65,
-      "project": 75,
-      "letterGrade": "CB",
-      "ects": 6,
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 60,
+      "final": 22,
+      "project": 70,
+      "letterGrade": "FF",
+      "ects": 4,
       "semester": "2025-2026 Bahar",
-      "absentDates": [],
-      "absencePercentage": 0
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut",
+      "average": 40
     },
     {
       "id": "g4",
       "studentId": "u7",
-      "courseCode": "WEB 307",
-      "courseName": "Web Programming",
-      "instructor": "Dr. Elif Soylu",
-      "midterm": 85,
-      "final": 85,
-      "project": 92,
-      "letterGrade": "BB",
-      "ects": 5,
+      "courseCode": "MATH 101",
+      "courseName": "Calculus I",
+      "instructor": "Prof. Dr. Kerem Soylu",
+      "midterm": 55,
+      "final": 60,
+      "project": null,
+      "letterGrade": "CB",
+      "ects": 4,
       "semester": "2025-2026 Bahar",
-      "absentDates": [
-        "10/04/2026"
-      ],
-      "absencePercentage": 8,
+      "absentDates": [],
+      "absencePercentage": 0,
       "attendanceStatus": "Mevcut",
       "average": 74
     },
     {
       "id": "g5",
       "studentId": "u7",
-      "courseCode": "NET 305",
-      "courseName": "Computer Networks",
-      "instructor": "Dr. Cem Akın",
-      "midterm": 80,
-      "final": null,
-      "project": 88,
-      "letterGrade": null,
-      "ects": 5,
+      "courseCode": "TURK 101",
+      "courseName": "Turkish Language I",
+      "instructor": "Dr. Elif Soylu",
+      "midterm": 90,
+      "final": 95,
+      "project": 100,
+      "letterGrade": "AA",
+      "ects": 2,
       "semester": "2025-2026 Bahar",
-      "absentDates": [
-        "14/04/2026",
-        "21/04/2026"
-      ],
-      "absencePercentage": 15
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
     },
     {
       "id": "g6",
@@ -753,11 +1604,9 @@
       "letterGrade": "AA",
       "ects": 4,
       "semester": "2025-2026 Bahar",
-      "absentDates": [
-        "04/05/2026",
-        "11/05/2026"
-      ],
-      "absencePercentage": 16
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
     },
     {
       "id": "g7",
@@ -771,133 +1620,902 @@
       "letterGrade": null,
       "ects": 3,
       "semester": "2025-2026 Bahar",
-      "absentDates": [
-        "18/05/2026"
-      ],
-      "absencePercentage": 10
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "homeworkStatus": "submitted",
+      "homeworkSubmitTime": "05.07.2026 21:19:37",
+      "homeworkFile": "Transcript_u7 (1).pdf",
+      "studentComment": "xxxxxx",
+      "githubLink": "https://github.com/ogrenci/human-computer-interaction"
     },
     {
-      "id": "g-web307-u10",
-      "studentId": "u10",
-      "courseCode": "WEB 307",
-      "courseName": "Web Programming",
-      "instructor": "Dr. Elif Soylu",
-      "midterm": 85,
-      "final": 90,
-      "project": 88,
-      "letterGrade": "BB",
+      "id": "g-dbm301-u7",
+      "studentId": "u7",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 70,
+      "final": null,
+      "project": 75,
+      "letterGrade": null,
       "ects": 5,
       "semester": "2025-2026 Bahar",
       "absentDates": [],
       "absencePercentage": 0,
-      "attendanceStatus": "Mevcut",
-      "average": 75
+      "attendanceStatus": "Mevcut"
     },
     {
-      "id": "g-web307-u11",
-      "studentId": "u11",
+      "id": "g-web307-u100",
+      "studentId": "u100",
       "courseCode": "WEB 307",
-      "courseName": "Web Programming",
-      "instructor": "Dr. Elif Soylu",
-      "midterm": 72,
-      "final": 68,
-      "project": 80,
-      "letterGrade": "CB",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 88,
+      "final": null,
+      "project": 81,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u100",
+      "studentId": "u100",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 66,
+      "final": null,
+      "project": 90,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u101",
+      "studentId": "u101",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 98,
+      "final": null,
+      "project": 97,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u101",
+      "studentId": "u101",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 77,
+      "final": null,
+      "project": 90,
+      "letterGrade": null,
       "ects": 5,
       "semester": "2025-2026 Bahar",
       "absentDates": [
-        "02/03/2026"
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u102",
+      "studentId": "u102",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 94,
+      "final": null,
+      "project": 97,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u102",
+      "studentId": "u102",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 78,
+      "final": null,
+      "project": 96,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u103",
+      "studentId": "u103",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 62,
+      "final": null,
+      "project": 71,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u103",
+      "studentId": "u103",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 86,
+      "final": null,
+      "project": 96,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u104",
+      "studentId": "u104",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 86,
+      "final": null,
+      "project": 81,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u104",
+      "studentId": "u104",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 83,
+      "final": null,
+      "project": 85,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026",
+        "19/03/2026"
+      ],
+      "absencePercentage": 10,
+      "attendanceStatus": "Yok"
+    },
+    {
+      "id": "g-web307-u105",
+      "studentId": "u105",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 72,
+      "final": null,
+      "project": 76,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u105",
+      "studentId": "u105",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 84,
+      "final": null,
+      "project": 96,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u106",
+      "studentId": "u106",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 94,
+      "final": null,
+      "project": 70,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u106",
+      "studentId": "u106",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 91,
+      "final": null,
+      "project": 83,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u107",
+      "studentId": "u107",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 91,
+      "final": null,
+      "project": 73,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u107",
+      "studentId": "u107",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 99,
+      "final": null,
+      "project": 71,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u108",
+      "studentId": "u108",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 98,
+      "final": null,
+      "project": 97,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u108",
+      "studentId": "u108",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 64,
+      "final": null,
+      "project": 96,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u109",
+      "studentId": "u109",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 70,
+      "final": null,
+      "project": 80,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u109",
+      "studentId": "u109",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 89,
+      "final": null,
+      "project": 76,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u1010",
+      "studentId": "u1010",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 72,
+      "final": null,
+      "project": 74,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u1010",
+      "studentId": "u1010",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 73,
+      "final": null,
+      "project": 70,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u1011",
+      "studentId": "u1011",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 74,
+      "final": null,
+      "project": 95,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u1011",
+      "studentId": "u1011",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 62,
+      "final": null,
+      "project": 70,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u1012",
+      "studentId": "u1012",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 83,
+      "final": null,
+      "project": 88,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u1012",
+      "studentId": "u1012",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 97,
+      "final": null,
+      "project": 84,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u1013",
+      "studentId": "u1013",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 78,
+      "final": null,
+      "project": 92,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026",
+        "19/03/2026"
       ],
       "absencePercentage": 10,
       "attendanceStatus": "Yok",
-      "average": 66
+      "average": null
     },
     {
-      "id": "g-web307-u12",
-      "studentId": "u12",
-      "courseCode": "WEB 307",
-      "courseName": "Web Programming",
-      "instructor": "Dr. Elif Soylu",
-      "midterm": 55,
-      "final": 92,
-      "project": 98,
-      "letterGrade": "BB",
+      "id": "g-dbm301-u1013",
+      "studentId": "u1013",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 78,
+      "final": null,
+      "project": 92,
+      "letterGrade": null,
       "ects": 5,
       "semester": "2025-2026 Bahar",
       "absentDates": [],
       "absencePercentage": 0,
-      "attendanceStatus": "Mevcut",
-      "average": 70
+      "attendanceStatus": "Mevcut"
     },
     {
-      "id": "g-web307-u13",
-      "studentId": "u13",
+      "id": "g-web307-u1014",
+      "studentId": "u1014",
       "courseCode": "WEB 307",
-      "courseName": "Web Programming",
-      "instructor": "Dr. Elif Soylu",
-      "midterm": 95,
-      "final": 100,
-      "project": 100,
-      "letterGrade": "BA",
-      "ects": 5,
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 99,
+      "final": null,
+      "project": 75,
+      "letterGrade": null,
+      "ects": 4,
       "semester": "2025-2026 Bahar",
       "absentDates": [],
       "absencePercentage": 0,
       "attendanceStatus": "Mevcut",
-      "average": 88
+      "average": null
     },
     {
-      "id": "g-web307-u14",
-      "studentId": "u14",
-      "courseCode": "WEB 307",
-      "courseName": "Web Programming",
-      "instructor": "Dr. Elif Soylu",
-      "midterm": 60,
-      "final": 75,
-      "project": 65,
-      "letterGrade": "CC",
+      "id": "g-dbm301-u1014",
+      "studentId": "u1014",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 88,
+      "final": null,
+      "project": 96,
+      "letterGrade": null,
       "ects": 5,
       "semester": "2025-2026 Bahar",
       "absentDates": [
-        "02/03/2026"
+        "12/03/2026",
+        "19/03/2026"
       ],
       "absencePercentage": 10,
-      "attendanceStatus": "Mevcut",
-      "average": 58
+      "attendanceStatus": "Yok"
     },
     {
-      "id": "g-web307-u15",
-      "studentId": "u15",
+      "id": "g-web307-u1015",
+      "studentId": "u1015",
       "courseCode": "WEB 307",
-      "courseName": "Web Programming",
-      "instructor": "Dr. Elif Soylu",
-      "midterm": 95,
-      "final": 88,
-      "project": 72,
-      "letterGrade": "BB",
-      "ects": 5,
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 83,
+      "final": null,
+      "project": 91,
+      "letterGrade": null,
+      "ects": 4,
       "semester": "2025-2026 Bahar",
       "absentDates": [],
       "absencePercentage": 0,
       "attendanceStatus": "Mevcut",
-      "average": 73
+      "average": null
     },
     {
-      "id": "g-web307-u16",
-      "studentId": "u16",
+      "id": "g-dbm301-u1015",
+      "studentId": "u1015",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 87,
+      "final": null,
+      "project": 77,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u1016",
+      "studentId": "u1016",
       "courseCode": "WEB 307",
-      "courseName": "Web Programming",
-      "instructor": "Dr. Elif Soylu",
-      "midterm": 96,
-      "final": 100,
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 68,
+      "final": null,
+      "project": 79,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u1016",
+      "studentId": "u1016",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 99,
+      "final": null,
+      "project": 93,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u1017",
+      "studentId": "u1017",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 86,
+      "final": null,
+      "project": 82,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u1017",
+      "studentId": "u1017",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 64,
+      "final": null,
       "project": 75,
-      "letterGrade": "BB",
+      "letterGrade": null,
       "ects": 5,
       "semester": "2025-2026 Bahar",
       "absentDates": [],
       "absencePercentage": 0,
-      "attendanceStatus": "Belirsiz",
-      "average": 78
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u1018",
+      "studentId": "u1018",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 70,
+      "final": null,
+      "project": 95,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026",
+        "19/03/2026"
+      ],
+      "absencePercentage": 10,
+      "attendanceStatus": "Yok",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u1018",
+      "studentId": "u1018",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 79,
+      "final": null,
+      "project": 93,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026",
+        "19/03/2026"
+      ],
+      "absencePercentage": 10,
+      "attendanceStatus": "Yok"
+    },
+    {
+      "id": "g-web307-u1019",
+      "studentId": "u1019",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 68,
+      "final": null,
+      "project": 83,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u1019",
+      "studentId": "u1019",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 81,
+      "final": null,
+      "project": 74,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u1020",
+      "studentId": "u1020",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 88,
+      "final": null,
+      "project": 77,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u1020",
+      "studentId": "u1020",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 65,
+      "final": null,
+      "project": 85,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026",
+        "19/03/2026"
+      ],
+      "absencePercentage": 10,
+      "attendanceStatus": "Yok"
+    },
+    {
+      "id": "g-web307-u1021",
+      "studentId": "u1021",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 87,
+      "final": null,
+      "project": 74,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u1021",
+      "studentId": "u1021",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 61,
+      "final": null,
+      "project": 71,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u1022",
+      "studentId": "u1022",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 87,
+      "final": null,
+      "project": 84,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u1022",
+      "studentId": "u1022",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 89,
+      "final": null,
+      "project": 74,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u1023",
+      "studentId": "u1023",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 76,
+      "final": null,
+      "project": 71,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026"
+      ],
+      "absencePercentage": 5,
+      "attendanceStatus": "Mevcut",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u1023",
+      "studentId": "u1023",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 67,
+      "final": null,
+      "project": 96,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
+    },
+    {
+      "id": "g-web307-u1024",
+      "studentId": "u1024",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 73,
+      "final": null,
+      "project": 73,
+      "letterGrade": null,
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "12/03/2026",
+        "19/03/2026"
+      ],
+      "absencePercentage": 10,
+      "attendanceStatus": "Yok",
+      "average": null
+    },
+    {
+      "id": "g-dbm301-u1024",
+      "studentId": "u1024",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Dr. Nazlı Başak",
+      "midterm": 98,
+      "final": null,
+      "project": 90,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0,
+      "attendanceStatus": "Mevcut"
     }
   ],
   "studentDashboard": {
@@ -1063,7 +2681,7 @@
     {
       "id": "hw-sub-1",
       "studentName": "Can Demir",
-      "studentNumber": "2021001",
+      "studentNumber": "20211024001",
       "avatar": "C",
       "homeworkTitle": "Ödev #4 — React Redux",
       "status": "pending",
@@ -1073,7 +2691,7 @@
     {
       "id": "hw-sub-2",
       "studentName": "Seda Kaya",
-      "studentNumber": "2021002",
+      "studentNumber": "20211024002",
       "avatar": "S",
       "homeworkTitle": "Ödev #4 — React Redux",
       "status": "reviewed",
@@ -1083,7 +2701,7 @@
     {
       "id": "hw-sub-3",
       "studentName": "Elif Şahin",
-      "studentNumber": "2021004",
+      "studentNumber": "20211024004",
       "avatar": "E",
       "homeworkTitle": "Ödev #4 — React Redux",
       "status": "approved",
@@ -1167,49 +2785,49 @@
     {
       "id": "att-r-1",
       "studentName": "Can Demir",
-      "studentId": "2021001",
+      "studentId": "20211024001",
       "avatar": "C",
       "status": "present"
     },
     {
       "id": "att-r-2",
       "studentName": "Seda Kaya",
-      "studentId": "2021002",
+      "studentId": "20211024002",
       "avatar": "S",
       "status": "absent"
     },
     {
       "id": "att-r-3",
       "studentName": "Bora Ak",
-      "studentId": "2021003",
+      "studentId": "20211024003",
       "avatar": "B",
       "status": "present"
     },
     {
       "id": "att-r-4",
       "studentName": "Elif Şahin",
-      "studentId": "2021004",
+      "studentId": "20211024004",
       "avatar": "E",
       "status": "present"
     },
     {
       "id": "att-r-5",
       "studentName": "Murat Yıldız",
-      "studentId": "2021005",
+      "studentId": "20211024005",
       "avatar": "M",
       "status": "absent"
     },
     {
       "id": "att-r-6",
       "studentName": "Ayşe Toprak",
-      "studentId": "2021006",
+      "studentId": "20211024006",
       "avatar": "A",
       "status": "present"
     },
     {
       "id": "att-r-7",
       "studentName": "Kemal Arslan",
-      "studentId": "2021007",
+      "studentId": "20211024007",
       "avatar": "K",
       "status": "indeterminate"
     }
@@ -1218,7 +2836,7 @@
     {
       "id": "ge1",
       "studentName": "Can Demir",
-      "studentNumber": "2021001",
+      "studentNumber": "20211024001",
       "avatar": "C",
       "midterm": 85,
       "final": 90,
@@ -1228,7 +2846,7 @@
     {
       "id": "ge2",
       "studentName": "Seda Kaya",
-      "studentNumber": "2021002",
+      "studentNumber": "20211024002",
       "avatar": "S",
       "midterm": 72,
       "final": 68,
@@ -1238,7 +2856,7 @@
     {
       "id": "ge3",
       "studentName": "Bora Ak",
-      "studentNumber": "2021003",
+      "studentNumber": "20211024003",
       "avatar": "B",
       "midterm": 55,
       "final": null,
@@ -1248,7 +2866,7 @@
     {
       "id": "ge4",
       "studentName": "Elif Şahin",
-      "studentNumber": "2021004",
+      "studentNumber": "20211024004",
       "avatar": "E",
       "midterm": 95,
       "final": 100,
@@ -1258,7 +2876,7 @@
     {
       "id": "ge5",
       "studentName": "Murat Yıldız",
-      "studentNumber": "2021005",
+      "studentNumber": "20211024005",
       "avatar": "M",
       "midterm": 60,
       "final": 75,
@@ -1532,9 +3150,6 @@
   "academicEvents": [
     {
       "id": "1",
-      "title": "Güz Dönemi Kayıt Yenileme ve Ders Seçimlerinin Başlaması",
-      "date": "22.09.2025",
-      "id": "1",
       "title": "Güz Dönemi Ders Kayıtları",
       "date": "15.09.2025",
       "semester": "guz"
@@ -1543,13 +3158,6 @@
       "id": "2",
       "title": "Güz Dönemi Kayıt Yenileme ve Ders Seçimlerinin Sona Ermesi",
       "date": "26.09.2025",
-      "semester": "guz"
-    },
-    {
-      "id": "3",
-      "id": "2",
-      "title": "Güz Dönemi Derslerinin Başlaması",
-      "date": "29.09.2025",
       "semester": "guz"
     },
     {
@@ -1571,8 +3179,6 @@
       "semester": "tatil"
     },
     {
-      "id": "7",
-      "title": "Atatürk'ü Anma Günü (Dersler Devam Eder)",
       "id": "3",
       "title": "Güz Dönemi Ara Sınav (Vize) Haftası",
       "date": "10.11.2025",
@@ -1591,24 +3197,9 @@
       "semester": "guz"
     },
     {
-      "id": "10",
-      "id": "4",
-      "title": "Yılbaşı Resmi Tatili",
-      "date": "01.01.2026",
-      "semester": "tatil"
-    },
-    {
       "id": "11",
       "title": "Güz Dönemi Derslerinin Sona Ermesi",
       "date": "02.01.2026",
-      "semester": "guz"
-    },
-    {
-      "id": "12",
-      "title": "Güz Dönemi Dönem Sonu (Final) Sınavları Başlangıcı",
-      "id": "5",
-      "title": "Güz Dönemi Dönem Sonu (Final) Sınavları",
-      "date": "05.01.2026",
       "semester": "guz"
     },
     {
@@ -1630,33 +3221,15 @@
       "semester": "guz"
     },
     {
-      "id": "16",
-      "title": "Bahar Dönemi Kayıt Yenileme ve Ders Seçimlerinin Başlaması",
-      "id": "6",
-      "title": "Bahar Dönemi Ders Kayıtları",
-      "date": "09.02.2026",
-      "semester": "bahar"
-    },
-    {
       "id": "17",
       "title": "Bahar Dönemi Kayıt Yenileme ve Ders Seçimlerinin Sona Ermesi",
       "date": "13.02.2026",
       "semester": "bahar"
     },
     {
-      "id": "18",
       "id": "7",
       "title": "Bahar Dönemi Derslerinin Başlaması",
       "date": "16.02.2026",
-      "semester": "bahar"
-    },
-    {
-      "id": "19",
-      "title": "Bahar Dönemi Ders Ekleme-Bırakma (Ekle-Sil) Dönemi Başlangıcı",
-      "date": "23.02.2026",
-      "id": "8",
-      "title": "Bahar Dönemi Ara Sınav (Vize) Haftası",
-      "date": "13.04.2026",
       "semester": "bahar"
     },
     {
@@ -1816,12 +3389,45 @@
       "semester": "bahar"
     },
     {
-      "id": "46",
-      "title": "2025-2026 Mezuniyet Töreni ve Diploma Teslimi",
-      "date": "03.07.2026",
-      "id": "9",
+      "id": "1000",
+      "title": "Güz Dönemi Derslerinin Başlaması",
+      "date": "29.09.2025",
+      "semester": "guz"
+    },
+    {
+      "id": "1001",
+      "title": "Yılbaşı Resmi Tatili",
+      "date": "01.01.2026",
+      "semester": "tatil"
+    },
+    {
+      "id": "1002",
+      "title": "Güz Dönemi Dönem Sonu (Final) Sınavları",
+      "date": "05.01.2026",
+      "semester": "guz"
+    },
+    {
+      "id": "1003",
+      "title": "Bahar Dönemi Ders Kayıtları",
+      "date": "09.02.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "1004",
+      "title": "Bahar Dönemi Ara Sınav (Vize) Haftası",
+      "date": "13.04.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "1005",
       "title": "Bahar Dönemi Dönem Sonu (Final) Sınavları",
       "date": "08.06.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "GlEeoQlfR0Q",
+      "title": "Kurban Bayramı",
+      "date": "15.04.2025",
       "semester": "bahar"
     }
   ],
@@ -1835,7 +3441,7 @@
         "code": "DTS 201",
         "name": "Data Structures",
         "room": "Amfi-1",
-        "instructor": "Prof. Dr. Nazlı BAŞAK"
+        "instructor": "Prof. Dr. Ahmet Yılmaz"
       },
       {
         "id": 102,
@@ -1875,7 +3481,7 @@
         "code": "DTS 201",
         "name": "Data Structures",
         "room": "Amfi-1",
-        "instructor": "Prof. Dr. Nazlı BAŞAK"
+        "instructor": "Prof. Dr. Ahmet Yılmaz"
       },
       {
         "id": 106,
@@ -2077,7 +3683,7 @@
       "id": "3",
       "studentId": "u7",
       "courseName": "Database Management Systems",
-      "instructor": "Doç. Dr. Mert Akın",
+      "instructor": "Dr. Nazlı Başak",
       "category": "Veri Bilimi",
       "akts": 6,
       "progress": 40,
@@ -2089,7 +3695,7 @@
       "id": "4",
       "studentId": "u7",
       "courseName": "Operating Systems",
-      "instructor": "Dr. Elif Soylu",
+      "instructor": "Dr. Nazlı Başak",
       "category": "Bilgisayar",
       "akts": 6,
       "progress": 65,
@@ -2113,7 +3719,7 @@
       "id": "6",
       "studentId": "u7",
       "courseName": "Web Programming",
-      "instructor": "Dr. Elif Soylu",
+      "instructor": "Dr. Nazlı Başak",
       "category": "Mühendislik",
       "akts": 5,
       "progress": 80,
@@ -2156,12 +3762,67 @@
       "code": "HC 309",
       "type": "Fakülte",
       "classroom": "D-204"
+    },
+    {
+      "id": "sc-1",
+      "studentId": "u7",
+      "courseName": "React Redux Advanced",
+      "instructor": "Dr. Elif Soylu",
+      "category": "Yazılım",
+      "akts": 5,
+      "progress": 82,
+      "code": "SOFT 302",
+      "type": "Online"
+    },
+    {
+      "id": "sc-2",
+      "studentId": "u7",
+      "courseName": "Software Engineering",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
+      "category": "Yazılım",
+      "akts": 5,
+      "progress": 90,
+      "code": "SE 305",
+      "type": "Fakülte"
+    },
+    {
+      "id": "sc-3",
+      "studentId": "u7",
+      "courseName": "Web Programming II",
+      "instructor": "Dr. Nazlı Başak",
+      "category": "Yazılım",
+      "akts": 4,
+      "progress": 75,
+      "code": "WEB 307",
+      "type": "Online"
+    },
+    {
+      "id": "sc-4",
+      "studentId": "u7",
+      "courseName": "Calculus I",
+      "instructor": "Prof. Dr. Kerem Soylu",
+      "category": "Matematik",
+      "akts": 4,
+      "progress": 68,
+      "code": "MATH 101",
+      "type": "Fakülte"
+    },
+    {
+      "id": "sc-5",
+      "studentId": "u7",
+      "courseName": "Turkish Language I",
+      "instructor": "Dr. Elif Soylu",
+      "category": "Türkçe",
+      "akts": 2,
+      "progress": 95,
+      "code": "TURK 101",
+      "type": "Fakülte"
     }
   ],
   "attendance": [
     {
       "id": "1",
-      "studentId": "1",
+      "studentId": "u7",
       "totalHours": 180,
       "attendedHours": 162,
       "limitBreached": false,
@@ -2678,7 +4339,7 @@
       "id": "apt-1",
       "studentId": "u7",
       "studentName": "Ahmet Yılmaz",
-      "studentNumber": "2021100",
+      "studentNumber": "20211024100",
       "advisorId": "u20",
       "advisorName": "Prof. Dr. Selçuk Yılmaz",
       "timeSlotId": "slot-4",
@@ -2692,7 +4353,7 @@
       "id": "lVGpiU6CbhM",
       "studentId": "u7",
       "studentName": "Ahmet Yılmaz",
-      "studentNumber": "2021100",
+      "studentNumber": "20211024100",
       "advisorId": "u20",
       "advisorName": "Prof. Dr. Selçuk Yılmaz",
       "timeSlotId": "slot-1",
@@ -2704,323 +4365,1359 @@
     }
   ],
   "courseAssignments": [
-  {
-    "id": "ca-1",
-    "instructorName": "Dr. Elif Soylu",
-    "courseName": "TAR202 - Osmanlı Müesseseleri Tarihi",
-    "dept": "Tarih Bölümü",
-    "status": "pending"
+    {
+      "id": "ca-1",
+      "instructorName": "Dr. Elif Soylu",
+      "courseName": "TAR202 - Osmanlı Müesseseleri Tarihi",
+      "dept": "Tarih Bölümü",
+      "status": "rejected"
+    },
+    {
+      "id": "ca-2",
+      "instructorName": "Doç. Dr. Mert Akın",
+      "courseName": "TIP101 - Temel Anatomi ve Fizyoloji",
+      "dept": "Tıp Fakültesi",
+      "status": "approved"
+    },
+    {
+      "id": "ca-3",
+      "instructorName": "Prof. Seda Demir",
+      "courseName": "EDB301 - Klasik Türk Edebiyatı",
+      "dept": "Türk Dili ve Edebiyatı",
+      "status": "pending"
+    }
+  ],
+  "studentRequests": [
+    {
+      "id": "sr-1",
+      "studentName": "Ahmet Yılmaz",
+      "studentNumber": "20211024100",
+      "requestType": "Kayıt Dondurma",
+      "details": "Sağlık raporuna istinaden FYK kararı ile kayıt dondurma talebi",
+      "status": "pending"
+    },
+    {
+      "id": "sr-2",
+      "studentName": "Can Demir",
+      "studentNumber": "20211024001",
+      "requestType": "Not Değişikliği",
+      "details": "TAR202 sınav maddi hatası düzeltmesi: CB -> BB (Kurul Kararlı)",
+      "status": "pending"
+    },
+    {
+      "id": "sr-3",
+      "studentName": "Seda Kaya",
+      "studentNumber": "20211024002",
+      "requestType": "Ders Muafiyeti",
+      "details": "Yatay Geçiş Muafiyet Raporu: İNG101 ve FİZ101 derslerinden muafiyet",
+      "status": "pending"
+    },
+    {
+      "id": "-URlAGzaorc",
+      "studentName": "Ahmet Yılmaz",
+      "studentNumber": "20211024100",
+      "requestType": "Sağlık Raporu",
+      "details": "hhh (Dosya: Universite_Mufredat_Raporu.pdf)",
+      "status": "pending",
+      "createdAt": "05.07.2026"
+    },
+    {
+      "id": "yBsx3PwsDY4",
+      "studentName": "Ahmet Yılmaz",
+      "studentNumber": "20211024100",
+      "requestType": "Özel İzin Dilekçesi",
+      "details": "hhh (Dosya: Devamsizlik_Raporu_current_2025_2026 (2).pdf)",
+      "status": "pending",
+      "createdAt": "05.07.2026"
+    }
+  ],
+  "termStatus": {
+    "isTermClosed": false,
+    "isGradeLocksActive": true,
+    "emergencyAlertActive": false,
+    "emergencyAlertText": "Hava muhalefeti nedeniyle bugün tüm dersler online (Zoom) yapılacaktır."
   },
-  {
-    "id": "ca-2",
-    "instructorName": "Doç. Dr. Mert Akın",
-    "courseName": "TIP101 - Temel Anatomi ve Fizyoloji",
-    "dept": "Tıp Fakültesi",
-    "status": "pending"
-  },
-  {
-    "id": "ca-3",
-    "instructorName": "Prof. Seda Demir",
-    "courseName": "EDB301 - Klasik Türk Edebiyatı",
-    "dept": "Türk Dili ve Edebiyatı",
-    "status": "pending"
-  }
-],
-"studentRequests": [
-  {
-    "id": "sr-1",
-    "studentName": "Ahmet Yılmaz",
-    "studentNumber": "20211024100",
-    "requestType": "Kayıt Dondurma",
-    "details": "Sağlık raporuna istinaden FYK kararı ile kayıt dondurma talebi",
-    "status": "pending"
-  },
-  {
-    "id": "sr-2",
-    "studentName": "Can Demir",
-    "studentNumber": "20211024001",
-    "requestType": "Not Değişikliği",
-    "details": "TAR202 sınav maddi hatası düzeltmesi: CB -> BB (Kurul Kararlı)",
-    "status": "pending"
-  },
-  {
-    "id": "sr-3",
-    "studentName": "Seda Kaya",
-    "studentNumber": "20211024002",
-    "requestType": "Ders Muafiyeti",
-    "details": "Yatay Geçiş Muafiyet Raporu: İNG101 ve FİZ101 derslerinden muafiyet",
-    "status": "pending"
-  }
-],
-"termStatus": {
-  "isTermClosed": false,
-  "isGradeLocksActive": true,
-  "emergencyAlertActive": false,
-  "emergencyAlertText": "Hava muhalefeti nedeniyle bugün tüm dersler online (Zoom) yapılacaktır."
-},
-"systemLogs": [
-  {
-    "id": "log-1",
-    "operator": "Dr. Elif Soylu",
-    "action": "Harf Notu Güncellendi",
-    "details": "Can Demir (20211024001) - TAR202 notu güncellendi",
-    "timestamp": "12.10.2023, 14:32"
-  },
-  {
-    "id": "log-2",
-    "operator": "Öğrenci İşleri",
-    "action": "Kayıt Donduruldu",
-    "details": "Ahmet Yılmaz (20211024100) - Bahar Dönemi kayıt donduruldu",
-    "timestamp": "11.10.2023, 09:15"
-  },
-  {
-    "id": "log-3",
-    "operator": "Sistem",
-    "action": "Müfredat Değişikliği",
-    "details": "TIP101 Temel Anatomi ve Fizyoloji dersi müfredata eklendi",
-    "timestamp": "08.10.2023, 11:00"
-  },
-  {
-    "id": "aswCga36jb8",
-    "timestamp": "04.07.2026 21:21:15",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Mezuniyet Onaylandı",
-    "details": "Buse Korkmaz isimli öğrencinin mezuniyet belgesi onaylandı."
-  },
-  {
-    "id": "3qwm9PR6u1Q",
-    "timestamp": "04.07.2026 21:44:32",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Acil Durum Bildirisi Yayında",
-    "details": "Sistem geneli acil durum mesajı yayınlandı: \"Hava muhalefeti nedeniyle bugün tüm dersler online (Zoom) yapılacaktır.\""
-  },
-  {
-    "id": "9PUN-mK9mVQ",
-    "timestamp": "04.07.2026 21:44:35",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Acil Durum Bildirisi Kaldırıldı",
-    "details": "Sistem geneli acil durum mesajı yayından kaldırıldı."
-  },
-  {
-    "id": "F03p3EaQKHs",
-    "timestamp": "04.07.2026 21:44:53",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Hesap Askıya Alındı",
-    "details": "Doç. Dr. Mert Akın (Eğitmen) hesabı askıya alındı."
-  },
-  {
-    "id": "cCEc6ZkRQA0",
-    "timestamp": "04.07.2026 21:44:55",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Hesap Aktifleştirildi",
-    "details": "Doç. Dr. Mert Akın (Eğitmen) hesabı aktif edildi."
-  },
-  {
-    "id": "6N_dpBeSgjU",
-    "timestamp": "04.07.2026 21:45:01",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Şifre Sıfırlama",
-    "details": "Doç. Dr. Mert Akın kullanıcısının şifresi sıfırlandı."
-  },
-  {
-    "id": "gql1wX-ukDg",
-    "timestamp": "05.07.2026 09:50:35",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Finansal Durum Güncellemesi",
-    "details": "Bora Ak isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
-  },
-  {
-    "id": "DI0QwIqzgZg",
-    "timestamp": "05.07.2026 09:50:36",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Finansal Durum Güncellemesi",
-    "details": "Bora Ak isimli öğrencinin harç ödeme durumu ÖDENMEDİ olarak güncellendi."
-  },
-  {
-    "id": "x4xAvnUTF2c",
-    "timestamp": "05.07.2026 09:50:37",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Finansal Durum Güncellemesi",
-    "details": "Bora Ak isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
-  },
-  {
-    "id": "6kVJsFEPuow",
-    "timestamp": "05.07.2026 09:50:39",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Finansal Durum Güncellemesi",
-    "details": "Can Demir isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
-  },
-  {
-    "id": "W9CIma68L9M",
-    "timestamp": "05.07.2026 09:50:40",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Finansal Durum Güncellemesi",
-    "details": "Seda Kaya isimli öğrencinin harç ödeme durumu ÖDENMEDİ olarak güncellendi."
-  },
-  {
-    "id": "xEg8WuVObuE",
-    "timestamp": "05.07.2026 09:50:41",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Finansal Durum Güncellemesi",
-    "details": "Seda Kaya isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
-  },
-  {
-    "id": "3HwM6mNj6as",
-    "timestamp": "05.07.2026 10:01:33",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Belge Talebi Reddedildi",
-    "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Askerlik Tecil Belgesi\" talebi reddedildi."
-  },
-  {
-    "id": "miSZ9A4Q1gw",
-    "timestamp": "05.07.2026 10:34:50",
-    "operator": "Prof. Dr. Kemal Arslan",
-    "action": "Eğitmene Soru Uyarısı",
-    "details": "Dr. Elif Soylu isimli eğitmene, SOFT-302 dersindeki yanıtsız soru için bildirim gönderildi."
-  }
-],
-"graduationApprovals": [
-  {
-    "id": "ga-1",
-    "studentName": "Buse Korkmaz",
-    "studentNumber": "20211024005",
-    "gpa": 3.42,
-    "ects": 240,
-    "status": "approved"
-  },
-  {
-    "id": "ga-2",
-    "studentName": "Mert Yılmaz",
-    "studentNumber": "20211024006",
-    "gpa": 3.1,
-    "ects": 242,
-    "status": "pending"
-  }
-],
-"forumQuestions": [
-  {
-    "id": "fq-1",
-    "courseCode": "SOFT-302",
-    "courseName": "React Redux Advanced",
-    "studentName": "Can Demir",
-    "instructorName": "Dr. Elif Soylu",
-    "questionText": "Redux Toolkit'te createAsyncThunk ile thunkAPI parametresinden dispatch yaparken rejectWithValue kullanmak en iyi yöntem midir?",
-    "createdAt": "05.07.2026, 09:30",
-    "status": "unanswered",
-    "responseTimeHours": null,
-    "reportedReason": null
-  },
-  {
-    "id": "fq-2",
-    "courseCode": "SOFT-302",
-    "courseName": "React Redux Advanced",
-    "studentName": "Seda Kaya",
-    "instructorName": "Dr. Elif Soylu",
-    "questionText": "Ders videosundaki useEffect bağımlılık dizisinde nesne karşılaştırması yaparken neden sonsuz döngüye giriyor?",
-    "createdAt": "04.07.2026, 15:45",
-    "status": "answered",
-    "responseTimeHours": 3,
-    "reportedReason": null
-  },
-  {
-    "id": "fq-3",
-    "courseCode": "DATA-204",
-    "courseName": "Big Data Analytics",
-    "studentName": "Bora Ak",
-    "instructorName": "Doç. Dr. Mert Akın",
-    "questionText": "Sınavda çıkacak soruyu bana önceden söyleyin yoksa çok kötü olur.",
-    "createdAt": "03.07.2026, 11:20",
-    "status": "reported",
-    "responseTimeHours": null,
-    "reportedReason": "Sınav güvenliğini ihlal edici / tehditkar dil kullanımı"
-  },
-  {
-    "id": "fq-4",
-    "courseCode": "MATH-102",
-    "courseName": "Discrete Mathematics",
-    "studentName": "Elif Şahin",
-    "instructorName": "Prof. Mert Can",
-    "questionText": "Graph Theory kısmındaki Euler Path ve Hamiltonian Path arasındaki farkları örneklerle açıklayabilir misiniz?",
-    "createdAt": "02.07.2026, 10:00",
-    "status": "answered",
-    "responseTimeHours": 1,
-    "reportedReason": null
-  }
-],
-"liveStreams": [
-  {
-    "id": "ls-1",
-    "courseCode": "SOFT-302",
-    "courseName": "React Redux Advanced",
-    "instructorName": "Dr. Elif Soylu",
-    "startTime": "09:15",
-    "viewerCount": 42,
-    "status": "live"
-  },
-  {
-    "id": "ls-2",
-    "courseCode": "DATA-204",
-    "courseName": "Big Data Analytics",
-    "instructorName": "Doç. Dr. Mert Akın",
-    "startTime": "10:00",
-    "viewerCount": 28,
-    "status": "live"
-  },
-  {
-    "id": "ls-3",
-    "courseCode": "MATH-102",
-    "courseName": "Discrete Mathematics",
-    "instructorName": "Prof. Mert Can",
-    "startTime": "08:30",
-    "viewerCount": 0,
-    "status": "ended"
-  }
-],
-"schedules": [
-  {
-    "id": "sch-1",
-    "courseCode": "SOFT-302",
-    "courseName": "React Redux Advanced",
-    "instructorName": "Dr. Elif Soylu",
-    "day": "Pazartesi",
-    "timeSlot": "09:00 - 10:30",
-    "room": "LAB-B3",
-    "type": "ders",
-    "status": "approved"
-  },
-  {
-    "id": "sch-2",
-    "courseCode": "DATA-204",
-    "courseName": "Big Data Analytics",
-    "instructorName": "Doç. Dr. Mert Akın",
-    "day": "Salı",
-    "timeSlot": "11:00 - 12:30",
-    "room": "Amfi-1",
-    "type": "ders",
-    "status": "approved"
-  },
-  {
-    "id": "sch-3",
-    "courseCode": "SOFT-302",
-    "courseName": "React Redux Advanced Vize",
-    "instructorName": "Dr. Elif Soylu",
-    "day": "Çarşamba",
-    "timeSlot": "14:00 - 15:30",
-    "room": "LAB-B3",
-    "type": "sinav",
-    "status": "pending"
-  },
-  {
-    "id": "sch-4",
-    "courseCode": "MATH-102",
-    "courseName": "Discrete Mathematics Final",
-    "instructorName": "Prof. Mert Can",
-    "day": "Cuma",
-    "timeSlot": "10:00 - 12:00",
-    "room": "Amfi-2",
-    "type": "sinav",
-    "status": "pending"
-  }
-],
-"$schema": "./node_modules/json-server/schema.json"
+  "systemLogs": [
+    {
+      "id": "log-1",
+      "operator": "Dr. Elif Soylu",
+      "action": "Harf Notu Güncellendi",
+      "details": "Can Demir (20211024001) - TAR202 notu güncellendi",
+      "timestamp": "12.10.2023, 14:32"
+    },
+    {
+      "id": "log-2",
+      "operator": "Öğrenci İşleri",
+      "action": "Kayıt Donduruldu",
+      "details": "Ahmet Yılmaz (20211024100) - Bahar Dönemi kayıt donduruldu",
+      "timestamp": "11.10.2023, 09:15"
+    },
+    {
+      "id": "log-3",
+      "operator": "Sistem",
+      "action": "Müfredat Değişikliği",
+      "details": "TIP101 Temel Anatomi ve Fizyoloji dersi müfredata eklendi",
+      "timestamp": "08.10.2023, 11:00"
+    },
+    {
+      "id": "aswCga36jb8",
+      "timestamp": "04.07.2026 21:21:15",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Mezuniyet Onaylandı",
+      "details": "Buse Korkmaz isimli öğrencinin mezuniyet belgesi onaylandı."
+    },
+    {
+      "id": "3qwm9PR6u1Q",
+      "timestamp": "04.07.2026 21:44:32",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Yayında",
+      "details": "Sistem geneli acil durum mesajı yayınlandı: \"Hava muhalefeti nedeniyle bugün tüm dersler online (Zoom) yapılacaktır.\""
+    },
+    {
+      "id": "9PUN-mK9mVQ",
+      "timestamp": "04.07.2026 21:44:35",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Kaldırıldı",
+      "details": "Sistem geneli acil durum mesajı yayından kaldırıldı."
+    },
+    {
+      "id": "F03p3EaQKHs",
+      "timestamp": "04.07.2026 21:44:53",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Hesap Askıya Alındı",
+      "details": "Doç. Dr. Mert Akın (Eğitmen) hesabı askıya alındı."
+    },
+    {
+      "id": "cCEc6ZkRQA0",
+      "timestamp": "04.07.2026 21:44:55",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Hesap Aktifleştirildi",
+      "details": "Doç. Dr. Mert Akın (Eğitmen) hesabı aktif edildi."
+    },
+    {
+      "id": "6N_dpBeSgjU",
+      "timestamp": "04.07.2026 21:45:01",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Şifre Sıfırlama",
+      "details": "Doç. Dr. Mert Akın kullanıcısının şifresi sıfırlandı."
+    },
+    {
+      "id": "gql1wX-ukDg",
+      "timestamp": "05.07.2026 09:50:35",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Bora Ak isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
+    },
+    {
+      "id": "DI0QwIqzgZg",
+      "timestamp": "05.07.2026 09:50:36",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Bora Ak isimli öğrencinin harç ödeme durumu ÖDENMEDİ olarak güncellendi."
+    },
+    {
+      "id": "x4xAvnUTF2c",
+      "timestamp": "05.07.2026 09:50:37",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Bora Ak isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
+    },
+    {
+      "id": "6kVJsFEPuow",
+      "timestamp": "05.07.2026 09:50:39",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Can Demir isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
+    },
+    {
+      "id": "W9CIma68L9M",
+      "timestamp": "05.07.2026 09:50:40",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Seda Kaya isimli öğrencinin harç ödeme durumu ÖDENMEDİ olarak güncellendi."
+    },
+    {
+      "id": "xEg8WuVObuE",
+      "timestamp": "05.07.2026 09:50:41",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Seda Kaya isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
+    },
+    {
+      "id": "3HwM6mNj6as",
+      "timestamp": "05.07.2026 10:01:33",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Askerlik Tecil Belgesi\" talebi reddedildi."
+    },
+    {
+      "id": "miSZ9A4Q1gw",
+      "timestamp": "05.07.2026 10:34:50",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Eğitmene Soru Uyarısı",
+      "details": "Dr. Elif Soylu isimli eğitmene, SOFT-302 dersindeki yanıtsız soru için bildirim gönderildi."
+    },
+    {
+      "id": "mnqxvX_LHCw",
+      "timestamp": "05.07.2026 12:19:00",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge E-İmzalandı",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Disiplin Durum Belgesi\" talebi onaylanıp e-imzalandı."
+    },
+    {
+      "id": "9I6kGWH4Yf8",
+      "timestamp": "05.07.2026 12:19:06",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Transkript\" talebi reddedildi."
+    },
+    {
+      "id": "zQGrYkLmIYM",
+      "timestamp": "05.07.2026 12:19:21",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Canlı Ders Sonlandırıldı",
+      "details": "Dr. Elif Soylu tarafından yürütülen SOFT-302 dersinin canlı yayını idari kararla kapatıldı."
+    },
+    {
+      "id": "wq0_eUwLiMQ",
+      "timestamp": "05.07.2026 12:19:47",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Akademik Takvim Güncellemesi",
+      "details": "Akademik takvime yeni etkinlik eklendi: \"Kurban Bayramı\" (15.04.2025)"
+    },
+    {
+      "id": "aQRr_G7g8LE",
+      "timestamp": "05.07.2026 12:20:07",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Ahmet Yılmaz isimli öğrencinin harç ödeme durumu ÖDENMEDİ olarak güncellendi."
+    },
+    {
+      "id": "lSbBpWJLQs4",
+      "timestamp": "05.07.2026 12:20:08",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Can Demir isimli öğrencinin harç ödeme durumu ÖDENMEDİ olarak güncellendi."
+    },
+    {
+      "id": "YKxQGuca3ms",
+      "timestamp": "05.07.2026 12:20:12",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Finansal Durum Güncellemesi",
+      "details": "Can Demir isimli öğrencinin harç ödeme durumu ÖDENDİ olarak güncellendi."
+    },
+    {
+      "id": "odtYMXYcOk0",
+      "timestamp": "05.07.2026 13:43:44",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Öğrenci Belgesi\" talebi reddedildi."
+    },
+    {
+      "id": "KAcciMAJBtw",
+      "timestamp": "05.07.2026 13:44:57",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Öğrenci Belgesi\" talebi reddedildi."
+    },
+    {
+      "id": "bV-fVwwkJUg",
+      "timestamp": "05.07.2026 13:45:00",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Transkript\" talebi reddedildi."
+    },
+    {
+      "id": "VN09oKZhR0Q",
+      "timestamp": "05.07.2026 13:45:23",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Transkript\" talebi reddedildi."
+    },
+    {
+      "id": "pJPjYlVd7to",
+      "timestamp": "05.07.2026 13:45:25",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Özel İzin Dilekçesi\" talebi reddedildi."
+    },
+    {
+      "id": "c6jDc_eH3A4",
+      "timestamp": "05.07.2026 13:46:13",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Öğrenci Belgesi\" talebi reddedildi."
+    },
+    {
+      "id": "_pPrKxKeTxQ",
+      "timestamp": "05.07.2026 13:46:17",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Transkript\" talebi reddedildi."
+    },
+    {
+      "id": "7ovirPZjeRY",
+      "timestamp": "05.07.2026 13:46:20",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Öğrenci Belgesi\" talebi reddedildi."
+    },
+    {
+      "id": "pvHdNkgJPCU",
+      "timestamp": "05.07.2026 13:46:24",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Transkript\" talebi reddedildi."
+    },
+    {
+      "id": "v2-RbANlznk",
+      "timestamp": "05.07.2026 13:46:26",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Disiplin Durum Belgesi\" talebi reddedildi."
+    },
+    {
+      "id": "KmCzCYGGclA",
+      "timestamp": "05.07.2026 13:46:30",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge E-İmzalandı",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Staj Belgesi\" talebi onaylanıp e-imzalandı."
+    },
+    {
+      "id": "Q_4_QVUgTOA",
+      "timestamp": "05.07.2026 13:51:54",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge E-İmzalandı",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Resmi Transkript\" talebi onaylanıp e-imzalandı."
+    },
+    {
+      "id": "XF8n9_2JkKM",
+      "timestamp": "05.07.2026 13:54:58",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Hesap Askıya Alındı",
+      "details": "Bora Ak (Öğrenci) hesabı askıya alındı."
+    },
+    {
+      "id": "wt-h_RFC11c",
+      "timestamp": "05.07.2026 13:55:00",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Hesap Aktifleştirildi",
+      "details": "Bora Ak (Öğrenci) hesabı aktif edildi."
+    },
+    {
+      "id": "CjAyudACibE",
+      "timestamp": "05.07.2026 14:13:33",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Eğitmene Soru Uyarısı",
+      "details": "Dr. Elif Soylu isimli eğitmene, WEB 307 dersindeki yanıtsız soru için bildirim gönderildi."
+    },
+    {
+      "id": "qEhTQCdpKpI",
+      "timestamp": "05.07.2026 14:16:50",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Program Eklemesi Yapıldı",
+      "details": "SE-306 kodlu ders için Cuma günü 09:00 - 10:30 dilimine program tanımlandı."
+    },
+    {
+      "id": "iJUz0g1vFPQ",
+      "timestamp": "05.07.2026 14:44:43",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Yayında",
+      "details": "Sistem geneli acil durum mesajı yayınlandı: \"Hava muhalefeti nedeniyle bugün tüm dersler online (Zoom) yapılacaktır.\""
+    },
+    {
+      "id": "7U4fcCyg9DE",
+      "timestamp": "05.07.2026 14:44:52",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Kaldırıldı",
+      "details": "Sistem geneli acil durum mesajı yayından kaldırıldı."
+    },
+    {
+      "id": "0RSu2RWf1QE",
+      "timestamp": "05.07.2026 14:45:34",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Ders Görevlendirmesi Reddedildi",
+      "details": "TAR202 - Osmanlı Müesseseleri Tarihi dersinin Dr. Elif Soylu görevlendirmesi reddedildi."
+    },
+    {
+      "id": "mIzcpKd8dNw",
+      "timestamp": "05.07.2026 15:46:30",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Ders Görevlendirmesi Onaylandı",
+      "details": "TIP101 - Temel Anatomi ve Fizyoloji dersinin Doç. Dr. Mert Akın görevlendirmesi onaylandı."
+    },
+    {
+      "id": "H4zCH3CfWUU",
+      "timestamp": "05.07.2026 16:00:44",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Eğitmen Eklendi",
+      "details": "Yeni öğretim görevlisi Onur Baha (Moleküler Biyoloji) kadroya eklendi."
+    },
+    {
+      "id": "KRhYzzghvfA",
+      "timestamp": "05.07.2026 16:01:05",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Eğitmen Eklendi",
+      "details": "Yeni öğretim görevlisi ssss (Yazılım Mühendisliği) kadroya eklendi."
+    },
+    {
+      "id": "Qa_Y66l5GiM",
+      "timestamp": "05.07.2026 16:17:30",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Akademik Danışman Atandı",
+      "details": "Kemal Arslan isimli risk grubundaki öğrenciye Dr. Elif Soylu akademik danışman olarak atandı."
+    },
+    {
+      "id": "2zk0n_ynfYg",
+      "timestamp": "05.07.2026 16:17:32",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Akademik Danışman Atandı",
+      "details": "Kemal Arslan isimli risk grubundaki öğrenciye Dr. Elif Soylu akademik danışman olarak atandı."
+    },
+    {
+      "id": "8-a3Eqa9vds",
+      "timestamp": "05.07.2026 16:17:35",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Akademik Danışman Atandı",
+      "details": "Kemal Arslan isimli risk grubundaki öğrenciye Dr. Elif Soylu akademik danışman olarak atandı."
+    },
+    {
+      "id": "ZnAMCrK9IKE",
+      "timestamp": "05.07.2026 16:18:07",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Akademik Danışman Atandı",
+      "details": "Kemal Arslan isimli risk grubundaki öğrenciye Dr. Elif Soylu akademik danışman olarak atandı."
+    },
+    {
+      "id": "QPwor5ZU5wQ",
+      "timestamp": "05.07.2026 16:18:08",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Akademik Danışman Atandı",
+      "details": "Kemal Arslan isimli risk grubundaki öğrenciye Dr. Elif Soylu akademik danışman olarak atandı."
+    },
+    {
+      "id": "M6e39V4Dx-E",
+      "timestamp": "05.07.2026 16:30:13",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Bülten Yayınlandı",
+      "details": "\"YAZ PARTİSİ\" başlıklı genel bülten yayınlandı."
+    },
+    {
+      "id": "rv0OCSgoN0U",
+      "timestamp": "05.07.2026 20:41:22",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Yayında",
+      "details": "Sistem geneli acil durum mesajı yayınlandı: \"Hava muhalefeti nedeniyle bugün tüm dersler online (Zoom) yapılacaktır.\""
+    },
+    {
+      "id": "jlu2XUCfi0g",
+      "timestamp": "05.07.2026 20:43:04",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Kaldırıldı",
+      "details": "Sistem geneli acil durum mesajı yayından kaldırıldı."
+    },
+    {
+      "id": "EQ7tLZDZAew",
+      "timestamp": "05.07.2026 20:48:30",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Yayında",
+      "details": "Sistem geneli acil durum mesajı yayınlandı: \"Hava muhalefeti nedeniyle bugün tüm dersler online (Zoom) yapılacaktır.\""
+    },
+    {
+      "id": "-YOVn-vTEGo",
+      "timestamp": "05.07.2026 20:48:31",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Kaldırıldı",
+      "details": "Sistem geneli acil durum mesajı yayından kaldırıldı."
+    },
+    {
+      "id": "am17MF_ljgA",
+      "timestamp": "05.07.2026 20:55:39",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Yayında",
+      "details": "Sistem geneli acil durum mesajı yayınlandı: \"Hava muhalefeti nedeniyle bugün tüm dersler online (Zoom) yapılacaktır.\""
+    },
+    {
+      "id": "G44RAdwCE38",
+      "timestamp": "05.07.2026 20:56:15",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Kaldırıldı",
+      "details": "Sistem geneli acil durum mesajı yayından kaldırıldı."
+    },
+    {
+      "id": "AT6KckhRM3E",
+      "timestamp": "05.07.2026 21:33:26",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Yayında",
+      "details": "Sistem geneli acil durum mesajı yayınlandı: \"Hava muhalefeti nedeniyle bugün tüm dersler online (Zoom) yapılacaktır.\""
+    },
+    {
+      "id": "liMQ2in4GqU",
+      "timestamp": "05.07.2026 21:33:50",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Acil Durum Bildirisi Kaldırıldı",
+      "details": "Sistem geneli acil durum mesajı yayından kaldırıldı."
+    },
+    {
+      "id": "CTMyRu4gyvc",
+      "timestamp": "05.07.2026 21:34:06",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Eğitmene Soru Uyarısı",
+      "details": "Dr. Elif Soylu isimli eğitmene, WEB 307 dersindeki yanıtsız soru için bildirim gönderildi."
+    },
+    {
+      "id": "cqlzPghXi8Q",
+      "timestamp": "05.07.2026 21:34:08",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Eğitmene Soru Uyarısı",
+      "details": "Dr. Elif Soylu isimli eğitmene, WEB 307 dersindeki yanıtsız soru için bildirim gönderildi."
+    },
+    {
+      "id": "zzwFtYrUtfw",
+      "timestamp": "05.07.2026 21:34:10",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Eğitmene Soru Uyarısı",
+      "details": "Dr. Elif Soylu isimli eğitmene, SOFT-302 dersindeki yanıtsız soru için bildirim gönderildi."
+    },
+    {
+      "id": "zyryGdR9svM",
+      "timestamp": "05.07.2026 21:34:13",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Forum Sorusu Silindi",
+      "details": "#fq-3 nolu soru uygunsuz içerik nedeniyle dekanlık tarafından silindi."
+    },
+    {
+      "id": "IqKZRXVV1RQ",
+      "timestamp": "05.07.2026 21:34:18",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge E-İmzalandı",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Resmi Transkript\" talebi onaylanıp e-imzalandı."
+    },
+    {
+      "id": "sj5CTwq5-18",
+      "timestamp": "05.07.2026 21:34:20",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Bilinmeyen Öğrenci (—) isimli öğrencinin \"Öğrenci Belgesi\" talebi reddedildi."
+    },
+    {
+      "id": "-Vj70-kQrcs",
+      "timestamp": "05.07.2026 21:34:21",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Bilinmeyen Öğrenci (—) isimli öğrencinin \"Transkript\" talebi reddedildi."
+    },
+    {
+      "id": "Jg-ABtXz5nM",
+      "timestamp": "05.07.2026 21:34:22",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Belge Talebi Reddedildi",
+      "details": "Ahmet Yılmaz (20211024100) isimli öğrencinin \"Staj Belgesi\" talebi reddedildi."
+    },
+    {
+      "id": "A6IVR2WbMGU",
+      "timestamp": "05.07.2026 21:34:45",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Program Silindi",
+      "details": "SOFT-302 dersine ait program kaydı takvimden kaldırıldı."
+    },
+    {
+      "id": "Yojf3LDX_hA",
+      "timestamp": "05.07.2026 21:35:24",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Yeni Şube Açıldı",
+      "details": "TURK-101 dersi için Sınıf-A şubesi oluşturuldu."
+    }
+  ],
+  "graduationApprovals": [
+    {
+      "id": "ga-1",
+      "studentName": "Buse Korkmaz",
+      "studentNumber": "20211024005",
+      "gpa": 3.42,
+      "ects": 240,
+      "status": "approved"
+    },
+    {
+      "id": "ga-2",
+      "studentName": "Mert Yılmaz",
+      "studentNumber": "20211024006",
+      "gpa": 3.1,
+      "ects": 242,
+      "status": "pending"
+    }
+  ],
+  "forumQuestions": [
+    {
+      "id": "fq-1",
+      "courseCode": "SOFT-302",
+      "courseName": "React Redux Advanced",
+      "studentName": "Can Demir",
+      "instructorName": "Dr. Elif Soylu",
+      "questionText": "Redux Toolkit'te createAsyncThunk ile thunkAPI parametresinden dispatch yaparken rejectWithValue kullanmak en iyi yöntem midir?",
+      "createdAt": "05.07.2026, 09:30",
+      "status": "unanswered",
+      "responseTimeHours": null,
+      "reportedReason": null
+    },
+    {
+      "id": "fq-2",
+      "courseCode": "SOFT-302",
+      "courseName": "React Redux Advanced",
+      "studentName": "Seda Kaya",
+      "instructorName": "Dr. Elif Soylu",
+      "questionText": "Ders videosundaki useEffect bağımlılık dizisinde nesne karşılaştırması yaparken neden sonsuz döngüye giriyor?",
+      "createdAt": "04.07.2026, 15:45",
+      "status": "answered",
+      "responseTimeHours": 3,
+      "reportedReason": null
+    },
+    {
+      "id": "fq-4",
+      "courseCode": "MATH-102",
+      "courseName": "Discrete Mathematics",
+      "studentName": "Elif Şahin",
+      "instructorName": "Prof. Mert Can",
+      "questionText": "Graph Theory kısmındaki Euler Path ve Hamiltonian Path arasındaki farkları örneklerle açıklayabilir misiniz?",
+      "createdAt": "02.07.2026, 10:00",
+      "status": "answered",
+      "responseTimeHours": 1,
+      "reportedReason": null
+    },
+    {
+      "id": "YLwi3DTYH40",
+      "status": "unanswered",
+      "createdAt": "05.07.2026 14:13:07",
+      "responseTimeHours": null,
+      "reportedReason": null,
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming",
+      "studentName": "Ahmet Yılmaz",
+      "instructorName": "Dr. Elif Soylu",
+      "questionText": "sa"
+    }
+  ],
+  "liveStreams": [
+    {
+      "id": "ls-1",
+      "courseCode": "SOFT-302",
+      "courseName": "React Redux Advanced",
+      "instructorName": "Dr. Elif Soylu",
+      "startTime": "09:15",
+      "viewerCount": 0,
+      "status": "ended"
+    },
+    {
+      "id": "ls-2",
+      "courseCode": "DATA-204",
+      "courseName": "Big Data Analytics",
+      "instructorName": "Doç. Dr. Mert Akın",
+      "startTime": "10:00",
+      "viewerCount": 28,
+      "status": "live"
+    },
+    {
+      "id": "ls-3",
+      "courseCode": "MATH-102",
+      "courseName": "Discrete Mathematics",
+      "instructorName": "Prof. Mert Can",
+      "startTime": "08:30",
+      "viewerCount": 0,
+      "status": "ended"
+    }
+  ],
+  "schedules": [
+    {
+      "id": "sch-1",
+      "courseCode": "SOFT-302",
+      "courseName": "React Redux Advanced",
+      "instructorName": "Dr. Elif Soylu",
+      "day": "Pazartesi",
+      "timeSlot": "09:00 - 10:30",
+      "room": "LAB-B3",
+      "type": "ders",
+      "status": "approved"
+    },
+    {
+      "id": "sch-2",
+      "courseCode": "DATA-204",
+      "courseName": "Big Data Analytics",
+      "instructorName": "Doç. Dr. Mert Akın",
+      "day": "Salı",
+      "timeSlot": "11:00 - 12:30",
+      "room": "Amfi-1",
+      "type": "ders",
+      "status": "approved"
+    },
+    {
+      "id": "sch-4",
+      "courseCode": "MATH-102",
+      "courseName": "Discrete Mathematics Final",
+      "instructorName": "Prof. Mert Can",
+      "day": "Cuma",
+      "timeSlot": "10:00 - 12:00",
+      "room": "Amfi-2",
+      "type": "sinav",
+      "status": "pending"
+    },
+    {
+      "id": "dJJbYoiaO5I",
+      "courseCode": "SE-306",
+      "courseName": "Software Engineering II",
+      "instructorName": "Prof. Dr. Selçuk Yılmaz",
+      "day": "Cuma",
+      "timeSlot": "09:00 - 10:30",
+      "room": "LAB-B3",
+      "type": "sinav",
+      "status": "approved"
+    },
+    {
+      "id": "sch-nazli-1",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II",
+      "instructorName": "Dr. Nazlı Başak",
+      "day": "Çarşamba",
+      "timeSlot": "11:00 - 12:30",
+      "room": "LAB-B3",
+      "type": "ders",
+      "status": "approved",
+      "group": "Sınıf A",
+      "studentCount": 25
+    },
+    {
+      "id": "sch-nazli-2",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructorName": "Dr. Nazlı Başak",
+      "day": "Salı",
+      "timeSlot": "09:00 - 10:30",
+      "room": "LAB-B3",
+      "type": "ders",
+      "status": "approved",
+      "group": "Sınıf A",
+      "studentCount": 25
+    },
+    {
+      "id": "sch-nazli-3",
+      "courseCode": "OPS 302",
+      "courseName": "Operating Systems",
+      "instructorName": "Dr. Nazlı Başak",
+      "day": "Perşembe",
+      "timeSlot": "14:00 - 15:30",
+      "room": "Online / Zoom",
+      "type": "ders",
+      "status": "approved",
+      "group": "Sınıf A",
+      "studentCount": 25
+    },
+    {
+      "id": "sch-nazli-exam",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming II Midterm",
+      "instructorName": "Dr. Nazlı Başak",
+      "day": "Salı",
+      "timeSlot": "14:00 - 15:30",
+      "room": "Amfi-2",
+      "type": "sinav",
+      "status": "approved",
+      "group": "Sınıf A",
+      "studentCount": 25
+    }
+  ],
+  "notifications": [
+    {
+      "studentId": "u7",
+      "title": "Ders Kaydı Gönderildi",
+      "content": "2026-2027 Güz Dönemi ders kayıt talebiniz danışman onayına sunulmuştur. Durum: Danışman Onayı Bekleniyor",
+      "date": "05.07.2026",
+      "read": false,
+      "id": "G1pLDG2ksJU"
+    }
+  ],
+  "homeworkReviews": [
+    {
+      "id": "1",
+      "studentId": "u10",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Can Demir",
+      "avatar": "C",
+      "meta": "2021001 · Ödev #4 — React Redux",
+      "github": "https://github.com/candemir/hw4",
+      "time": "03.07.2024 14:22",
+      "status": "Bekliyor",
+      "grade": "",
+      "feedback": ""
+    },
+    {
+      "id": "2",
+      "studentId": "u11",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Seda Kaya",
+      "avatar": "S",
+      "meta": "2021002 · Ödev #4 — React Redux",
+      "github": "https://github.com/sedakaya/hw4",
+      "time": "02.07.2024 23:55",
+      "status": "İncelendi",
+      "grade": 85,
+      "feedback": "Redux store tasarımı güzel yapılmış. Action creator'lar temiz. Ancak middleware kullanımı detaylandırılabilir."
+    },
+    {
+      "id": "3",
+      "studentId": "u13",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Elif Şahin",
+      "avatar": "E",
+      "meta": "2021004 · Ödev #4 — React Redux",
+      "github": "https://github.com/elifsahin/hw4",
+      "time": "01.07.2024 10:10",
+      "status": "Onaylandı",
+      "grade": 100,
+      "feedback": "Harika bir çalışma! State yönetimi, klasör yapısı ve kod düzeni kusursuz. Tebrikler."
+    },
+    {
+      "id": "rev-ahmet-web307",
+      "studentId": "u7",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Ahmet Yılmaz",
+      "avatar": "A",
+      "meta": "20211024100 · Ödev #4 — React Redux Entegrasyonu",
+      "github": "https://github.com/ahmetyilmaz/hw4-redux",
+      "time": "04.07.2026 18:30",
+      "status": "Bekliyor",
+      "grade": "",
+      "feedback": ""
+    },
+    {
+      "id": "rev-can-dbm301",
+      "studentId": "u10",
+      "courseCode": "DBM 301",
+      "homeworkId": "hw-1",
+      "name": "Can Demir",
+      "avatar": "C",
+      "meta": "20211024001 · Ödev #1 — E-R Diyagramı Tasarımı",
+      "github": "https://github.com/candemir/dbm-hw1",
+      "time": "05.07.2026 12:15",
+      "status": "Bekliyor",
+      "grade": "",
+      "feedback": ""
+    },
+    {
+      "id": "rev-u100-web307-hw4",
+      "studentId": "u100",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Can Yılmaz",
+      "avatar": "C",
+      "meta": "20211024100 · Ödev #4 — React Redux",
+      "github": "https://github.com/can/hw4",
+      "time": "04.07.2026 14:10",
+      "status": "Bekliyor",
+      "grade": "",
+      "feedback": ""
+    },
+    {
+      "id": "rev-u101-web307-hw4",
+      "studentId": "u101",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Deniz Kaya",
+      "avatar": "D",
+      "meta": "20211024101 · Ödev #4 — React Redux",
+      "github": "https://github.com/deniz/hw4",
+      "time": "04.07.2026 14:11",
+      "status": "Bekliyor",
+      "grade": "",
+      "feedback": ""
+    },
+    {
+      "id": "rev-u102-web307-hw4",
+      "studentId": "u102",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Ege Demir",
+      "avatar": "E",
+      "meta": "20211024102 · Ödev #4 — React Redux",
+      "github": "https://github.com/ege/hw4",
+      "time": "04.07.2026 14:12",
+      "status": "Bekliyor",
+      "grade": "",
+      "feedback": ""
+    },
+    {
+      "id": "rev-u103-web307-hw4",
+      "studentId": "u103",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Mert Şahin",
+      "avatar": "M",
+      "meta": "20211024103 · Ödev #4 — React Redux",
+      "github": "https://github.com/mert/hw4",
+      "time": "04.07.2026 14:13",
+      "status": "Bekliyor",
+      "grade": "",
+      "feedback": ""
+    },
+    {
+      "id": "rev-u104-web307-hw4",
+      "studentId": "u104",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Burak Çelik",
+      "avatar": "B",
+      "meta": "20211024104 · Ödev #4 — React Redux",
+      "github": "https://github.com/burak/hw4",
+      "time": "04.07.2026 14:14",
+      "status": "Bekliyor",
+      "grade": "",
+      "feedback": ""
+    },
+    {
+      "id": "rev-u105-web307-hw4",
+      "studentId": "u105",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Oğuz Yıldız",
+      "avatar": "O",
+      "meta": "20211024105 · Ödev #4 — React Redux",
+      "github": "https://github.com/oğuz/hw4",
+      "time": "04.07.2026 14:15",
+      "status": "İncelendi",
+      "grade": 90,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u106-web307-hw4",
+      "studentId": "u106",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Yiğit Öztürk",
+      "avatar": "Y",
+      "meta": "20211024106 · Ödev #4 — React Redux",
+      "github": "https://github.com/yiğit/hw4",
+      "time": "04.07.2026 14:16",
+      "status": "İncelendi",
+      "grade": 91,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u107-web307-hw4",
+      "studentId": "u107",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Onur Aydın",
+      "avatar": "O",
+      "meta": "20211024107 · Ödev #4 — React Redux",
+      "github": "https://github.com/onur/hw4",
+      "time": "04.07.2026 14:17",
+      "status": "İncelendi",
+      "grade": 86,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u108-web307-hw4",
+      "studentId": "u108",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Gökhan Özdemir",
+      "avatar": "G",
+      "meta": "20211024108 · Ödev #4 — React Redux",
+      "github": "https://github.com/gökhan/hw4",
+      "time": "04.07.2026 14:18",
+      "status": "İncelendi",
+      "grade": 84,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u109-web307-hw4",
+      "studentId": "u109",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Serkan Arslan",
+      "avatar": "S",
+      "meta": "20211024109 · Ödev #4 — React Redux",
+      "github": "https://github.com/serkan/hw4",
+      "time": "04.07.2026 14:19",
+      "status": "İncelendi",
+      "grade": 84,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1010-web307-hw4",
+      "studentId": "u1010",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Elif Doğan",
+      "avatar": "E",
+      "meta": "20211024110 · Ödev #4 — React Redux",
+      "github": "https://github.com/elif/hw4",
+      "time": "04.07.2026 14:20",
+      "status": "İncelendi",
+      "grade": 85,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1011-web307-hw4",
+      "studentId": "u1011",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Zeynep Kılıç",
+      "avatar": "Z",
+      "meta": "20211024111 · Ödev #4 — React Redux",
+      "github": "https://github.com/zeynep/hw4",
+      "time": "04.07.2026 14:21",
+      "status": "İncelendi",
+      "grade": 90,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1012-web307-hw4",
+      "studentId": "u1012",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Seda Aslan",
+      "avatar": "S",
+      "meta": "20211024112 · Ödev #4 — React Redux",
+      "github": "https://github.com/seda/hw4",
+      "time": "04.07.2026 14:22",
+      "status": "İncelendi",
+      "grade": 96,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1013-web307-hw4",
+      "studentId": "u1013",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Buse Tekin",
+      "avatar": "B",
+      "meta": "20211024113 · Ödev #4 — React Redux",
+      "github": "https://github.com/buse/hw4",
+      "time": "04.07.2026 14:23",
+      "status": "İncelendi",
+      "grade": 83,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1014-web307-hw4",
+      "studentId": "u1014",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Damla Polat",
+      "avatar": "D",
+      "meta": "20211024114 · Ödev #4 — React Redux",
+      "github": "https://github.com/damla/hw4",
+      "time": "04.07.2026 14:24",
+      "status": "İncelendi",
+      "grade": 84,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1015-web307-hw4",
+      "studentId": "u1015",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Ceren Bulut",
+      "avatar": "C",
+      "meta": "20211024115 · Ödev #4 — React Redux",
+      "github": "https://github.com/ceren/hw4",
+      "time": "04.07.2026 14:25",
+      "status": "İncelendi",
+      "grade": 88,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1016-web307-hw4",
+      "studentId": "u1016",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Merve Şen",
+      "avatar": "M",
+      "meta": "20211024116 · Ödev #4 — React Redux",
+      "github": "https://github.com/merve/hw4",
+      "time": "04.07.2026 14:26",
+      "status": "İncelendi",
+      "grade": 80,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1017-web307-hw4",
+      "studentId": "u1017",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Ebru Güler",
+      "avatar": "E",
+      "meta": "20211024117 · Ödev #4 — React Redux",
+      "github": "https://github.com/ebru/hw4",
+      "time": "04.07.2026 14:27",
+      "status": "İncelendi",
+      "grade": 95,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1018-web307-hw4",
+      "studentId": "u1018",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Selin Yalçın",
+      "avatar": "S",
+      "meta": "20211024118 · Ödev #4 — React Redux",
+      "github": "https://github.com/selin/hw4",
+      "time": "04.07.2026 14:28",
+      "status": "İncelendi",
+      "grade": 82,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1019-web307-hw4",
+      "studentId": "u1019",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Gamze Koç",
+      "avatar": "G",
+      "meta": "20211024119 · Ödev #4 — React Redux",
+      "github": "https://github.com/gamze/hw4",
+      "time": "04.07.2026 14:29",
+      "status": "İncelendi",
+      "grade": 98,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1020-web307-hw4",
+      "studentId": "u1020",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Emir Sarı",
+      "avatar": "E",
+      "meta": "20211024120 · Ödev #4 — React Redux",
+      "github": "https://github.com/emir/hw4",
+      "time": "04.07.2026 14:30",
+      "status": "İncelendi",
+      "grade": 93,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1021-web307-hw4",
+      "studentId": "u1021",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Yağmur Avcı",
+      "avatar": "Y",
+      "meta": "20211024121 · Ödev #4 — React Redux",
+      "github": "https://github.com/yağmur/hw4",
+      "time": "04.07.2026 14:31",
+      "status": "İncelendi",
+      "grade": 92,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "rev-u1022-web307-hw4",
+      "studentId": "u1022",
+      "courseCode": "WEB 307",
+      "homeworkId": "hw-4",
+      "name": "Umut Köse",
+      "avatar": "U",
+      "meta": "20211024122 · Ödev #4 — React Redux",
+      "github": "https://github.com/umut/hw4",
+      "time": "04.07.2026 14:32",
+      "status": "İncelendi",
+      "grade": 84,
+      "feedback": "Başarılı bir çalışma, tebrikler."
+    },
+    {
+      "id": "z1ZAwwC5Jl8",
+      "studentId": "u7",
+      "courseCode": "WEB 307",
+      "homeworkId": "",
+      "studentName": "Ahmet Yılmaz",
+      "avatar": "A",
+      "grade": 85,
+      "feedback": "Adam ol",
+      "status": "Onaylandı",
+      "submittedAt": "05.07.2026 - 12:00"
+    },
+    {
+      "id": "He7dsyL-Hnc",
+      "studentId": "u7",
+      "courseCode": "DBM 301",
+      "homeworkId": "",
+      "studentName": "Ahmet Yılmaz",
+      "avatar": "A",
+      "grade": 100,
+      "feedback": "1111",
+      "status": "Onaylandı",
+      "submittedAt": "05.07.2026 - 12:00"
+    },
+    {
+      "id": "7CulzMpnjVM",
+      "studentId": "u100",
+      "courseCode": "DBM 301",
+      "homeworkId": "",
+      "studentName": "Can Yılmaz",
+      "avatar": "C",
+      "grade": "",
+      "feedback": "",
+      "status": "İncelendi",
+      "submittedAt": "05.07.2026 - 12:00"
+    },
+    {
+      "id": "D3pe2r6bkKw",
+      "studentId": "u101",
+      "courseCode": "DBM 301",
+      "homeworkId": "",
+      "studentName": "Deniz Kaya",
+      "avatar": "D",
+      "grade": 85,
+      "feedback": "",
+      "status": "Onaylandı",
+      "submittedAt": "05.07.2026 - 12:00"
+    }
+  ],
+  "pastLessons": [
+    {
+      "id": "1",
+      "name": "REST API Development with Express",
+      "group": "Grup B",
+      "date": "04.07.2026",
+      "time": "16:30",
+      "duration": "60 Dakika",
+      "viewers": 42
+    },
+    {
+      "id": "2",
+      "name": "React Hooks & State Management",
+      "group": "Grup A",
+      "date": "03.07.2026",
+      "time": "14:00",
+      "duration": "90 Dakika",
+      "viewers": 58
+    },
+    {
+      "id": "3",
+      "name": "CSS Grid & Flexbox Masterclass",
+      "group": "Tüm Gruplar",
+      "date": "30.06.2026",
+      "time": "10:00",
+      "duration": "120 Dakika",
+      "viewers": 95
+    },
+    {
+      "id": "4",
+      "name": "Introduction to Node.js & NPM",
+      "group": "Grup B",
+      "date": "27.06.2026",
+      "time": "16:30",
+      "duration": "60 Dakika",
+      "viewers": 39
+    },
+    {
+      "id": "5",
+      "name": "Asynchronous JavaScript & Promises",
+      "group": "Grup A",
+      "date": "26.06.2026",
+      "time": "14:00",
+      "duration": "90 Dakika",
+      "viewers": 54
+    }
+  ],
+  "liveParticipants": [
+    {
+      "id": "1",
+      "name": "Seda Kaya",
+      "status": "active",
+      "handRaised": false
+    },
+    {
+      "id": "2",
+      "name": "Can Demir",
+      "status": "active",
+      "handRaised": true
+    },
+    {
+      "id": "3",
+      "name": "Bora Ak",
+      "status": "active",
+      "handRaised": false
+    },
+    {
+      "id": "4",
+      "name": "Aslı Yılmaz",
+      "status": "inactive",
+      "handRaised": false
+    },
+    {
+      "id": "5",
+      "name": "Mehmet Öztürk",
+      "status": "active",
+      "handRaised": false
+    },
+    {
+      "id": "6",
+      "name": "Fatma Şahin",
+      "status": "active",
+      "handRaised": false
+    },
+    {
+      "id": "7",
+      "name": "Ali Yıldız",
+      "status": "active",
+      "handRaised": true
+    }
+  ],
+  "incomingChatQueue": [
+    {
+      "student": "Bora Ak",
+      "text": "Merhaba hocam, Advanced Context API konusu vizede çıkacak mı?",
+      "time": "14:01",
+      "id": "UMhjwgKcRX4"
+    },
+    {
+      "student": "Aslı Yılmaz",
+      "text": "Contexti birden fazla reducer ile kullanmak mantıklı mı yoksa Redux mı tercih etmeliyiz?",
+      "time": "14:02",
+      "id": "EAMVJuOuZxw"
+    },
+    {
+      "student": "Mehmet Öztürk",
+      "text": "Hocam tahtaya yazdığınız son kodu tekrar anlatabilir misiniz?",
+      "time": "14:03",
+      "id": "xzLYpZEOyDM"
+    },
+    {
+      "student": "Fatma Şahin",
+      "text": "Harika bir konu, teşekkürler hocam anlatım için.",
+      "time": "14:04",
+      "id": "9oassoszol0"
+    },
+    {
+      "student": "Ali Yıldız",
+      "text": "Hocam ders sonu kodları repo üzerinden mi paylaşacaksınız?",
+      "time": "14:05",
+      "id": "4on_bJMIzm0"
+    },
+    {
+      "student": "Seda Kaya",
+      "text": "React.memo ve useContext birlikte kullanımı hakkında ne düşünüyorsunuz?",
+      "time": "14:06",
+      "id": "hUjlkwTr_Xo"
+    }
+  ],
+  "liveChatMessages": [
+    {
+      "id": "1",
+      "student": "Seda Kaya",
+      "text": "Hocam yayın başladı, sesiniz ve görüntünüz net geliyor.",
+      "time": "14:00"
+    },
+    {
+      "id": "2",
+      "student": "Can Demir",
+      "text": "İyi dersler hocam.",
+      "time": "14:00"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

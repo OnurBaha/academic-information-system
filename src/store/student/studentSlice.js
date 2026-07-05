@@ -146,6 +146,87 @@ export const requestOfficialDocumentAsync = createAsyncThunk(
     }
 );
 
+// FAZ 2.4 — Dekan ApprovalCenter'a öğrenci talebi gönder
+export const submitStudentRequestAsync = createAsyncThunk(
+    'student/submitStudentRequestAsync',
+    async (requestPayload, { rejectWithValue }) => {
+        try {
+            return await apiFetch('/studentRequests', {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: `sr-${Date.now()}`,
+                    ...requestPayload,
+                    status: 'pending',
+                    createdAt: new Date().toLocaleDateString('tr-TR'),
+                }),
+            });
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+// FAZ 4.1 — Ders Kaydı Yap (studentCourses koleksiyonuna ekle)
+export const registerStudentCoursesAsync = createAsyncThunk(
+    'student/registerStudentCoursesAsync',
+    async ({ studentId, coursesList }, { rejectWithValue }) => {
+        try {
+            const promises = coursesList.map(course => {
+                return apiFetch('/studentCourses', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        id: `sc-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`,
+                        studentId: studentId,
+                        courseName: course.name,
+                        instructor: course.instructor || 'Eğitmen Belirtilmemiş',
+                        category: course.category || 'Mühendislik',
+                        akts: course.akts,
+                        progress: 0,
+                        code: course.code
+                    })
+                });
+            });
+            return await Promise.all(promises);
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+// FAZ 6.1 — Forum Sorularını Çek
+export const fetchForumQuestionsAsync = createAsyncThunk(
+    'student/fetchForumQuestionsAsync',
+    async (courseCode, { rejectWithValue }) => {
+        try {
+            return await apiFetch(`/forumQuestions?courseCode=${courseCode}`);
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+// FAZ 6.2 — Forumda Yeni Soru Sor
+export const postForumQuestionAsync = createAsyncThunk(
+    'student/postForumQuestionAsync',
+    async (questionPayload, { rejectWithValue }) => {
+        try {
+            return await apiFetch('/forumQuestions', {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: `fq-${Date.now()}`,
+                    status: 'unanswered',
+                    createdAt: new Date().toLocaleString('tr-TR'),
+                    responseTimeHours: null,
+                    reportedReason: null,
+                    ...questionPayload
+                })
+            });
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 const studentSlice = createSlice({
     name: 'student',
     initialState: {
@@ -157,6 +238,7 @@ const studentSlice = createSlice({
         grades: [],
         documents: [],
         dashboardData: null,
+        forumQuestions: [], // FAZ 6.1
         status: {
             studentCourses: 'idle',
             studentGrades: 'idle',
@@ -164,6 +246,7 @@ const studentSlice = createSlice({
             upcomingClasses: 'idle',
             courses: 'idle',
             documents: 'idle',
+            forumQuestions: 'idle', // FAZ 6.1
             global: 'idle',
         },
         actionStatus: 'idle',
@@ -339,6 +422,59 @@ const studentSlice = createSlice({
                 state.documents.unshift(action.payload);
             })
             .addCase(requestOfficialDocumentAsync.rejected, (state, action) => {
+                state.actionStatus = 'failed';
+                state.error = action.payload;
+            })
+
+            // FAZ 2.4 — Submit Student Request (Dekan ApprovalCenter için)
+            .addCase(submitStudentRequestAsync.pending, (state) => {
+                state.actionStatus = 'loading';
+                state.error = null;
+            })
+            .addCase(submitStudentRequestAsync.fulfilled, (state) => {
+                state.actionStatus = 'succeeded';
+            })
+            .addCase(submitStudentRequestAsync.rejected, (state, action) => {
+                state.actionStatus = 'failed';
+                state.error = action.payload;
+            })
+            // FAZ 4.1 — Register Student Courses
+            .addCase(registerStudentCoursesAsync.pending, (state) => {
+                state.actionStatus = 'loading';
+                state.error = null;
+            })
+            .addCase(registerStudentCoursesAsync.fulfilled, (state, action) => {
+                state.actionStatus = 'succeeded';
+                state.studentCourses = [...state.studentCourses, ...action.payload];
+            })
+            .addCase(registerStudentCoursesAsync.rejected, (state, action) => {
+                state.actionStatus = 'failed';
+                state.error = action.payload;
+            })
+            // FAZ 6.1 — Fetch Forum Questions
+            .addCase(fetchForumQuestionsAsync.pending, (state) => {
+                state.status.forumQuestions = 'loading';
+                state.error = null;
+            })
+            .addCase(fetchForumQuestionsAsync.fulfilled, (state, action) => {
+                state.status.forumQuestions = 'succeeded';
+                state.forumQuestions = action.payload;
+            })
+            .addCase(fetchForumQuestionsAsync.rejected, (state, action) => {
+                state.status.forumQuestions = 'failed';
+                state.error = action.payload;
+            })
+
+            // FAZ 6.2 — Post Forum Question
+            .addCase(postForumQuestionAsync.pending, (state) => {
+                state.actionStatus = 'loading';
+                state.error = null;
+            })
+            .addCase(postForumQuestionAsync.fulfilled, (state, action) => {
+                state.actionStatus = 'succeeded';
+                state.forumQuestions.unshift(action.payload);
+            })
+            .addCase(postForumQuestionAsync.rejected, (state, action) => {
                 state.actionStatus = 'failed';
                 state.error = action.payload;
             });

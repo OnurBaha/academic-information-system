@@ -6,15 +6,20 @@ export default function Calendar() {
   const [weeklyLessonsByWeek, setWeeklyLessonsByWeek] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  const [schedules, setSchedules] = useState([])
+
   useEffect(() => {
-    fetch('http://localhost:3001/weeklyLessonsByWeek')
-      .then(res => res.json())
-      .then(data => {
-        setWeeklyLessonsByWeek(data)
+    Promise.all([
+      fetch('http://localhost:3001/weeklyLessonsByWeek').then(res => res.json()),
+      fetch('http://localhost:3001/schedules?status=approved').then(res => res.json())
+    ])
+      .then(([lessonsData, schedulesData]) => {
+        setWeeklyLessonsByWeek(lessonsData)
+        setSchedules(schedulesData)
         setLoading(false)
       })
       .catch(err => {
-        console.error('Error fetching calendar', err)
+        console.error('Error fetching calendar data', err)
         setLoading(false)
       })
   }, [])
@@ -48,16 +53,48 @@ export default function Calendar() {
   const isThursdayActive = selectedWeekday === 4
   const isFridayActive = selectedWeekday === 5
 
+  // FAZ 7.2 — schedules (dekan onaylı ders planları) ile haftalık programı birleştir
   const getSelectedDaySchedule = () => {
     if (!weeklyLessonsByWeek) return []
     const dayOfWeek = getWeekdayIndex(selectedDay.day, selectedDay.month)
     const currentWeekLessons = weeklyLessonsByWeek[weekIndex] || {}
-    if (dayOfWeek === 1) return currentWeekLessons.monday || []
-    if (dayOfWeek === 2) return currentWeekLessons.tuesday || []
-    if (dayOfWeek === 3) return currentWeekLessons.wednesday || []
-    if (dayOfWeek === 4) return currentWeekLessons.thursday || []
-    if (dayOfWeek === 5) return currentWeekLessons.friday || []
-    return []
+    let dayLessons = []
+    
+    if (dayOfWeek === 1) dayLessons = [...(currentWeekLessons.monday || [])]
+    else if (dayOfWeek === 2) dayLessons = [...(currentWeekLessons.tuesday || [])]
+    else if (dayOfWeek === 3) dayLessons = [...(currentWeekLessons.wednesday || [])]
+    else if (dayOfWeek === 4) dayLessons = [...(currentWeekLessons.thursday || [])]
+    else if (dayOfWeek === 5) dayLessons = [...(currentWeekLessons.friday || [])]
+
+    // Bu güne denk gelen onaylı dekan programlarını ekle
+    const dayNames = [null, 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma']
+    const currentDayName = dayNames[dayOfWeek]
+    
+    if (currentDayName) {
+      const activeSchedules = schedules.filter(s => s.day === currentDayName)
+      activeSchedules.forEach(s => {
+        // Çakışmayı önlemek için eğer zaten aynı isimde ders varsa ekleme
+        if (!dayLessons.some(l => l.name === s.courseName)) {
+          // Saat aralığına göre top piksel hesaplama simülasyonu
+          // '09:00 - 10:30' -> 09:00 (top: 0), 10:30 (height: 120)
+          const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
+          const topVal = (startHour - 9) * 80
+          
+          dayLessons.push({
+            top: topVal >= 0 ? topVal : 0,
+            height: 120,
+            color: s.type === 'sinav' ? 'error' : 'success-emerald',
+            type: s.type === 'sinav' ? 'Sınav' : 'Teorik',
+            name: s.courseName,
+            instructor: s.instructorName,
+            room: s.room,
+            time: s.timeSlot
+          })
+        }
+      })
+    }
+
+    return dayLessons
   }
 
   const selectedDaySchedule = getSelectedDaySchedule()
@@ -193,7 +230,27 @@ export default function Calendar() {
               )}
 
               {/* Pazartesi Ders Gösterimi */}
-              {(weeklyLessonsByWeek[weekIndex]?.monday || []).map((course, idx) => (
+              {((() => {
+                const lessons = weeklyLessonsByWeek[weekIndex]?.monday || []
+                const approvedSchedules = schedules.filter(s => s.day === 'Pazartesi')
+                approvedSchedules.forEach(s => {
+                  if (!lessons.some(l => l.name === s.courseName)) {
+                    const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
+                    const topVal = (startHour - 9) * 80
+                    lessons.push({
+                      top: topVal >= 0 ? topVal : 0,
+                      height: 120,
+                      color: s.type === 'sinav' ? 'error' : 'success-emerald',
+                      type: s.type === 'sinav' ? 'Sınav' : 'Teorik',
+                      name: s.courseName,
+                      instructor: s.instructorName,
+                      room: s.room,
+                      time: s.timeSlot
+                    })
+                  }
+                })
+                return lessons
+              })()).map((course, idx) => (
                 <div
                   key={`mon-${idx}`}
                   className={`absolute w-[calc((100%-80px)/5)] p-2 transition-all duration-300 ${isMondayActive ? 'z-10 scale-[1.01]' : 'opacity-85 z-0'}`}
@@ -220,7 +277,27 @@ export default function Calendar() {
               ))}
 
               {/* Salı Ders Gösterimi */}
-              {(weeklyLessonsByWeek[weekIndex]?.tuesday || []).map((course, idx) => (
+              {((() => {
+                const lessons = weeklyLessonsByWeek[weekIndex]?.tuesday || []
+                const approvedSchedules = schedules.filter(s => s.day === 'Salı')
+                approvedSchedules.forEach(s => {
+                  if (!lessons.some(l => l.name === s.courseName)) {
+                    const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
+                    const topVal = (startHour - 9) * 80
+                    lessons.push({
+                      top: topVal >= 0 ? topVal : 0,
+                      height: 120,
+                      color: s.type === 'sinav' ? 'error' : 'success-emerald',
+                      type: s.type === 'sinav' ? 'Sınav' : 'Teorik',
+                      name: s.courseName,
+                      instructor: s.instructorName,
+                      room: s.room,
+                      time: s.timeSlot
+                    })
+                  }
+                })
+                return lessons
+              })()).map((course, idx) => (
                 <div
                   key={`tue-${idx}`}
                   className={`absolute w-[calc((100%-80px)/5)] p-2 transition-all duration-300 ${isTuesdayActive ? 'z-10 scale-[1.01]' : 'opacity-85 z-0'}`}
@@ -247,7 +324,27 @@ export default function Calendar() {
               ))}
 
               {/* Çarşamba Ders Gösterimi */}
-              {(weeklyLessonsByWeek[weekIndex]?.wednesday || []).map((course, idx) => (
+              {((() => {
+                const lessons = weeklyLessonsByWeek[weekIndex]?.wednesday || []
+                const approvedSchedules = schedules.filter(s => s.day === 'Çarşamba')
+                approvedSchedules.forEach(s => {
+                  if (!lessons.some(l => l.name === s.courseName)) {
+                    const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
+                    const topVal = (startHour - 9) * 80
+                    lessons.push({
+                      top: topVal >= 0 ? topVal : 0,
+                      height: 120,
+                      color: s.type === 'sinav' ? 'error' : 'success-emerald',
+                      type: s.type === 'sinav' ? 'Sınav' : 'Teorik',
+                      name: s.courseName,
+                      instructor: s.instructorName,
+                      room: s.room,
+                      time: s.timeSlot
+                    })
+                  }
+                })
+                return lessons
+              })()).map((course, idx) => (
                 <div
                   key={`wed-${idx}`}
                   className={`absolute w-[calc((100%-80px)/5)] p-2 transition-all duration-300 ${isWednesdayActive ? 'z-10 scale-[1.01]' : 'opacity-85 z-0'}`}
@@ -274,7 +371,27 @@ export default function Calendar() {
               ))}
 
               {/* Perşembe Ders Gösterimi */}
-              {(weeklyLessonsByWeek[weekIndex]?.thursday || []).map((course, idx) => (
+              {((() => {
+                const lessons = weeklyLessonsByWeek[weekIndex]?.thursday || []
+                const approvedSchedules = schedules.filter(s => s.day === 'Perşembe')
+                approvedSchedules.forEach(s => {
+                  if (!lessons.some(l => l.name === s.courseName)) {
+                    const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
+                    const topVal = (startHour - 9) * 80
+                    lessons.push({
+                      top: topVal >= 0 ? topVal : 0,
+                      height: 120,
+                      color: s.type === 'sinav' ? 'error' : 'success-emerald',
+                      type: s.type === 'sinav' ? 'Sınav' : 'Teorik',
+                      name: s.courseName,
+                      instructor: s.instructorName,
+                      room: s.room,
+                      time: s.timeSlot
+                    })
+                  }
+                })
+                return lessons
+              })()).map((course, idx) => (
                 <div
                   key={`thu-${idx}`}
                   className={`absolute w-[calc((100%-80px)/5)] p-2 transition-all duration-300 ${isThursdayActive ? 'z-10 scale-[1.01]' : 'opacity-85 z-0'}`}
@@ -301,7 +418,27 @@ export default function Calendar() {
               ))}
 
               {/* Cuma Ders Gösterimi */}
-              {(weeklyLessonsByWeek[weekIndex]?.friday || []).map((course, idx) => (
+              {((() => {
+                const lessons = weeklyLessonsByWeek[weekIndex]?.friday || []
+                const approvedSchedules = schedules.filter(s => s.day === 'Cuma')
+                approvedSchedules.forEach(s => {
+                  if (!lessons.some(l => l.name === s.courseName)) {
+                    const startHour = parseInt(s.timeSlot.split(':')[0]) || 9
+                    const topVal = (startHour - 9) * 80
+                    lessons.push({
+                      top: topVal >= 0 ? topVal : 0,
+                      height: 120,
+                      color: s.type === 'sinav' ? 'error' : 'success-emerald',
+                      type: s.type === 'sinav' ? 'Sınav' : 'Teorik',
+                      name: s.courseName,
+                      instructor: s.instructorName,
+                      room: s.room,
+                      time: s.timeSlot
+                    })
+                  }
+                })
+                return lessons
+              })()).map((course, idx) => (
                 <div
                   key={`fri-${idx}`}
                   className={`absolute w-[calc((100%-80px)/5)] p-2 transition-all duration-300 ${isFridayActive ? 'z-10 scale-[1.01]' : 'opacity-85 z-0'}`}
@@ -452,4 +589,3 @@ export default function Calendar() {
     </div>
   )
 }
-

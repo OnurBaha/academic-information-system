@@ -1,8 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { apiFetch } from '../../services/api';
-import teacherDb from '../../../teacher_db.json';
 
-// Öğretmenin ders verdiği öğrencilerin notlarını asenkron olarak çeken thunk eylemi
+// Async Thunks
 export const fetchTeacherStudentsGradesAsync = createAsyncThunk(
     'teacher/fetchTeacherStudentsGradesAsync',
     async (_, { rejectWithValue }) => {
@@ -14,14 +13,12 @@ export const fetchTeacherStudentsGradesAsync = createAsyncThunk(
     }
 );
 
-// Belirli bir öğrencinin notunu (vize, final, proje) güncelleyen ve ortalama ile harf notunu hesaplayan thunk eylemi
 export const updateStudentGradeAsync = createAsyncThunk(
     'teacher/updateStudentGradeAsync',
     async ({ gradeId, midterm, final, project, homeworkAverage }, { rejectWithValue }) => {
         try {
             const currentGrade = await apiFetch(`/studentGrades/${gradeId}`);
 
-            // Eğer değer boş veya null ise null olarak ayarla, aksi halde sayıya çevir
             const updatedMidterm = midterm !== undefined ? (midterm === '' || midterm === null ? null : parseInt(midterm, 10)) : currentGrade.midterm;
             const updatedFinal = final !== undefined ? (final === '' || final === null ? null : parseInt(final, 10)) : currentGrade.final;
             const updatedProject = project !== undefined ? (project === '' || project === null ? null : parseInt(project, 10)) : currentGrade.project;
@@ -29,7 +26,6 @@ export const updateStudentGradeAsync = createAsyncThunk(
             let average = null;
             let letterGrade = null;
 
-            // Eğer vize ve final notları girilmişse ortalama ve harf notunu hesapla (%25 vize, %25 proje, %15 ödev, %35 final)
             if (updatedMidterm !== null && updatedFinal !== null && updatedMidterm !== undefined && updatedFinal !== undefined) {
                 const m = updatedMidterm || 0;
                 const f = updatedFinal || 0;
@@ -46,7 +42,6 @@ export const updateStudentGradeAsync = createAsyncThunk(
                 else letterGrade = 'FF';
             }
 
-            // Sunucuda öğrenci not kaydını güncelle
             return await apiFetch(`/studentGrades/${gradeId}`, {
                 method: 'PATCH',
                 body: JSON.stringify({
@@ -63,7 +58,6 @@ export const updateStudentGradeAsync = createAsyncThunk(
     }
 );
 
-// Öğrencinin yoklama durumunu güncelleyen thunk eylemi
 export const updateAttendanceAsync = createAsyncThunk(
     'teacher/updateAttendanceAsync',
     async ({ gradeId, attendanceStatus }, { rejectWithValue }) => {
@@ -78,142 +72,228 @@ export const updateAttendanceAsync = createAsyncThunk(
     }
 );
 
-// Öğretmen paneli ile ilgili durum yönetimini gerçekleştiren Redux dilimi (slice)
-const db = teacherDb?.default || teacherDb || {};
+export const fetchTeacherDashboardDataAsync = createAsyncThunk(
+    'teacher/fetchTeacherDashboardDataAsync',
+    async (_, { rejectWithValue }) => {
+        try {
+            const [
+                courses, homeworkReviews, pastLessons, liveParticipants,
+                incomingChatQueue, liveChatMessages, announcements, users, bulletins, studentsGrades
+            ] = await Promise.all([
+                apiFetch('/courses'),
+                apiFetch('/homeworkReviews'),
+                apiFetch('/pastLessons'),
+                apiFetch('/liveParticipants'),
+                apiFetch('/incomingChatQueue'),
+                apiFetch('/liveChatMessages'),
+                apiFetch('/announcements'),
+                apiFetch('/users'),
+                apiFetch('/bulletins'),
+                apiFetch('/studentGrades')
+            ]);
+            return {
+                courses, homeworkReviews, pastLessons, liveParticipants,
+                incomingChatQueue, liveChatMessages, announcements, users, bulletins, studentsGrades
+            };
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
 
+export const addAnnouncement = createAsyncThunk(
+    'teacher/addAnnouncement',
+    async (announcementPayload, { rejectWithValue }) => {
+        try {
+            return await apiFetch('/announcements', {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: `ann-${Date.now()}`,
+                    pinned: false,
+                    date: new Date().toLocaleDateString('tr-TR'),
+                    ...announcementPayload
+                })
+            });
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const updateAnnouncement = createAsyncThunk(
+    'teacher/updateAnnouncement',
+    async (payload, { rejectWithValue }) => {
+        try {
+            const { id, ...data } = payload;
+            return await apiFetch(`/announcements/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify(data)
+            });
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const deleteAnnouncement = createAsyncThunk(
+    'teacher/deleteAnnouncement',
+    async (id, { rejectWithValue }) => {
+        try {
+            await apiFetch(`/announcements/${id}`, {
+                method: 'DELETE'
+            });
+            return id;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const evaluateHomework = createAsyncThunk(
+    'teacher/evaluateHomework',
+    async ({ id, studentId, courseCode, homeworkId, name, avatar, grade, feedback, status }, { rejectWithValue }) => {
+        try {
+            let reviewId = id;
+            if (!reviewId) {
+                const reviews = await apiFetch('/homeworkReviews');
+                const existing = reviews.find(r => r.studentId === studentId && r.courseCode === courseCode && r.homeworkId === homeworkId);
+                if (existing) {
+                    reviewId = existing.id;
+                }
+            }
+
+            if (reviewId) {
+                return await apiFetch(`/homeworkReviews/${reviewId}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({
+                        grade: grade !== '' && grade !== null && grade !== undefined ? Number(grade) : '',
+                        feedback,
+                        status: status || 'İncelendi'
+                    })
+                });
+            } else {
+                return await apiFetch('/homeworkReviews', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        id: `rev-${Date.now()}`,
+                        studentId,
+                        courseCode,
+                        homeworkId,
+                        studentName: name,
+                        avatar,
+                        grade: grade !== '' && grade !== null && grade !== undefined ? Number(grade) : '',
+                        feedback,
+                        status: status || 'İncelendi',
+                        submittedAt: new Date().toLocaleDateString('tr-TR') + ' - 12:00'
+                    })
+                });
+            }
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const addHomework = createAsyncThunk(
+    'teacher/addHomework',
+    async ({ courseCode, homeworkPayload }, { rejectWithValue }) => {
+        try {
+            const courses = await apiFetch('/courses');
+            const course = courses.find(c => c.code === courseCode);
+            if (!course) throw new Error('Course not found');
+
+            const homeworks = course.homeworks || [];
+            const newId = `hw-${homeworks.length + 1}`;
+            const updatedHomeworks = [
+                {
+                    id: newId,
+                    ...homeworkPayload,
+                    weight: Number(homeworkPayload.weight)
+                },
+                ...homeworks
+            ];
+
+            return await apiFetch(`/courses/${course.id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ homeworks: updatedHomeworks })
+            });
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const updateHomeworkWeights = createAsyncThunk(
+    'teacher/updateHomeworkWeights',
+    async ({ courseCode, weights }, { rejectWithValue }) => {
+        try {
+            const courses = await apiFetch('/courses');
+            const course = courses.find(c => c.code === courseCode);
+            if (!course) throw new Error('Course not found');
+
+            const updatedHomeworks = (course.homeworks || []).map(hw => {
+                if (weights[hw.id] !== undefined) {
+                    return { ...hw, weight: Number(weights[hw.id]) };
+                }
+                return hw;
+            });
+
+            return await apiFetch(`/courses/${course.id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ homeworks: updatedHomeworks })
+            });
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const submitTeacherCourseRequestAsync = createAsyncThunk(
+    'teacher/submitTeacherCourseRequestAsync',
+    async (requestPayload, { rejectWithValue }) => {
+        try {
+            return await apiFetch('/courseAssignments', {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: `ca-${Date.now()}`,
+                    ...requestPayload,
+                    status: 'pending'
+                })
+            });
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+// Teacher Slice
 const teacherSlice = createSlice({
     name: 'teacher',
     initialState: {
-        studentsGrades: [], // Öğrencilerin not bilgileri listesi
-        selectedCourseId: null, // Seçilen dersin ID'si
-        status: 'idle', // Veri yükleme durumu ('idle', 'loading', 'succeeded', 'failed')
-        actionStatus: 'idle', // Not/yoklama güncelleme işlem durumu
-        error: null, // Hata mesajı
-        kpis: db.kpis || {},
-        pastLessons: db.pastLessons || [],
-        students: db.students || [],
-        announcements: db.announcements || [],
-        homeworkReviews: db.homeworkReviews || [],
-        liveParticipants: db.liveParticipants || [],
-        incomingChatQueue: db.incomingChatQueue || [],
-        liveChatMessages: db.liveChatMessages || [],
-        courses: [
-            {
-                code: 'WEB 307',
-                name: 'Modern Web Geliştirme',
-                homeworks: [
-                    { id: 'hw-1', title: 'HTML5 & CSS3 Standartları', givenDate: '05.05.2026', dueDate: '12.05.2026', weight: 20 },
-                    { id: 'hw-2', title: 'Modern Javascript (ES6+) & Asenkron Programlama', givenDate: '13.05.2026', dueDate: '20.05.2026', weight: 20 },
-                    { id: 'hw-3', title: 'React Temelleri & Component Mimarisi', givenDate: '21.05.2026', dueDate: '28.05.2026', weight: 30 },
-                    { id: 'hw-4', title: 'React Redux & Context API', givenDate: '29.05.2026', dueDate: '07.06.2026', weight: 30 }
-                ]
-            },
-            {
-                code: 'DBM 301',
-                name: 'Veri Tabanı Yönetim Sistemleri',
-                homeworks: [
-                    { id: 'hw-1', title: 'SQL Sorgulama ve DDL/DML', givenDate: '10.05.2026', dueDate: '17.05.2026', weight: 30 },
-                    { id: 'hw-2', title: 'Veri Tabanı Tasarımı ve Normalizasyon', givenDate: '18.05.2026', dueDate: '25.05.2026', weight: 35 },
-                    { id: 'hw-3', title: 'İndeksleme ve Sorgu Optimizasyonu', givenDate: '26.05.2026', dueDate: '02.06.2026', weight: 35 }
-                ]
-            },
-            {
-                code: 'OPS 302',
-                name: 'İşletim Sistemleri',
-                homeworks: [
-                    { id: 'hw-1', title: 'Süreç (Process) Zamanlama Algoritmaları', givenDate: '12.05.2026', dueDate: '19.05.2026', weight: 50 },
-                    { id: 'hw-2', title: 'Bellek Yönetimi ve Paging Simülasyonu', givenDate: '20.05.2026', dueDate: '27.05.2026', weight: 50 }
-                ]
-            }
-        ],
+        studentsGrades: [],
+        courses: [],
+        announcements: [],
+        homeworkReviews: [],
+        pastLessons: [],
+        liveParticipants: [],
+        incomingChatQueue: [],
+        liveChatMessages: [],
+        bulletins: [],
+        users: [],
+        kpis: {
+            totalStudents: 0,
+            unreadHomework: 0,
+            attendanceAverage: 0,
+            completedLiveLessons: "0 Saat"
+        },
+        selectedCourseId: null,
+        status: 'idle',
+        actionStatus: 'idle',
+        error: null
     },
     reducers: {
-        // Seçilen dersin ID'sini güncelleyen reducer eylemi
         setSelectedCourseId: (state, action) => {
             state.selectedCourseId = action.payload;
-        },
-        addAnnouncement: (state, action) => {
-            state.announcements.unshift(action.payload);
-        },
-        updateAnnouncement: (state, action) => {
-            const index = state.announcements.findIndex(ann => ann.id === action.payload.id);
-            if (index !== -1) {
-                state.announcements[index] = action.payload;
-            }
-        },
-        deleteAnnouncement: (state, action) => {
-            state.announcements = state.announcements.filter(ann => ann.id !== action.payload);
-        },
-        approveHomework: (state, action) => {
-            const index = state.homeworkReviews.findIndex(rev => rev.id === action.payload);
-            if (index !== -1) {
-                state.homeworkReviews[index].status = 'Onaylandı';
-            }
-        },
-        addHomework: (state, action) => {
-            const { courseCode, title, givenDate, dueDate, weight } = action.payload;
-            const course = state.courses.find(c => c.code === courseCode);
-            if (course) {
-                const newId = `hw-${course.homeworks.length + 1}`;
-                course.homeworks.unshift({
-                    id: newId,
-                    title,
-                    givenDate,
-                    dueDate,
-                    weight: weight !== undefined ? Number(weight) : 0
-                });
-            }
-        },
-        updateHomeworkWeights: (state, action) => {
-            const { courseCode, weights } = action.payload;
-            const course = state.courses.find(c => c.code === courseCode);
-            if (course) {
-                course.homeworks.forEach(hw => {
-                    if (weights[hw.id] !== undefined) {
-                        hw.weight = Number(weights[hw.id]);
-                    }
-                });
-            }
-        },
-        evaluateHomework: (state, action) => {
-            const { id, studentId, courseCode, homeworkId, name, avatar, grade, feedback, status } = action.payload;
-            let index = -1;
-            if (id) {
-                index = state.homeworkReviews.findIndex(rev => rev.id === id);
-            } else if (studentId && courseCode && homeworkId) {
-                index = state.homeworkReviews.findIndex(rev => 
-                    rev.studentId === studentId && 
-                    rev.courseCode === courseCode && 
-                    rev.homeworkId === homeworkId
-                );
-            }
-
-            if (index !== -1) {
-                state.homeworkReviews[index].grade = grade;
-                state.homeworkReviews[index].feedback = feedback;
-                if (status) {
-                    state.homeworkReviews[index].status = status;
-                } else if (state.homeworkReviews[index].status === 'Bekliyor') {
-                    state.homeworkReviews[index].status = 'İncelendi';
-                }
-            } else {
-                const newId = state.homeworkReviews.length > 0 
-                    ? Math.max(...state.homeworkReviews.map(r => r.id)) + 1 
-                    : 1;
-                state.homeworkReviews.push({
-                    id: newId,
-                    studentId,
-                    courseCode,
-                    homeworkId,
-                    name: name || '',
-                    avatar: avatar || (name ? name.charAt(0) : 'U'),
-                    github: '',
-                    time: new Date().toLocaleDateString('tr-TR') + ' ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
-                    status: status || 'İncelendi',
-                    grade,
-                    feedback
-                });
-            }
         },
         addLiveChatMessage: (state, action) => {
             state.liveChatMessages.push(action.payload);
@@ -223,11 +303,11 @@ const teacherSlice = createSlice({
             if (index !== -1) {
                 state.liveParticipants[index].handRaised = !state.liveParticipants[index].handRaised;
             }
-        },
+        }
     },
     extraReducers: (builder) => {
         builder
-            // fetchTeacherStudentsGradesAsync durumları
+            // fetchTeacherStudentsGradesAsync
             .addCase(fetchTeacherStudentsGradesAsync.pending, (state) => {
                 state.status = 'loading';
                 state.error = null;
@@ -241,7 +321,7 @@ const teacherSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // updateStudentGradeAsync durumları
+            // updateStudentGradeAsync
             .addCase(updateStudentGradeAsync.pending, (state) => {
                 state.actionStatus = 'loading';
                 state.error = null;
@@ -258,7 +338,7 @@ const teacherSlice = createSlice({
                 state.error = action.payload;
             })
 
-            // updateAttendanceAsync durumları
+            // updateAttendanceAsync
             .addCase(updateAttendanceAsync.pending, (state) => {
                 state.actionStatus = 'loading';
                 state.error = null;
@@ -273,20 +353,81 @@ const teacherSlice = createSlice({
             .addCase(updateAttendanceAsync.rejected, (state, action) => {
                 state.actionStatus = 'failed';
                 state.error = action.payload;
+            })
+
+            // fetchTeacherDashboardDataAsync
+            .addCase(fetchTeacherDashboardDataAsync.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(fetchTeacherDashboardDataAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.courses = action.payload.courses;
+                state.homeworkReviews = action.payload.homeworkReviews;
+                state.pastLessons = action.payload.pastLessons;
+                state.liveParticipants = action.payload.liveParticipants;
+                state.incomingChatQueue = action.payload.incomingChatQueue;
+                state.liveChatMessages = action.payload.liveChatMessages;
+                state.announcements = action.payload.announcements;
+                state.users = action.payload.users;
+                state.bulletins = action.payload.bulletins;
+                state.studentsGrades = action.payload.studentsGrades;
+            })
+            .addCase(fetchTeacherDashboardDataAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload;
+            })
+
+            // addAnnouncement
+            .addCase(addAnnouncement.fulfilled, (state, action) => {
+                state.announcements.unshift(action.payload);
+            })
+
+            // updateAnnouncement
+            .addCase(updateAnnouncement.fulfilled, (state, action) => {
+                const index = state.announcements.findIndex(ann => ann.id === action.payload.id);
+                if (index !== -1) {
+                    state.announcements[index] = action.payload;
+                }
+            })
+
+            // deleteAnnouncement
+            .addCase(deleteAnnouncement.fulfilled, (state, action) => {
+                state.announcements = state.announcements.filter(ann => ann.id !== action.payload);
+            })
+
+            // evaluateHomework
+            .addCase(evaluateHomework.fulfilled, (state, action) => {
+                const index = state.homeworkReviews.findIndex(rev => rev.id === action.payload.id);
+                if (index !== -1) {
+                    state.homeworkReviews[index] = action.payload;
+                } else {
+                    state.homeworkReviews.unshift(action.payload);
+                }
+            })
+
+            // addHomework
+            .addCase(addHomework.fulfilled, (state, action) => {
+                const index = state.courses.findIndex(c => c.id === action.payload.id);
+                if (index !== -1) {
+                    state.courses[index] = action.payload;
+                }
+            })
+
+            // updateHomeworkWeights
+            .addCase(updateHomeworkWeights.fulfilled, (state, action) => {
+                const index = state.courses.findIndex(c => c.id === action.payload.id);
+                if (index !== -1) {
+                    state.courses[index] = action.payload;
+                }
             });
-    },
+    }
 });
 
 export const {
     setSelectedCourseId,
-    addAnnouncement,
-    updateAnnouncement,
-    deleteAnnouncement,
-    approveHomework,
-    evaluateHomework,
     addLiveChatMessage,
-    toggleParticipantHandRaise,
-    addHomework,
-    updateHomeworkWeights
+    toggleParticipantHandRaise
 } = teacherSlice.actions;
+
 export default teacherSlice.reducer;

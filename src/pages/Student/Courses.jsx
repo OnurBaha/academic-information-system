@@ -259,11 +259,11 @@ const Timer = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {onlineCourses.map((course) => {
+          {onlineCourses.map((course, idx) => {
             const isCourseOnline = course.type === 'Online'
             return (
               <div 
-                key={course.code}
+                key={`${course.code}-${idx}`}
                 className="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200/50 dark:border-slate-800/80 p-6 flex flex-col justify-between hover:shadow-md transition-all group relative overflow-hidden cursor-pointer"
                 onClick={() => {
                   setSelectedCourseCode(course.code)
@@ -360,8 +360,8 @@ const Timer = () => {
             onChange={(e) => setSelectedCourseCode(e.target.value)}
             className="w-full py-2 px-3 bg-white dark:bg-slate-800 text-slate-800 dark:text-white border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
           >
-            {onlineCourses.map(course => (
-              <option key={course.code} value={course.code}>
+            {onlineCourses.map((course, idx) => (
+              <option key={`${course.code}-${idx}`} value={course.code}>
                 {course.courseName || course.name} ({course.type === 'Online' ? 'Online' : 'Fakülte'})
               </option>
             ))}

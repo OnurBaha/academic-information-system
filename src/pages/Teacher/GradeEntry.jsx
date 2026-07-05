@@ -1,37 +1,45 @@
 // React hook'ları, Redux dispatch/select metotları ve API çağrı fonksiyonlarının import edilmesi
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchTeacherStudentsGradesAsync, updateStudentGradeAsync } from '../../store/teacher/teacherSlice'
+import { fetchTeacherStudentsGradesAsync, updateStudentGradeAsync, fetchTeacherDashboardDataAsync } from '../../store/teacher/teacherSlice'
 import { apiFetch } from '../../services/api'
 
-// Öğretmenin not girişi yaptığı "Not Giriş Sistemi" bileşeni
 export default function GradeEntry() {
   const dispatch = useDispatch()
-  
-  // Redux store'dan öğretmen durumlarının (öğrenci notları, yüklenme durumu, dersler ve ödevler) alınması
+  const { currentUser } = useSelector(state => state.auth || {})
   const { studentsGrades, status, courses = [], homeworkReviews = [] } = useSelector(state => state.teacher)
 
-  const [activeTab, setActiveTab] = useState('exams') // 'exams' veya 'homeworks' sekmeleri
-  const [users, setUsers] = useState([]) // Tüm kullanıcı/öğrenci hesap bilgileri
-  const [students, setStudents] = useState([]) // Bu derse kayıtlı öğrencilerin eşleştirilmiş not listesi
+  const [selectedCourseCode, setSelectedCourseCode] = useState('')
+  const [activeTab, setActiveTab] = useState('exams')
+  const [users, setUsers] = useState([])
+  const [students, setStudents] = useState([])
 
-  // WEB 307 dersinin ödevlerini filtreleme
-  const currentCourse = courses.find(c => c.code === 'WEB 307')
-  const courseHomeworks = currentCourse ? currentCourse.homeworks : []
-
-  // Bileşen yüklendiğinde öğrenci notlarını ve genel kullanıcı listesini API'den çekme
+  // Load teacher dashboard data on mount to get courses list
   useEffect(() => {
+    dispatch(fetchTeacherDashboardDataAsync())
     dispatch(fetchTeacherStudentsGradesAsync())
     apiFetch('/users')
       .then(data => setUsers(data))
       .catch(err => console.error(err))
   }, [dispatch])
 
-  // Gelen not verileri ile kullanıcı (ad, numara vb.) bilgilerini eşleştirip yerel state'e atayan efekt
+  // Select the first course code taught by the teacher
+  const teacherCourses = courses.filter(c => c.instructor === currentUser?.name)
+  
   useEffect(() => {
-    if (status === 'succeeded' && users.length > 0) {
+    if (teacherCourses.length > 0 && !selectedCourseCode) {
+      setSelectedCourseCode(teacherCourses[0].code)
+    }
+  }, [courses, currentUser, selectedCourseCode])
+
+  const currentCourse = courses.find(c => c.code === selectedCourseCode)
+  const courseHomeworks = currentCourse ? currentCourse.homeworks || [] : []
+
+  // Map enrolled students dynamically
+  useEffect(() => {
+    if (status === 'succeeded' && users.length > 0 && selectedCourseCode) {
       const mapped = studentsGrades
-        .filter(g => g.courseCode === 'WEB 307') // Sadece bu derse ait notları filtrele
+        .filter(g => g.courseCode === selectedCourseCode)
         .map(g => {
           const u = users.find(user => user.id === g.studentId) || {}
           return {
@@ -47,9 +55,9 @@ export default function GradeEntry() {
         })
       setStudents(mapped)
     }
-  }, [studentsGrades, users, status])
+  }, [studentsGrades, users, status, selectedCourseCode])
 
-  const [toast, setToast] = useState(null) // Toast bildirim durumu
+  const [toast, setToast] = useState(null)
   const showToast = (message, type) => {
     setToast({ message, type })
   }
@@ -147,7 +155,7 @@ export default function GradeEntry() {
   const getHomeworkCellStatus = (studentNumber, hw) => {
     const review = homeworkReviews.find(r => 
       r.studentId === studentNumber && 
-      r.courseCode === 'WEB 307' && 
+      r.courseCode === selectedCourseCode && 
       r.homeworkId === hw.id
     )
 
@@ -273,7 +281,7 @@ export default function GradeEntry() {
   const handleSave = async () => {
     try {
       await Promise.all(students.map(s => {
-        const hwStats = calculateStudentHomeworkAverage(s.studentNumber, 'WEB 307')
+        const hwStats = calculateStudentHomeworkAverage(s.studentNumber, selectedCourseCode)
         return dispatch(updateStudentGradeAsync({
           gradeId: s.id,
           midterm: s.midterm,
@@ -303,9 +311,20 @@ export default function GradeEntry() {
   return (
     <section className="grades-entry-canvas">
       <div className="grades-entry-header">
-        <div>
+        <div className="flex flex-col gap-1.5">
           <h2 className="grades-entry-title">Not Giriş Sistemi</h2>
-          <p className="grades-entry-subtitle">Web Programming (Full-Stack .NET &amp; React) · Grup A</p>
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-semibold text-slate-500">Aktif Ders:</span>
+            <select
+              value={selectedCourseCode}
+              onChange={(e) => setSelectedCourseCode(e.target.value)}
+              className="p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              {teacherCourses.map(c => (
+                <option key={c.id} value={c.code}>{c.code} - {c.name}</option>
+              ))}
+            </select>
+          </div>
         </div>
         {activeTab === 'exams' && (
           <div className="grades-entry-actions">
@@ -387,7 +406,7 @@ export default function GradeEntry() {
               </thead>
               <tbody>
                 {students.map((student, index) => {
-                  const hwStats = calculateStudentHomeworkAverage(student.studentNumber, 'WEB 307')
+                  const hwStats = calculateStudentHomeworkAverage(student.studentNumber, selectedCourseCode)
                   const letter = calculateLetterGrade(student.midterm, student.final, student.project, hwStats.average)
                   return (
                     <tr key={student.id} className="grades-entry-row">
@@ -489,7 +508,7 @@ export default function GradeEntry() {
               </thead>
               <tbody>
                 {students.map((student, index) => {
-                  const hwStats = calculateStudentHomeworkAverage(student.studentNumber, 'WEB 307')
+                  const hwStats = calculateStudentHomeworkAverage(student.studentNumber, selectedCourseCode)
                   return (
                     <tr key={student.id} className="grades-entry-row">
                       <td className="grades-entry-td-left-num">{index + 1}</td>

@@ -290,7 +290,7 @@ export const defaultCertificates = [
 
 export const initialHomeworks = [
   {
-    id: 'row-1',
+    id: 'g1',
     courseName: 'Database Management Systems',
     courseCode: 'DBM 301',
     title: 'SQL Veritabanı Optimizasyonu',
@@ -303,7 +303,7 @@ export const initialHomeworks = [
     colorClass: 'bg-indigo-100/50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400'
   },
   {
-    id: 'row-2',
+    id: 'g2',
     courseName: 'Operating Systems',
     courseCode: 'OPS 302',
     title: 'CPU Zamanlama Simülasyonu',
@@ -316,7 +316,7 @@ export const initialHomeworks = [
     colorClass: 'bg-indigo-100/50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400'
   },
   {
-    id: 'row-3',
+    id: 'g3',
     courseName: 'Software Engineering',
     courseCode: 'SE 305',
     title: 'Gereksinim Analizi Raporu',
@@ -329,7 +329,7 @@ export const initialHomeworks = [
     colorClass: 'bg-indigo-100/50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400'
   },
   {
-    id: 'row-4',
+    id: 'g4',
     courseName: 'Web Programming',
     courseCode: 'WEB 307',
     title: 'React Hooks ve Context API',
@@ -342,7 +342,7 @@ export const initialHomeworks = [
     colorClass: 'bg-indigo-100/50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400'
   },
   {
-    id: 'row-5',
+    id: 'g5',
     courseName: 'Computer Networks',
     courseCode: 'NET 305',
     title: 'Alt Ağ Maskeleme Projesi',
@@ -355,7 +355,7 @@ export const initialHomeworks = [
     colorClass: 'bg-indigo-100/50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400'
   },
   {
-    id: 'row-6',
+    id: 'g6',
     courseName: 'Machine Learning',
     courseCode: 'ML 307',
     title: 'Classification Model Raporu',
@@ -368,7 +368,7 @@ export const initialHomeworks = [
     colorClass: 'bg-indigo-100/50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400'
   },
   {
-    id: 'row-7',
+    id: 'g7',
     courseName: 'Human-Computer Interaction',
     courseCode: 'HC 309',
     title: 'Dönem Sonu Bitirme Projesi Raporu',

@@ -12,6 +12,7 @@ export default function StudentDashboard() {
 
   const [weeklySchedule, setWeeklySchedule] = useState(null)
   const [academicEvents, setAcademicEvents] = useState([])
+  const [bulletins, setBulletins] = useState([])
   const [overviewLoading, setOverviewLoading] = useState(true)
 
   // Advisor state
@@ -23,8 +24,9 @@ export default function StudentDashboard() {
   useEffect(() => {
     if (currentUser?.id) {
       dispatch(fetchStudentGradesAsync(currentUser.id))
-      // Fetch u20 (Prof. Dr. Selçuk Yılmaz) as the advisor
-      fetch('http://localhost:3001/users/u20')
+      // FAZ 3.3 — advisorId'yi dinamik olarak kullanıcıdan çek, yoksa u20'ye düş
+      const advisorId = currentUser.advisorId || 'u20'
+      fetch(`http://localhost:3001/users/${advisorId}`)
         .then(res => res.json())
         .then(data => setAdvisorUser(data))
         .catch(err => console.error('Error fetching advisor info', err))
@@ -34,11 +36,13 @@ export default function StudentDashboard() {
   useEffect(() => {
     Promise.all([
       fetch('http://localhost:3001/weeklyLessonsByWeek').then(res => res.json()),
-      fetch('http://localhost:3001/academicEvents').then(res => res.json())
+      fetch('http://localhost:3001/academicEvents').then(res => res.json()),
+      fetch('http://localhost:3001/bulletins').then(res => res.json())
     ])
-      .then(([schedule, events]) => {
+      .then(([schedule, events, bulls]) => {
         setWeeklySchedule(schedule)
         setAcademicEvents(events)
+        setBulletins(bulls)
         setOverviewLoading(false)
       })
       .catch(err => {
@@ -137,6 +141,22 @@ export default function StudentDashboard() {
     <>
       <main className="student-main-content">
         <section className="student-page-canvas">
+
+          {(() => {
+            const urgent = bulletins.filter(b => b.priority === 'ACİL');
+            const latest = urgent.length > 0 ? urgent[urgent.length - 1] : null;
+            if (!latest) return null;
+            return (
+              <div className="p-4 mb-6 bg-red-50 dark:bg-red-950/20 border-l-4 border-red-600 rounded-xl flex items-start gap-3 shadow-sm animate-pulse">
+                <span className="material-symbols-outlined text-red-650 shrink-0 mt-0.5">campaign</span>
+                <div>
+                  <h4 className="text-xs font-extrabold text-red-900 dark:text-red-400 uppercase tracking-wider">ACİL DUYURU: {latest.title}</h4>
+                  <p className="text-xs font-medium text-slate-700 dark:text-slate-350 mt-1 leading-relaxed">{latest.content}</p>
+                  <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold mt-2 block">{latest.date} · Dekanlık Makamı</span>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Kurumsal Karşılama Banner'ı */}
           <div className="student-hero-banner mb-6">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchStudentGradesAsync, requestOfficialDocumentAsync } from '../../store/student/studentSlice'
+import { fetchStudentGradesAsync, requestOfficialDocumentAsync, submitStudentRequestAsync } from '../../store/student/studentSlice'
 import { toast } from 'react-hot-toast'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
@@ -39,6 +39,7 @@ export default function StudentAttendance() {
         const title = modalType === 'rapor' ? 'Sağlık Raporu' : 'Özel İzin Dilekçesi'
         const description = explanation
 
+        // FAZ 2.5 — Belge talebi (Oversight'ta görünür)
         await dispatch(requestOfficialDocumentAsync({
           studentId: currentUser.id,
           title: title,
@@ -47,6 +48,14 @@ export default function StudentAttendance() {
           status: 'pending',
           fileName: fileName,
           studentName: currentUser.name || 'Öğrenci'
+        }))
+
+        // FAZ 2.5 — Aynı zamanda ApprovalCenter'a da talep gönder (Dekan görebilsin)
+        await dispatch(submitStudentRequestAsync({
+          studentName: currentUser.name || 'Öğrenci',
+          studentNumber: currentUser.studentNumber || currentUser.id,
+          requestType: title,
+          details: `${description} (Dosya: ${fileName})`,
         }))
 
         setIsSubmitting(false)
@@ -108,7 +117,7 @@ export default function StudentAttendance() {
       doc.setFontSize(10)
       doc.setTextColor(100, 116, 139)
       doc.text(`Devamsizlik Raporu - ${semesterLabel}`, 14, 25)
-      doc.text(`Ogrenci: ${currentUser?.name || 'Ogrenci'} | Ogrenci No: ${currentUser?.id || '2021007'}`, 14, 30)
+      doc.text(`Ogrenci: ${currentUser?.name || 'Ogrenci'} | Ogrenci No: ${currentUser?.id || '20211024007'}`, 14, 30)
       doc.text(`Tarih: ${new Date().toLocaleDateString('tr-TR')}`, 14, 35)
 
       const bodyData = filteredGrades.map(g => {

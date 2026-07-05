@@ -2,22 +2,35 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
-import { fetchTeacherStudentsGradesAsync, updateAttendanceAsync } from '../../store/teacher/teacherSlice'
+import { fetchTeacherStudentsGradesAsync, updateAttendanceAsync, fetchTeacherDashboardDataAsync } from '../../store/teacher/teacherSlice'
 import { apiFetch } from '../../services/api'
 
 // Ders yoklama yönetiminin yapıldığı panel bileşeni
 export default function Attendance() {
   const dispatch = useDispatch()
   const location = useLocation()
-  
-  // Redux store'dan öğretmen durumlarının (öğrenciler, yüklenme durumları ve dersler) alınması
+  const { currentUser } = useSelector(state => state.auth || {})
   const { studentsGrades, status, courses = [] } = useSelector(state => state.teacher)
 
   const passedCourseCode = location.state?.courseCode
   const passedGroup = location.state?.group
 
-  const [selectedCourseCode, setSelectedCourseCode] = useState(passedCourseCode || 'WEB 307')
+  const [selectedCourseCode, setSelectedCourseCode] = useState(passedCourseCode || '')
   const [selectedGroup, setSelectedGroup] = useState(passedGroup || 'Grup A')
+
+  // Load teacher dashboard data on mount to get courses list
+  useEffect(() => {
+    dispatch(fetchTeacherDashboardDataAsync())
+  }, [dispatch])
+
+  // Select the first course code taught by the teacher
+  const teacherCourses = courses.filter(c => c.instructor === currentUser?.name)
+  
+  useEffect(() => {
+    if (teacherCourses.length > 0 && !selectedCourseCode) {
+      setSelectedCourseCode(teacherCourses[0].code)
+    }
+  }, [courses, currentUser, selectedCourseCode])
 
   useEffect(() => {
     if (passedCourseCode) {
@@ -127,8 +140,8 @@ export default function Attendance() {
                 value={selectedCourseCode}
                 onChange={(e) => setSelectedCourseCode(e.target.value)}
               >
-                {courses.map(course => (
-                  <option key={course.code} value={course.code}>
+                {teacherCourses.map((course, idx) => (
+                  <option key={`${course.code}-${idx}`} value={course.code}>
                     {course.code} - {course.name}
                   </option>
                 ))}

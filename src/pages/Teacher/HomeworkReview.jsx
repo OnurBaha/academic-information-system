@@ -1,29 +1,61 @@
-// React ve React Router kütüphanelerinin içe aktarılması
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { evaluateHomework, addHomework, updateHomeworkWeights } from '../../store/teacher/teacherSlice'
+import { fetchTeacherStudentsGradesAsync, fetchTeacherDashboardDataAsync } from '../../store/teacher/teacherSlice'
 
-// Öğretmenin öğrencilerin gönderdiği ödevleri incelediği bileşen
 export default function HomeworkReview() {
   const location = useLocation()
   const dispatch = useDispatch()
-
-  // Görünüm Modu: 'homework-based' (Ödev Bazlı) veya 'student-based' (Öğrenci Bazlı)
   const [viewMode, setViewMode] = useState('homework-based')
 
-  // Filtreleme Durumları
-  const [selectedCourse, setSelectedCourse] = useState('WEB 307')
-  const [selectedHomework, setSelectedHomework] = useState('hw-4')
+  const { currentUser } = useSelector(state => state.auth || {})
+  const { homeworkReviews = [], courses: COURSES = [], studentsGrades = [], users = [] } = useSelector(state => state.teacher || {})
+
+  // Fetch teacher data on mount
+  useEffect(() => {
+    dispatch(fetchTeacherDashboardDataAsync())
+    dispatch(fetchTeacherStudentsGradesAsync())
+  }, [dispatch])
+
+  const teacherCourses = COURSES.filter(c => c.instructor === currentUser?.name)
+
+  const [selectedCourse, setSelectedCourse] = useState('')
+  const [selectedHomework, setSelectedHomework] = useState('')
   const [selectedStudentId, setSelectedStudentId] = useState('')
-  const [subFilterTab, setSubFilterTab] = useState('All') // 'All', 'Submitted', 'Pending', 'Graded', 'NotSubmitted'
+  const [subFilterTab, setSubFilterTab] = useState('All')
 
-  // Redux store'dan verileri çekme
-  const { kpis, homeworkReviews = [], students = [], courses: COURSES = [] } = useSelector(state => state.teacher || {})
+  // Dynamic student derivation
+  const students = useMemo(() => {
+    if (!studentsGrades.length || !users.length || !selectedCourse) return []
+    const gradesForCourse = studentsGrades.filter(g => g.courseCode === selectedCourse)
+    return gradesForCourse.map(g => {
+      const u = users.find(user => user.id === g.studentId) || {}
+      return {
+        id: u.id || '',
+        studentNumber: u.studentNumber || '—',
+        name: u.name || 'Bilinmeyen Öğrenci',
+        avatar: u.name ? u.name.charAt(0) : '?',
+        email: u.email || '—',
+        group: (g.group || 'Sınıf A').replace('Grup', 'Sınıf'),
+        attendance: (100 - (g.absencePercentage || 0)) + '%',
+        grade: g.letterGrade || 'Süreçte',
+        status: u.status || 'active'
+      }
+    })
+  }, [studentsGrades, users, selectedCourse])
 
-  // Seçili Ders ve Ödev Detayları
+  useEffect(() => {
+    if (teacherCourses.length > 0 && !selectedCourse) {
+      setSelectedCourse(teacherCourses[0].code)
+      if (teacherCourses[0].homeworks && teacherCourses[0].homeworks.length > 0) {
+        setSelectedHomework(teacherCourses[0].homeworks[0].id)
+      }
+    }
+  }, [COURSES, currentUser, teacherCourses, selectedCourse])
+
   const currentCourse = COURSES.find(c => c.code === selectedCourse)
-  const currentHw = currentCourse?.homeworks.find(h => h.id === selectedHomework)
+  const currentHw = currentCourse?.homeworks?.find(h => h.id === selectedHomework)
 
   // Giriş değerlerini yönetmek için yerel durumlar (Input States)
   // Key formatı: `${studentId}_${courseCode}_${homeworkId}`
@@ -57,7 +89,7 @@ export default function HomeworkReview() {
     const month = String(now.getMonth() + 1).padStart(2, '0')
     const day = String(now.getDate()).padStart(2, '0')
     
-    setNewHwCourseCode(selectedCourse || 'WEB 307')
+    setNewHwCourseCode(selectedCourse || (teacherCourses[0]?.code || ''))
     setNewHwTitle('')
     setNewHwGivenDate(`${year}-${month}-${day}`)
     setNewHwDueDate('')
@@ -133,8 +165,8 @@ export default function HomeworkReview() {
   // Seçilen ders değiştiğinde ödev ağırlıklarını tempState'e yükleme
   useEffect(() => {
     if (currentCourse) {
-      const initialWeights = {}
-      currentCourse.homeworks.forEach(hw => {
+      const initialWeights = {};
+      (currentCourse.homeworks || []).forEach(hw => {
         initialWeights[hw.id] = hw.weight !== undefined ? hw.weight : 0
       })
       setTempWeights(initialWeights)
@@ -145,7 +177,7 @@ export default function HomeworkReview() {
   const handleCourseChange = (courseCode) => {
     setSelectedCourse(courseCode)
     const course = COURSES.find(c => c.code === courseCode)
-    if (course && course.homeworks.length > 0) {
+    if (course && (course.homeworks || []).length > 0) {
       setSelectedHomework(course.homeworks[0].id)
     }
   }
@@ -440,9 +472,9 @@ export default function HomeworkReview() {
                     onChange={(e) => handleCourseChange(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold bg-white text-slate-700 shadow-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer"
                   >
-                    {COURSES.map(c => (
-                      <option key={c.code} value={c.code}>{c.code} - {c.name}</option>
-                    ))}
+                     {teacherCourses.map((c, idx) => (
+                       <option key={`${c.code}-${idx}`} value={c.code}>{c.code} - {c.name}</option>
+                     ))}
                   </select>
                 </div>
 
@@ -454,7 +486,7 @@ export default function HomeworkReview() {
                     onChange={(e) => setSelectedHomework(e.target.value)}
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold bg-white text-slate-700 shadow-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer"
                   >
-                    {currentCourse?.homeworks.map(h => (
+                    {(currentCourse?.homeworks || []).map(h => (
                       <option key={h.id} value={h.id}>{h.title}</option>
                     ))}
                   </select>
@@ -530,7 +562,7 @@ export default function HomeworkReview() {
                       setIsEditingWeights(!isEditingWeights)
                       if (!isEditingWeights) {
                         const initialWeights = {}
-                        currentCourse.homeworks.forEach(hw => {
+                        (currentCourse.homeworks || []).forEach(hw => {
                           initialWeights[hw.id] = hw.weight !== undefined ? hw.weight : 0
                         })
                         setTempWeights(initialWeights)
@@ -542,7 +574,7 @@ export default function HomeworkReview() {
                     <span>{isEditingWeights ? 'Ağırlık Düzenlemeyi Kapat' : 'Ödev Ağırlık Yüzdelerini Düzenle'}</span>
                   </button>
                   <div className="text-[10px] font-bold text-slate-400">
-                    Toplam Ağırlık: {currentCourse.homeworks.reduce((sum, hw) => sum + (hw.weight || 0), 0)}%
+                    Toplam Ağırlık: {(currentCourse.homeworks || []).reduce((sum, hw) => sum + (hw.weight || 0), 0)}%
                   </div>
                 </div>
 
@@ -788,8 +820,8 @@ export default function HomeworkReview() {
                   onChange={(e) => handleCourseChange(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold bg-white text-slate-700 shadow-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer"
                 >
-                  {COURSES.map(c => (
-                    <option key={c.code} value={c.code}>{c.code} - {c.name}</option>
+                  {teacherCourses.map((c, idx) => (
+                    <option key={`${c.code}-${idx}`} value={c.code}>{c.code} - {c.name}</option>
                   ))}
                 </select>
               </div>
@@ -836,7 +868,7 @@ export default function HomeworkReview() {
           {/* Öğrencinin Ödev Listesi */}
           <div className="hw-list-container">
             {currentCourse && selectedStudent ? (
-              currentCourse.homeworks.map(hw => {
+              (currentCourse.homeworks || []).map(hw => {
                 const review = homeworkReviews.find(r => 
                   r.studentId === selectedStudent.id && 
                   r.courseCode === selectedCourse && 
@@ -1000,8 +1032,8 @@ export default function HomeworkReview() {
                   onChange={(e) => setNewHwCourseCode(e.target.value)}
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs font-semibold bg-white text-slate-700 shadow-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer"
                 >
-                  {COURSES.map(c => (
-                    <option key={c.code} value={c.code}>{c.code} - {c.name}</option>
+                  {teacherCourses.map((c, idx) => (
+                    <option key={`${c.code}-${idx}`} value={c.code}>{c.code} - {c.name}</option>
                   ))}
                 </select>
               </div>

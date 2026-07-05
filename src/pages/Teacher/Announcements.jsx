@@ -135,8 +135,8 @@ export default function Announcements() {
               onChange={e => setTarget(e.target.value)}
             >
               <option value="Tüm Öğrenciler">Tüm Öğrenciler</option>
-              <option value="Grup A">Grup A</option>
-              <option value="Grup B">Grup B</option>
+              <option value="Sınıf A">Sınıf A</option>
+              <option value="Sınıf B">Sınıf B</option>
             </select>
             <select
               className="ann-composer-select"
@@ -188,7 +188,7 @@ export default function Announcements() {
                 </span>
                 <span className="ann-meta-item">
                   <span className="material-symbols-outlined">group</span>
-                  <span>{ann.target}</span>
+                  <span>{(ann.target || '').replace('Grup', 'Sınıf')}</span>
                 </span>
               </div>
             </div>

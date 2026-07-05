@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchStudentGradesAsync } from '../../store/student/studentSlice'
+import { fetchStudentGradesAsync, requestOfficialDocumentAsync } from '../../store/student/studentSlice'
 import { calculateScore, getLetterGrade, simulateGano, calculateGano, getLetterBadgeStyle } from '../../utils/studentCalc'
 import { toast } from 'react-hot-toast'
 import { jsPDF } from 'jspdf'
@@ -111,7 +111,6 @@ export default function StudentGrades() {
     }
     return avgs;
   }, [currentUser, courses, homeworkReviews]);
-
   useEffect(() => {
     if (currentUser?.id) {
       dispatch(fetchStudentGradesAsync(currentUser.id))
@@ -232,7 +231,7 @@ export default function StudentGrades() {
       doc.text('Telefon:', 20, 120)
 
       doc.setFont('Helvetica', 'normal')
-      doc.text(currentUser?.id || '2021007', 60, 80)
+      doc.text(currentUser?.id || '20211024007', 60, 80)
       doc.text(currentUser?.name || 'Ogrenci', 60, 90)
       doc.text('...........................................................................', 60, 100)
       doc.text('[  ] Vize  /  [  ] Final  /  [  ] Proje', 60, 110)
@@ -263,7 +262,7 @@ export default function StudentGrades() {
       doc.setFontSize(10)
       doc.setTextColor(100, 116, 139)
       doc.text(`Ogrenci Ad Soyad: ${currentUser?.name || 'Ogrenci'}`, 14, 26)
-      doc.text(`Ogrenci No: ${currentUser?.id || '2021007'}`, 14, 32)
+      doc.text(`Ogrenci No: ${currentUser?.id || '20211024007'}`, 14, 32)
       doc.text(`Program: Bilgisayar Muhendisligi`, 14, 38)
       doc.text(`Akademik GANO: ${grades.length ? calculateGano(studentGrades, homeworkAverages).toFixed(2) : '3.42'} | Toplam AKTS: 215`, 14, 44)
       doc.text(`Yazdirilma Tarihi: ${new Date().toLocaleDateString('tr-TR')}`, 14, 50)
@@ -321,6 +320,29 @@ export default function StudentGrades() {
     }
   }
 
+  // FAZ 2.3 — Resmi Transkript Talebi → DB'ye POST at (Dekan görebilsin)
+  const [isRequestingTranscript, setIsRequestingTranscript] = useState(false)
+
+  const handleTranscriptRequest = async () => {
+    if (isRequestingTranscript) return
+    setIsRequestingTranscript(true)
+    try {
+      await dispatch(requestOfficialDocumentAsync({
+        studentId: currentUser?.id,
+        studentName: currentUser?.name || 'Öğrenci',
+        title: 'Resmi Transkript',
+        description: 'Öğrenci Not Dökümü talebinde bulunulmuştur.',
+        type: 'document',
+        status: 'pending',
+      }))
+      toast.success('Transkript talebiniz alındı! Belgeler sekmesinden takip edebilirsiniz.')
+    } catch (err) {
+      console.error(err)
+      toast.error('Transkript talebi gönderilemedi.')
+    } finally {
+      setIsRequestingTranscript(false)
+    }
+  }
   // Ders seçildiğinde AKTS alanını güncelle
   const handleSimCourseChange = (code) => {
     setSimCourseCode(code)
@@ -623,10 +645,14 @@ export default function StudentGrades() {
           <div className="grades-actions-card">
             <h5 className="grades-actions-title">Hızlı İşlemler</h5>
             <div className="grades-actions-list">
-              <button className="grades-action-row cursor-pointer" onClick={() => toast.success('Resmi transkript talebiniz alındı. Belgeler sekmesinden kontrol edebilirsiniz.')}>
+              <button
+                className={`grades-action-row cursor-pointer ${isRequestingTranscript ? 'opacity-60' : ''}`}
+                onClick={handleTranscriptRequest}
+                disabled={isRequestingTranscript}
+              >
                 <div className="grades-action-left">
                   <span className="material-symbols-outlined">verified</span>
-                  <span>Resmi Transkript Talebi</span>
+                  <span>{isRequestingTranscript ? 'Gönderiliyor...' : 'Resmi Transkript Talebi'}</span>
                 </div>
                 <span className="material-symbols-outlined">chevron_right</span>
               </button>

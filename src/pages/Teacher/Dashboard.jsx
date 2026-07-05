@@ -1,7 +1,8 @@
 // React ve React Router kütüphanelerinden gerekli hook'ların içe aktarılması
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { fetchTeacherDashboardDataAsync } from '../../store/teacher/teacherSlice'
 
 // Mock YouTube Video IDs for Past Lessons
 const mockYoutubeIds = {
@@ -16,8 +17,65 @@ const mockYoutubeIds = {
 export default function TeacherDashboard() {
   const navigate = useNavigate()
   const location = useLocation()
+  const dispatch = useDispatch()
   const { currentUser } = useSelector((state) => state.auth || {})
-  const { kpis, pastLessons = [], students = [] } = useSelector((state) => state.teacher || {})
+  const { pastLessons = [], bulletins = [], courses = [], studentsGrades = [], users = [], homeworkReviews = [] } = useSelector((state) => state.teacher || {})
+
+  // Compute teacher courses
+  const teacherCourses = useMemo(() => courses.filter(c => c.instructor === currentUser?.name), [courses, currentUser])
+  const teacherCourseCodes = useMemo(() => teacherCourses.map(c => c.code), [teacherCourses])
+
+  // Compute dynamic students list
+  const students = useMemo(() => {
+    if (!studentsGrades.length || !users.length) return []
+    const gradesForTeacher = studentsGrades.filter(g => teacherCourseCodes.includes(g.courseCode))
+    const seen = new Set()
+    const list = []
+    gradesForTeacher.forEach(g => {
+      const u = users.find(user => user.id === g.studentId)
+      if (u && !seen.has(u.id)) {
+        seen.add(u.id)
+        list.push({
+          id: u.studentNumber || u.id || '—',
+          dbId: u.id,
+          name: u.name || 'Bilinmeyen Öğrenci',
+          avatar: u.name ? u.name.charAt(0) : '?',
+          email: u.email || '—',
+          group: g.courseCode + ' - ' + (g.group || 'Sınıf A').replace('Grup', 'Sınıf'),
+          attendance: (100 - (g.absencePercentage || 0)) + '%',
+          grade: g.letterGrade || 'Süreçte',
+          status: u.status || 'active'
+        })
+      }
+    })
+    return list
+  }, [studentsGrades, users, teacherCourseCodes])
+
+  // Compute dynamic KPIs
+  const kpis = useMemo(() => {
+    const totalStudents = students.length
+    const unreadHomework = homeworkReviews.filter(r => teacherCourseCodes.includes(r.courseCode) && r.status === 'Bekliyor').length
+    
+    // Average attendance
+    const gradesForTeacher = studentsGrades.filter(g => teacherCourseCodes.includes(g.courseCode))
+    const attendanceSum = gradesForTeacher.reduce((sum, g) => sum + (100 - (g.absencePercentage || 0)), 0)
+    const attendanceAverage = gradesForTeacher.length > 0 ? Math.round(attendanceSum / gradesForTeacher.length) : 0
+
+    // Completed live lessons
+    const completedHours = pastLessons.length * 1.5 // assume 1.5 hours per lesson
+    const completedLiveLessons = `${completedHours} Saat`
+
+    return {
+      totalStudents,
+      unreadHomework,
+      attendanceAverage,
+      completedLiveLessons
+    }
+  }, [students, homeworkReviews, teacherCourseCodes, studentsGrades, pastLessons])
+
+  useEffect(() => {
+    dispatch(fetchTeacherDashboardDataAsync())
+  }, [dispatch])
   
   // Bileşenin durum (state) yönetim tanımlamaları
   const [isStreaming, setIsStreaming] = useState(false) // Canlı yayın aktiflik durumu
@@ -34,15 +92,16 @@ export default function TeacherDashboard() {
 
   const filteredPastLessons = pastLessons.filter(lesson => {
     const matchesSearch = lesson.name.toLowerCase().includes(lessonSearchTerm.toLowerCase())
-    const matchesGroup = lessonSelectedGroup === 'All' || lesson.group === lessonSelectedGroup
+    const lessonClass = (lesson.group || '').replace('Grup', 'Sınıf')
+    const matchesGroup = lessonSelectedGroup === 'All' || lessonClass.includes(lessonSelectedGroup.replace('Grup', 'Sınıf'))
     return matchesSearch && matchesGroup
   })
 
-  // Arama ve grup filtresine göre öğrencileri filtreleme işlemi
+  // Arama ve sınıf filtresine göre öğrencileri filtreleme işlemi
   const filteredStudents = students.filter(student => {
     const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.id.includes(searchTerm)
-    const matchesGroup = selectedGroup === 'All' || student.group === selectedGroup
+    const matchesGroup = selectedGroup === 'All' || student.group.includes(selectedGroup.replace('Grup', 'Sınıf'))
     return matchesSearch && matchesGroup
   })
 
@@ -199,6 +258,22 @@ export default function TeacherDashboard() {
 
   return (
     <section className="teacher-page-canvas">
+      {(() => {
+        const urgent = bulletins.filter(b => b.priority === 'ACİL');
+        const latest = urgent.length > 0 ? urgent[urgent.length - 1] : null;
+        if (!latest) return null;
+        return (
+          <div className="p-4 mb-6 bg-red-50 dark:bg-red-950/20 border-l-4 border-red-600 rounded-xl flex items-start gap-3 shadow-sm animate-pulse">
+            <span className="material-symbols-outlined text-red-600 shrink-0 mt-0.5">campaign</span>
+            <div className="flex-1">
+              <h4 className="text-xs font-extrabold text-red-900 dark:text-red-400 uppercase tracking-wider">ACİL DUYURU: {latest.title}</h4>
+              <p className="text-xs font-medium text-slate-700 dark:text-slate-350 mt-1 leading-relaxed">{latest.content}</p>
+              <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold mt-2 block">{latest.date} · Dekanlık Makamı</span>
+            </div>
+          </div>
+        );
+      })()}
+
       <div className={isStreaming ? "teacher-banner-card bg-red-950 transition-all duration-500 border border-red-500/20" : "teacher-banner-card transition-all duration-500"}>
         <div className="teacher-banner-content">
           {isStreaming ? (
@@ -518,15 +593,15 @@ export default function TeacherDashboard() {
               </div>
 
               <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Grup:</span>
+                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sınıf:</span>
                 <select
                   className="px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white text-slate-700 cursor-pointer font-medium"
                   value={selectedGroup}
                   onChange={(e) => setSelectedGroup(e.target.value)}
                 >
-                  <option value="All">Tüm Gruplar</option>
-                  <option value="Grup A">Grup A</option>
-                  <option value="Grup B">Grup B</option>
+                  <option value="All">Tüm Sınıflar</option>
+                  <option value="Sınıf A">Sınıf A</option>
+                  <option value="Sınıf B">Sınıf B</option>
                 </select>
               </div>
             </div>
@@ -541,7 +616,7 @@ export default function TeacherDashboard() {
                         <th className="py-3 px-4 font-bold text-slate-500">Öğrenci</th>
                         <th className="py-3 px-4 font-bold text-slate-500">Öğrenci No</th>
                         <th className="py-3 px-4 font-bold text-slate-500">E-Posta</th>
-                        <th className="py-3 px-4 font-bold text-slate-500">Grup / Ders</th>
+                        <th className="py-3 px-4 font-bold text-slate-500">Sınıf / Ders</th>
                         <th className="py-3 px-4 font-bold text-slate-500">Devamsızlık</th>
                         <th className="py-3 px-4 font-bold text-slate-500">Not Ort.</th>
                         <th className="py-3 px-4 font-bold text-slate-500 text-center">Durum</th>
@@ -648,16 +723,16 @@ export default function TeacherDashboard() {
               </div>
 
               <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Grup:</span>
+                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sınıf:</span>
                 <select
                   className="px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all bg-white text-slate-700 cursor-pointer font-medium"
                   value={lessonSelectedGroup}
                   onChange={(e) => setLessonSelectedGroup(e.target.value)}
                 >
-                  <option value="All">Tüm Gruplar</option>
-                  <option value="Grup A">Grup A</option>
-                  <option value="Grup B">Grup B</option>
-                  <option value="Tüm Gruplar">Tüm Gruplar</option>
+                  <option value="All">Tüm Sınıflar</option>
+                  <option value="Sınıf A">Sınıf A</option>
+                  <option value="Sınıf B">Sınıf B</option>
+                  <option value="Tüm Sınıflar">Tüm Sınıflar</option>
                 </select>
               </div>
             </div>
@@ -670,7 +745,7 @@ export default function TeacherDashboard() {
                     <thead>
                       <tr className="bg-slate-50 text-slate-400 font-semibold uppercase text-xs tracking-wider border-b border-slate-100">
                         <th className="py-3 px-4 font-bold text-slate-500">Ders Adı</th>
-                        <th className="py-3 px-4 font-bold text-slate-500">Grup / Sınıf</th>
+                        <th className="py-3 px-4 font-bold text-slate-500">Sınıf</th>
                         <th className="py-3 px-4 font-bold text-slate-500">Tarih / Saat</th>
                         <th className="py-3 px-4 font-bold text-slate-500">Süre</th>
                         <th className="py-3 px-4 font-bold text-slate-500">İzleyici</th>
@@ -688,7 +763,7 @@ export default function TeacherDashboard() {
                           </td>
                           <td className="py-3.5 px-4">
                             <span className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-semibold">
-                              {lesson.group}
+                              {lesson.group.replace('Grup', 'Sınıf')}
                             </span>
                           </td>
                           <td className="py-3.5 px-4 text-slate-500">{lesson.date} - {lesson.time}</td>

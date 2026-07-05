@@ -1,19 +1,31 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { fetchDeanDashboardData, publishGlobalBulletinAsync } from '../../store/dean/deanSlice';
+import { fetchDeanDashboardData } from '../../store/dean/deanSlice';
+import OverviewMetrics from '../../components/overview/OverviewMetrics';
+import FeaturedAcademicians from '../../components/overview/FeaturedAcademicians';
 
 export default function DeanOverview() {
   const dispatch = useDispatch();
-  const { users, courses, deanOverview, instructors, status } = useSelector((state) => state.dean);
-  const [announcementText, setAnnouncementText] = useState('');
-  const [audience, setAudience] = useState('Herkes');
+  const { currentUser } = useSelector((state) => state.auth || {});
+  const { 
+    users, 
+    courses, 
+    deanOverview, 
+    instructors, 
+    systemLogs = [], 
+    courseAssignments = [], 
+    studentRequests = [],
+    graduationApprovals = [],
+    documents = []
+  } = useSelector((state) => state.dean);
+  
+  const [selectedTermFilter, setSelectedTermFilter] = useState('Son Dönem');
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchDeanDashboardData());
   }, [dispatch]);
 
-  // Dynamic metrics calculation
   const students = users.filter(u => u.role === 'student');
   const studentCount = students.length > 0 ? students.length : 340;
   
@@ -25,26 +37,20 @@ export default function DeanOverview() {
     ? `%${deanOverview.metrics.employmentRate}` 
     : '%84.2';
 
-  const pendingApprovalsCount = courses.filter(c => c.gradesApproved === false).length || 3;
+  const pendingGrades = courses.filter(c => !c.gradesApproved).length;
+  const pendingAssignments = courseAssignments.filter(ca => ca.status === 'pending').length;
+  const pendingRequests = studentRequests.filter(sr => sr.status === 'pending').length;
+  const pendingGraduations = graduationApprovals.filter(ga => ga.status === 'pending').length;
+  const pendingDocs = documents.filter(d => d.status === 'pending').length;
 
-  const handlePublish = () => {
-    if (!announcementText.trim()) return;
-    dispatch(publishGlobalBulletinAsync({
-      priority: 'Normal',
-      title: 'Genel Akademik Duyuru',
-      content: announcementText,
-      target: audience
-    }));
-    setAnnouncementText('');
-    alert('Duyuru başarıyla yayınlandı!');
-  };
+  const totalPendingApprovals = pendingGrades + pendingAssignments + pendingRequests + pendingGraduations + pendingDocs;
 
   return (
     <section className="dean-page-canvas">
       {/* Welcome Banner */}
       <div className="dean-welcome-banner">
         <div className="dean-welcome-content">
-          <h2 className="dean-welcome-title">Hoş geldiniz, Dekan Prof. Dr. Kemal Arslan.</h2>
+          <h2 className="dean-welcome-title">Hoş geldiniz, Dekan {currentUser?.name || 'Değerli Dekan'}.</h2>
           <p className="dean-welcome-desc">
             Sistem genelinde aktif <strong>{courses.length || 14} branş / ders</strong> ve <strong>{studentCount} kayıtlı öğrenci</strong> bulunmaktadır.
           </p>
@@ -53,99 +59,13 @@ export default function DeanOverview() {
         <span className="material-symbols-outlined dean-welcome-bg-icon">account_balance</span>
       </div>
 
-      {/* Metrics Cards */}
-      <div className="dean-metrics-grid-4">
-        {/* Card 1: Toplam Aktif Öğrenci */}
-        <div className="dean-metric-card-new">
-          <div className="dean-card-top-row">
-            <div className="dean-card-icon-box dean-card-icon-blue">
-              <span className="material-symbols-outlined">school</span>
-            </div>
-            <span className="dean-card-trend">
-              <span className="material-symbols-outlined">trending_up</span>
-              +8%
-            </span>
-          </div>
-          <div className="dean-card-content">
-            <span className="dean-card-label">Toplam Aktif Öğrenci</span>
-            <div className="dean-card-value-group">
-              <h3 className="dean-card-value">{studentCount}</h3>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 2: GANO */}
-        <div className="dean-metric-card-new">
-          <div className="dean-card-top-row">
-            <div className="dean-card-icon-box dean-card-icon-blue">
-              <span className="material-symbols-outlined">star</span>
-            </div>
-            <div className="w-8 h-8 flex items-center justify-center">
-              <svg className="w-7 h-7 text-blue-600" viewBox="0 0 36 36">
-                <path
-                  className="text-slate-100"
-                  strokeWidth="3.5"
-                  stroke="currentColor"
-                  fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-                <path
-                  className="text-blue-600"
-                  strokeWidth="3.5"
-                  strokeDasharray="73, 100"
-                  strokeLinecap="round"
-                  stroke="currentColor"
-                  fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-              </svg>
-            </div>
-          </div>
-          <div className="dean-card-content">
-            <span className="dean-card-label">Genel Başarı (GANO)</span>
-            <div className="dean-card-value-group">
-              <h3 className="dean-card-value">{avgGpa}</h3>
-              <span className="dean-card-value-sub">/ 4.00</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 3: İstihdam & Staj */}
-        <div className="dean-metric-card-new">
-          <div className="dean-card-top-row">
-            <div className="dean-card-icon-box dean-card-icon-blue">
-              <span className="material-symbols-outlined">work_history</span>
-            </div>
-            <div className="flex items-end gap-1 h-6 pb-1">
-              <div className="w-1.5 bg-blue-600 rounded-t h-[40%]"></div>
-              <div className="w-1.5 bg-blue-600 rounded-t h-[70%]"></div>
-              <div className="w-1.5 bg-blue-600 rounded-t h-[100%]"></div>
-            </div>
-          </div>
-          <div className="dean-card-content">
-            <span className="dean-card-label">İstihdam &amp; Staj</span>
-            <div className="dean-card-value-group">
-              <h3 className="dean-card-value">{employmentSuccess}</h3>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 4: Bekleyen Onaylar */}
-        <div className="dean-metric-card-new">
-          <div className="dean-card-top-row">
-            <div className="dean-card-icon-box dean-card-icon-amber">
-              <span className="material-symbols-outlined">warning</span>
-            </div>
-            <span className="dean-card-badge-urgent">ACİL</span>
-          </div>
-          <div className="dean-card-content">
-            <span className="dean-card-label">Bekleyen Onaylar</span>
-            <div className="dean-card-value-group">
-              <h3 className="dean-card-value">{pendingApprovalsCount}</h3>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Extracted Metrics Cards Component */}
+      <OverviewMetrics 
+        studentCount={studentCount} 
+        avgGpa={avgGpa} 
+        employmentSuccess={employmentSuccess} 
+        totalPendingApprovals={totalPendingApprovals} 
+      />
 
       {/* Bento Grid Row 1: Academic Performance & System Logs */}
       <div className="dean-bento-grid">
@@ -156,17 +76,28 @@ export default function DeanOverview() {
               <h4 className="dean-perf-title">Akademik Performans Grafiği</h4>
               <p className="dean-perf-subtitle">Bölüm bazlı ortalama başarı dağılımı</p>
             </div>
-            <select className="dean-perf-select" defaultValue="Son Dönem">
-              <option>Son Dönem</option>
-              <option>Tüm Dönemler</option>
+            <select 
+              className="dean-perf-select" 
+              value={selectedTermFilter} 
+              onChange={(e) => setSelectedTermFilter(e.target.value)}
+            >
+              <option value="Son Dönem">Son Dönem</option>
+              <option value="Tüm Dönemler">Tüm Dönemler</option>
             </select>
           </div>
           <div className="dean-perf-list">
-            {(deanOverview?.branchPopularity || [
-              { label: 'Tıp ve Sağlık Bilimleri', percentage: 85 },
-              { label: 'Mühendislik ve Teknoloji', percentage: 70 },
-              { label: 'Tarih ve Sosyal Bilimler', percentage: 55 },
-              { label: 'Edebiyat ve Dil Bilimi', percentage: 40 }
+            {(selectedTermFilter === 'Son Dönem' ? [
+              { label: 'Bilgisayar Mühendisliği', percentage: 88 },
+              { label: 'Yazılım Mühendisliği', percentage: 92 },
+              { label: 'İşletme', percentage: 76 },
+              { label: 'Yönetim Bilişim Sistemleri', percentage: 81 }
+            ] : [
+              { label: 'Bilgisayar Mühendisliği', percentage: 84 },
+              { label: 'Yazılım Mühendisliği', percentage: 89 },
+              { label: 'İşletme', percentage: 73 },
+              { label: 'Yönetim Bilişim Sistemleri', percentage: 78 },
+              { label: 'Moleküler Biyoloji ve Genetik', percentage: 85 },
+              { label: 'Matematik', percentage: 80 }
             ]).map((item, idx) => (
               <div className="dean-perf-item" key={idx}>
                 <div className="dean-perf-item-header">
@@ -198,86 +129,43 @@ export default function DeanOverview() {
             <h4 className="dean-log-title">Kritik Sistem Günlüğü</h4>
             <p className="dean-log-subtitle">Gerçek zamanlı akademik akış</p>
           </div>
-          <div className="dean-log-timeline">
-            <div className="dean-log-item">
-              <div className="dean-log-dot-wrap dean-log-dot-green">
-                <div className="dean-log-dot-inner-green"></div>
-              </div>
-              <span className="dean-log-time">Bugün, 09:45</span>
-              <h5 className="dean-log-msg-title">Not Girişi Tamamlandı</h5>
-              <p className="dean-log-desc">TAR202 Osmanlı Müesseseleri Tarihi sınav notları Dr. Elif Soylu tarafından sisteme girildi.</p>
-            </div>
-
-            <div className="dean-log-item">
-              <div className="dean-log-dot-wrap dean-log-dot-blue">
-                <div className="dean-log-dot-inner-blue"></div>
-              </div>
-              <span className="dean-log-time">Dün, 16:20</span>
-              <h5 className="dean-log-msg-title">Müfredat Güncellemesi</h5>
-              <p className="dean-log-desc">TIP101 Temel Anatomi dökümantasyonu sürüm 1.8 olarak güncellendi.</p>
-            </div>
-
-            <div className="dean-log-item">
-              <div className="dean-log-dot-wrap dean-log-dot-amber">
-                <div className="dean-log-dot-inner-amber"></div>
-              </div>
-              <span className="dean-log-time">12 Ocak, 11:30</span>
-              <h5 className="dean-log-msg-title">Akademik İzin Talebi</h5>
-              <p className="dean-log-desc">Doç. Dr. Mert Akın tarafından sempozyum katılım izin dilekçesi gönderildi.</p>
-            </div>
-
-            <div className="dean-log-item">
-              <div className="dean-log-dot-wrap dean-log-dot-gray">
-                <div className="dean-log-dot-inner-gray"></div>
-              </div>
-              <span className="dean-log-time">11 Ocak, 08:00</span>
-              <h5 className="dean-log-msg-title">Yeni Dönem Kayıtları</h5>
-              <p className="dean-log-desc">Hukuk Fakültesi ek ders kontenjan artırım talebi onaylandı.</p>
-            </div>
-          </div>
-          <button className="dean-log-btn-more">Tüm Geçmişi Görüntüle</button>
-        </div>
-      </div>
-
-      {/* Featured Academicians */}
-      <div className="dean-featured-card">
-        <div className="dean-featured-header">
-          <h4 className="dean-featured-title">Öne Çıkan Akademisyenler</h4>
-          <Link to="/dean/faculty" className="dean-featured-link">
-            <span>Tüm Kadro</span>
-            <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          </Link>
-        </div>
-        <div className="dean-featured-grid grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {(instructors.length > 0 ? instructors.slice(0, 6) : [
-            { name: 'Dr. Elif Soylu', dept: 'Tarih Bölümü', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&q=80', status: 'active' },
-            { name: 'Doç. Dr. Mert Akın', dept: 'Genel Cerrahi', avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&q=80', status: 'active' },
-            { name: 'Dr. Cem Kaya', dept: 'Hukuk', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&q=80', status: 'idle' },
-            { name: 'Prof. Seda Demir', dept: 'Edebiyat', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&q=80', status: 'active' },
-            { name: 'Dr. Ahmet Yılmaz', dept: 'Mühendislik Fakültesi', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80', status: 'active' },
-            { name: 'Lektör Canan Kaya', dept: 'Yabancı Diller', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&q=80', status: 'busy' }
-          ]).map((item, idx) => (
-            <div className="dean-academician-item" key={idx}>
-              <div className="dean-academician-avatar-wrap">
-                {item.avatar && item.avatar.startsWith('http') ? (
-                  <img 
-                    className="dean-academician-img" 
-                    src={item.avatar} 
-                    alt={item.name} 
-                  />
-                ) : (
-                  <div className="w-12 h-12 rounded-full bg-[#00236f] text-white flex items-center justify-center font-black text-sm uppercase">
-                    {item.name?.charAt(0) || 'A'}
+          <div className="dean-log-timeline overflow-y-auto max-h-[300px] pr-2 flex flex-col gap-4">
+            {systemLogs.length > 0 ? (
+              systemLogs.slice(0, 5).map((log, idx) => {
+                let dotColor = 'dean-log-dot-blue';
+                if (log.action?.includes('Red') || log.action?.includes('Kilitle') || log.action?.includes('Askı')) {
+                  dotColor = 'dean-log-dot-amber';
+                } else if (log.action?.includes('Onay') || log.action?.includes('Aktif')) {
+                  dotColor = 'dean-log-dot-green';
+                }
+                
+                return (
+                  <div className="dean-log-item flex gap-3 relative pb-2 border-b border-solid border-slate-50 last:border-none" key={log.id || idx}>
+                    <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                      dotColor === 'dean-log-dot-green' ? 'bg-emerald-500' : dotColor === 'dean-log-dot-amber' ? 'bg-amber-500' : 'bg-blue-500'
+                    }`} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-center gap-2">
+                        <h5 className="font-bold text-[11px] text-slate-800 truncate m-0">{log.action}</h5>
+                        <span className="text-[9px] text-slate-400 shrink-0 font-bold">{log.timestamp || 'Yeni'}</span>
+                      </div>
+                      <p className="text-[10px] text-slate-550 leading-relaxed mt-1 m-0">{log.details} <span className="text-[9px] text-slate-400">({log.operator})</span></p>
+                    </div>
                   </div>
-                )}
-                <span className={`dean-status-badge ${item.status === 'active' ? 'dean-status-active' : item.status === 'busy' ? 'dean-status-busy' : 'dean-status-idle'}`}></span>
-              </div>
-              <p className="dean-academician-name">{item.name}</p>
-              <p className="dean-academician-role">{item.dept}</p>
-            </div>
-          ))}
+                );
+              })
+            ) : (
+              <div className="text-center py-6 text-xs text-slate-400">Henüz sistem günlüğü kaydı bulunmamaktadır.</div>
+            )}
+          </div>
+          <button className="dean-log-btn-more w-full mt-4 py-2 border border-slate-200 border-solid hover:bg-slate-50 rounded-xl text-[10px] font-bold text-slate-650 cursor-pointer bg-white transition-all" onClick={() => setIsLogsModalOpen(true)}>
+            Tüm Geçmişi Görüntüle
+          </button>
         </div>
       </div>
+
+      {/* Extracted Featured Academicians */}
+      <FeaturedAcademicians instructors={instructors} />
 
       {/* Footer Area */}
       <footer className="dean-footer">
@@ -289,11 +177,44 @@ export default function DeanOverview() {
         </div>
       </footer>
 
-      {/* Floating Action Button */}
-      <button className="dean-fab-emergency group">
-        <span className="material-symbols-outlined">campaign</span>
-        <span className="dean-fab-tooltip">Acil Durum Duyurusu</span>
-      </button>
+      {/* Tüm Geçmiş Sistem Günlükleri Modalı */}
+      {isLogsModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[80vh] border border-solid border-slate-100">
+            <div className="p-5 border-b border-solid border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <div>
+                <h3 className="font-black text-slate-800 text-sm flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-blue-900 text-base">history</span>
+                  Sistem Kritik Günlük Geçmişi
+                </h3>
+                <p className="text-[10px] text-slate-400 font-medium">Fakültede bugüne dek gerçekleşmiş tüm idari hareketlerin listesi</p>
+              </div>
+              <button 
+                onClick={() => setIsLogsModalOpen(false)}
+                className="w-8 h-8 rounded-full border border-solid border-slate-200 bg-white hover:bg-slate-50 cursor-pointer flex items-center justify-center text-slate-500 font-bold"
+              >
+                <span className="material-symbols-outlined text-sm">close</span>
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {systemLogs.map((log, idx) => (
+                <div key={log.id || idx} className="p-3 bg-slate-50 rounded-2xl border border-solid border-slate-100/60 flex justify-between items-start gap-4 text-xs">
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">{log.action}</span>
+                    <p className="font-bold text-slate-700 m-0">{log.details}</p>
+                    <span className="text-[9px] text-slate-400 block mt-1.5 font-bold">Gerçekleştiren: {log.operator}</span>
+                  </div>
+                  <span className="text-[9px] text-slate-400 shrink-0 font-bold">{log.timestamp}</span>
+                </div>
+              ))}
+              {systemLogs.length === 0 && (
+                <p className="text-center py-8 text-slate-400 text-xs italic">Kayıtlı sistem günlüğü bulunmamaktadır.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
-  )
+  );
 }

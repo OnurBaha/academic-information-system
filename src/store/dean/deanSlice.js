@@ -9,7 +9,8 @@ export const fetchDeanDashboardData = createAsyncThunk(
                 instructors, bulletins, users, courses, curriculum, 
                 deanOverview, studentAnalytics, courseAssignments,
                 studentRequests, termStatus, systemLogs, graduationApprovals,
-                documents, forumQuestions, liveStreams, schedules, academicEvents
+                documents, forumQuestions, liveStreams, schedules, academicEvents,
+                faculties, departments
             ] = await Promise.all([
                 apiFetch('/facultyWorkloads'),
                 apiFetch('/bulletins'),
@@ -27,13 +28,16 @@ export const fetchDeanDashboardData = createAsyncThunk(
                 apiFetch('/forumQuestions'),
                 apiFetch('/liveStreams'),
                 apiFetch('/schedules'),
-                apiFetch('/academicEvents')
+                apiFetch('/academicEvents'),
+                apiFetch('/faculties'),
+                apiFetch('/departments')
             ]);
             return { 
                 instructors, bulletins, users, courses, curriculum, 
                 deanOverview, studentAnalytics, courseAssignments,
                 studentRequests, termStatus, systemLogs, graduationApprovals,
-                documents, forumQuestions, liveStreams, schedules, academicEvents
+                documents, forumQuestions, liveStreams, schedules, academicEvents,
+                faculties, departments
             };
         } catch (error) {
             return rejectWithValue(error.message);
@@ -248,6 +252,64 @@ export const terminateLiveStreamAsync = createAsyncThunk(
     }
 );
 
+export const updateStudentAdvisorAsync = createAsyncThunk(
+    'dean/updateStudentAdvisorAsync',
+    async ({ id, advisorId }, { rejectWithValue }) => {
+        try {
+            return await apiFetch(`/users/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ advisorId })
+            });
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const addInstructorAsync = createAsyncThunk(
+    'dean/addInstructorAsync',
+    async (payload, { rejectWithValue }) => {
+        try {
+            return await apiFetch('/facultyWorkloads', {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: `fw-${Date.now()}`,
+                    ...payload
+                })
+            });
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const updateInstructorAsync = createAsyncThunk(
+    'dean/updateInstructorAsync',
+    async (payload, { rejectWithValue }) => {
+        try {
+            const { id, ...data } = payload;
+            return await apiFetch(`/facultyWorkloads/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify(data)
+            });
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const deleteInstructorAsync = createAsyncThunk(
+    'dean/deleteInstructorAsync',
+    async (id, { rejectWithValue }) => {
+        try {
+            await apiFetch(`/facultyWorkloads/${id}`, { method: 'DELETE' });
+            return id;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 export const addScheduleAsync = createAsyncThunk(
     'dean/addScheduleAsync',
     async (schedulePayload, { rejectWithValue }) => {
@@ -340,6 +402,8 @@ const deanSlice = createSlice({
         liveStreams: [],
         schedules: [],
         academicEvents: [],
+        faculties: [], // FAZ 2
+        departments: [], // FAZ 2
         activeSemester: '2026-2027 Güz Dönemi',
         status: 'idle',
         actionStatus: 'idle',
@@ -375,6 +439,8 @@ const deanSlice = createSlice({
                 state.liveStreams = action.payload.liveStreams || [];
                 state.schedules = action.payload.schedules || [];
                 state.academicEvents = action.payload.academicEvents || [];
+                state.faculties = action.payload.faculties || [];
+                state.departments = action.payload.departments || [];
             })
             .addCase(fetchDeanDashboardData.rejected, (state, action) => {
                 state.status = 'failed';
@@ -414,11 +480,27 @@ const deanSlice = createSlice({
                     state.users[index] = action.payload;
                 }
             })
-            .addCase(updateUserTuition.fulfilled, (state, action) => {
+            // updateStudentAdvisorAsync
+            .addCase(updateStudentAdvisorAsync.fulfilled, (state, action) => {
                 const index = state.users.findIndex(x => x.id === action.payload.id);
                 if (index !== -1) {
                     state.users[index] = action.payload;
                 }
+            })
+            // addInstructorAsync
+            .addCase(addInstructorAsync.fulfilled, (state, action) => {
+                state.instructors.push(action.payload);
+            })
+            // updateInstructorAsync
+            .addCase(updateInstructorAsync.fulfilled, (state, action) => {
+                const index = state.instructors.findIndex(i => i.id === action.payload.id);
+                if (index !== -1) {
+                    state.instructors[index] = action.payload;
+                }
+            })
+            // deleteInstructorAsync
+            .addCase(deleteInstructorAsync.fulfilled, (state, action) => {
+                state.instructors = state.instructors.filter(i => i.id !== action.payload);
             })
             .addCase(triggerEmergencyAlert.fulfilled, (state, action) => {
                 state.termStatus = action.payload;

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { logout } from '../../store/auth/authSlice'
 import { fetchStudentDocumentsAsync } from '../../store/student/studentSlice'
+import { updateProfileAsync } from '../../store/auth/authSlice'
 import { toast } from 'react-hot-toast'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
@@ -82,7 +83,7 @@ export default function Profile() {
   }, [documents])
 
   // İletişim bilgilerini güncelle
-  const handleUpdateInfo = (e) => {
+  const handleUpdateInfo = async (e) => {
     e.preventDefault()
     if (!phone) {
       toast.error('Lütfen telefon alanını boş bırakmayın.')
@@ -92,26 +93,49 @@ export default function Profile() {
     setIsSaving(true)
     setSaveStatus('saving')
 
-    setTimeout(() => {
-      setIsSaving(false)
+    try {
+      await dispatch(updateProfileAsync({
+        id: currentUser.id,
+        phone: phone
+      })).unwrap()
       setSaveStatus('success')
       toast.success('İletişim bilgileriniz başarıyla güncellendi!')
-
+    } catch (err) {
+      console.error(err)
+      setSaveStatus('idle')
+      toast.error('Bilgiler güncellenirken bir hata oluştu.')
+    } finally {
+      setIsSaving(false)
       // Butonu 2 saniye sonra normale döndür
       setTimeout(() => {
         setSaveStatus('idle')
       }, 2000)
-    }, 1000)
+    }
   }
 
   // Adres bilgilerini güncelle
-  const handleUpdateAddress = (e) => {
+  const handleUpdateAddress = async (e) => {
     e.preventDefault()
     if (!address.trim()) {
       toast.error('Lütfen adres alanını boş bırakmayın.')
       return
     }
-    toast.success('Adres bilgileriniz başarıyla güncellendi!')
+    // Adres içindeki şehri otomatik yakala
+    const parts = address.split(',')
+    if (parts.length > 1) {
+      setCity(parts[parts.length - 1].trim())
+    }
+    
+    try {
+      await dispatch(updateProfileAsync({
+        id: currentUser.id,
+        address: address
+      })).unwrap()
+      toast.success('Adres bilgileriniz başarıyla güncellendi!')
+    } catch (err) {
+      console.error(err)
+      toast.error('Adres güncellenirken bir hata oluştu.')
+    }
   }
 
   // Sertifika dosya seçimi tetikleyicisi
@@ -167,7 +191,7 @@ export default function Profile() {
       doc.setFontSize(10)
       doc.setTextColor(100, 116, 139)
       doc.text(`Ogrenci Ad Soyad: ${currentUser?.name || 'Ogrenci'}`, 14, 26)
-      doc.text(`Ogrenci No: ${currentUser?.id || '2021007'}`, 14, 32)
+      doc.text(`Ogrenci No: ${currentUser?.id || '20211024007'}`, 14, 32)
       doc.text(`Tarih: ${new Date().toLocaleDateString('tr-TR')}`, 14, 38)
       
       const bodyData = certificatesList.map(c => [

@@ -28,6 +28,7 @@ export default function TopAppBar() {
   const profileRef = useRef(null)
 
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
+  const [bulletins, setBulletins] = useState([])
 
   // Okunmuş duyuru ID'lerini localStorage'dan yükle
   const [readIds, setReadIds] = useState(() => {
@@ -66,6 +67,10 @@ export default function TopAppBar() {
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchAnnouncementsAsync())
+      fetch('http://localhost:3001/bulletins')
+        .then(res => res.json())
+        .then(data => setBulletins(data))
+        .catch(err => console.error(err))
     }
   }, [dispatch, currentUser])
 
@@ -96,8 +101,22 @@ export default function TopAppBar() {
   const userId = role === 'student' ? (currentUser?.studentNumber || currentUser?.id || '—') : null
 
   // Hem API hem de teacher store duyurularını birleştir, ID'ye göre tekrarları engelle
+  // Hem API, teacher hem de dekan bültenlerini birleştir
   const allAnnouncements = useMemo(() => {
-    const combined = [...(apiAnnouncements || []), ...(teacherAnnouncements || [])]
+    const mappedBulletins = bulletins.map(b => ({
+      id: b.id,
+      title: b.title,
+      body: b.content,
+      date: b.date,
+      target: b.target || 'global',
+      pinned: b.priority === 'ACİL'
+    }));
+
+    const combined = [
+      ...(apiAnnouncements || []), 
+      ...(teacherAnnouncements || []),
+      ...mappedBulletins
+    ]
     const seen = new Set()
     return combined.filter(ann => {
       const key = String(ann.id)
@@ -105,7 +124,7 @@ export default function TopAppBar() {
       seen.add(key)
       return true
     })
-  }, [apiAnnouncements, teacherAnnouncements])
+  }, [apiAnnouncements, teacherAnnouncements, bulletins])
 
   // Kullanıcının rolüne göre duyuruları filtrele
   const filteredAnnouncements = useMemo(() => {
@@ -151,7 +170,19 @@ export default function TopAppBar() {
     setSelectedAnn(null)
   }
 
-  const { termStatus } = useSelector((state) => state.dean || {})
+  const [termStatus, setTermStatus] = useState(null)
+
+  useEffect(() => {
+    const fetchTermStatus = () => {
+      fetch('http://localhost:3001/termStatus')
+        .then(res => res.json())
+        .then(data => setTermStatus(data))
+        .catch(err => console.error('Error fetching termStatus:', err))
+    }
+    fetchTermStatus()
+    const interval = setInterval(fetchTermStatus, 3000) // Poll every 3 seconds for real-time responsiveness
+    return () => clearInterval(interval)
+  }, [])
 
   const handleLogout = () => {
     dispatch(logout())
