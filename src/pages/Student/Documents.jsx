@@ -5,6 +5,8 @@ import {
   requestOfficialDocumentAsync
 } from '../../store/student/studentSlice'
 import { toast } from 'react-hot-toast'
+import { jsPDF } from 'jspdf'
+import { defaultCertificates } from '../../store/student/studentData'
 
 export default function Documents() {
   const dispatch = useDispatch()
@@ -23,19 +25,81 @@ export default function Documents() {
 
   // PDF İndirme Fonksiyonu (Gerçek indirme simülasyonu)
   const handleDownloadPdf = (title) => {
-    const content = `%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << >> /Contents 4 0 R >>\nendobj\n4 0 obj\n<< /Length 50 >>\nstream\nBT /F1 24 Tf 100 700 Td (${title}) Tj ET\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f\n0000000009 00000 n\n0000000056 00000 n\n0000000111 00000 n\n0000000212 00000 n\ntrailer\n<< /Size 5 >>\nstartxref\n311\n%%EOF`;
-    
-    const blob = new Blob([content], { type: 'application/pdf' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `${title.replace(/\s+/g, '_')}_Belgesi.pdf`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-    
-    toast.success(`${title} belgesi başarıyla indirildi!`)
+    try {
+      const doc = new jsPDF()
+      
+      // Çerçeve (Resmi Görünüm)
+      doc.setDrawColor(30, 58, 138)
+      doc.setLineWidth(1)
+      doc.rect(10, 10, 190, 277)
+      
+      doc.setFont('Helvetica', 'bold')
+      doc.setFontSize(16)
+      doc.setTextColor(30, 41, 59)
+      doc.text('T.C. ISTANBUL SOFTITO UNIVERSITESI', 105, 30, { align: 'center' })
+      doc.setFontSize(11)
+      doc.text('OGRENCI ISLERI DAIRE BASKANLIGI', 105, 38, { align: 'center' })
+      
+      doc.setDrawColor(226, 232, 240)
+      doc.line(20, 45, 190, 45)
+      
+      doc.setFont('Helvetica', 'bold')
+      doc.setFontSize(13)
+      doc.text(title.toUpperCase(), 105, 60, { align: 'center' })
+      
+      doc.setFont('Helvetica', 'normal')
+      doc.setFontSize(10)
+      doc.setTextColor(51, 65, 85)
+      
+      // Belge içeriği
+      let contentText = ''
+      if (title.includes('Ogrenci') || title.includes('Öğrenci')) {
+        contentText = `Yukarida kimlik bilgileri yer alan ${currentUser?.name || 'Ogrenci'} isimli ogrencinin, Universitemiz Bilgisayar Muhendisligi programinda kayitli ve aktif ogrencimiz oldugunu gosterir resmi ogrenci belgesidir.\n\nBu belge ogrencinin talebi uzerine ilgili makama sunulmak uzere duzenlenmistir.`
+      } else if (title.includes('Transkript') || title.includes('Not')) {
+        contentText = `Yukarida kimlik bilgileri yer alan ${currentUser?.name || 'Ogrenci'} isimli ogrencinin, Universitemiz bunyesinde aldigi tum dersleri ve not dokumunu iceren resmi transkript belgesidir. Ogrencinin Genel Akademik Not Ortalamasi (GANO) 3.42'dir.\n\nBu belge ogrencinin talebi uzerine ilgili makama sunulmak uzere duzenlenmistir.`
+      } else {
+        contentText = `Yukarida kimlik bilgileri yer alan ${currentUser?.name || 'Ogrenci'} isimli ogrencimizin, universitemiz resmi kayitlarina gore hazirlanmis resmi ${title} belgesidir.\n\nBu belge ilgili makama sunulmak uzere ogrencinin talebi dogrultusunda duzenlenmistir.`
+      }
+      
+      // Öğrenci Detayları Kutusu
+      doc.rect(20, 75, 170, 45)
+      doc.setFont('Helvetica', 'bold')
+      doc.text('Ogrenci No:', 25, 85)
+      doc.text('Ad Soyad:', 25, 95)
+      doc.text('T.C. Kimlik No:', 25, 105)
+      doc.text('Fakulte / Bolum:', 25, 115)
+      
+      doc.setFont('Helvetica', 'normal')
+      doc.text(currentUser?.id || '20211024007', 70, 85)
+      doc.text(currentUser?.name || 'Ogrenci', 70, 95)
+      doc.text('102*********', 70, 105)
+      doc.text('Muhendislik Fakultesi / Bilgisayar Muhendisligi', 70, 115)
+      
+      // İçerik Metni
+      const splitText = doc.splitTextToSize(contentText, 170)
+      doc.text(splitText, 20, 140)
+      
+      // Belge Doğrulama Kodu
+      doc.setFont('Helvetica', 'bold')
+      doc.setFontSize(9)
+      doc.text('Belge Dogrulama Kodu: ' + Math.random().toString(36).substring(2, 10).toUpperCase(), 20, 200)
+      doc.setFont('Helvetica', 'normal')
+      doc.setFontSize(8)
+      doc.text('Bu belge elektronik imzali olup, yukaridaki dogrulama kodu ile sorgulanabilir.', 20, 205)
+      
+      // İmza Yetkilileri
+      doc.setFont('Helvetica', 'bold')
+      doc.setFontSize(10)
+      doc.text('Ogrenci Isleri Daire Baskani', 130, 230)
+      doc.setFont('Helvetica', 'normal')
+      doc.text('Elektronik E-Imza', 130, 240)
+      
+      doc.save(`${title.replace(/\s+/g, '_')}_Belgesi.pdf`)
+      toast.success(`${title} belgesi başarıyla indirildi!`)
+    } catch (err) {
+      console.error(err)
+      toast.error('Belge PDF olarak oluşturulurken bir hata meydana geldi.')
+    }
   }
 
   // Talep Gönderimi Fonksiyonu
@@ -64,12 +128,9 @@ export default function Documents() {
     }
   }
 
-  const documentRequests = (documents || []).filter(d => d.type === 'document' || !d.type)
+  const documentRequests = (documents || []).filter(d => (d.type === 'document' || !d.type) && d.title !== 'Askerlik Tecil Belgesi')
   
-  const defaultCertificates = [
-    { id: 'cert-1', name: 'React Developer Certificate', issuer: 'Softito Academy', date: '15.01.2026' },
-    { id: 'cert-2', name: 'Full-Stack Web Development', issuer: 'AIS Certification', date: '10.03.2026' }
-  ]
+  // defaultCertificates → src/data/studentData.js'ten import edilir
   const certificatesList = (documents || []).filter(d => d.type === 'certificate')
   const certificates = certificatesList.length > 0 ? certificatesList : defaultCertificates
 
@@ -98,13 +159,13 @@ export default function Documents() {
     <section className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 text-slate-800 dark:text-white">
       
       {/* Üst Bilgi Başlığı */}
-      <div className="relative overflow-hidden rounded-2xl bg-blue-900 px-8 py-10 text-white shadow-xl flex items-center justify-between">
+      <div className="student-hero-banner">
         <div className="absolute right-0 top-0 w-1/3 h-full opacity-10 pointer-events-none">
           <span className="material-symbols-outlined text-[200px] translate-x-12 -translate-y-6">history_edu</span>
         </div>
         <div className="relative z-10 space-y-2">
-          <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight">Resmi Belge İşlemleri</h3>
-          <p className="text-sm md:text-base text-blue-100 max-w-2xl font-medium">
+          <h3 className="student-page-title !text-white text-2xl md:text-3xl">Resmi Belge İşlemleri</h3>
+          <p className="student-page-subtitle !text-blue-100 max-w-2xl font-medium">
             Öğrenciliğinize dair ihtiyaç duyduğunuz tüm resmi belgelere buradan ulaşabilir, dijital veya e-imzalı taleplerinizi anında oluşturup indirebilirsiniz.
           </p>
         </div>
@@ -264,7 +325,6 @@ export default function Documents() {
                   <th className="px-6 py-3.5">Talep No</th>
                   <th className="px-6 py-3.5">Belge Tipi</th>
                   <th className="px-6 py-3.5">Tarih</th>
-                  <th className="px-6 py-3.5">Doğrulama</th>
                   <th className="px-6 py-3.5 text-right">İşlem</th>
                 </tr>
               </thead>
@@ -282,11 +342,6 @@ export default function Documents() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-slate-500 dark:text-slate-400 font-semibold">{req.requestDate}</td>
-                      <td className="px-6 py-4">
-                        <span className="material-symbols-outlined text-slate-500 dark:text-slate-400 cursor-help text-lg" title="Karekod Doğrulama Barkodu Mevcut">
-                          qr_code_2
-                        </span>
-                      </td>
                       <td className="px-6 py-4 text-right">
                         <button
                           onClick={() => handleDownloadPdf(req.title)}
@@ -320,31 +375,27 @@ export default function Documents() {
 
       </div>
 
-      {/* Bilgi Kartları ve Sertifikalar 3'lü Bento Alanı */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-2">
+      {/* Bilgi Kartları ve Sertifikalar 2'li Bento Alanı */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
         
-        {/* Kart 1: Dijital Belge Doğrulama */}
-        <div className="flex gap-4 p-5 rounded-2xl border border-blue-200 dark:border-blue-900/40 bg-blue-50/30 dark:bg-blue-950/10">
-          <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-3xl shrink-0">info</span>
-          <div className="space-y-1.5">
-            <h5 className="text-sm font-extrabold text-blue-900 dark:text-blue-400">Dijital Belge Doğrulama</h5>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-semibold">
-              Sistemimiz üzerinden oluşturulan belgeler karekod (QR) ve doğrulama kodu içerir. Üçüncü kurumlar <strong>SoftIto Doğrulama Portalı</strong> üzerinden belgenin geçerliliğini teyit edebilirler.
-            </p>
-          </div>
-        </div>
-
-        {/* Kart 2: Yardım mı gerekiyor? */}
-        <div className="flex gap-4 p-5 rounded-2xl border border-slate-200/60 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/40">
-          <span className="material-symbols-outlined text-slate-400 text-3xl shrink-0">contact_support</span>
-          <div className="space-y-1.5">
+        {/* Kart 1: Yardım mı gerekiyor? */}
+        <div className="flex flex-col p-5 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800/60 shadow-sm">
+          <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800/60 pb-2.5 mb-3 shrink-0">
+            <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl font-bold">contact_support</span>
             <h5 className="text-sm font-extrabold text-slate-800 dark:text-white">Yardım mı gerekiyor?</h5>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-semibold mb-2">
-              Talep ettiğiniz belge listede yoksa veya bir sorun yaşıyorsanız öğrenci işleri ile iletişime geçebilirsiniz.
-            </p>
-            <a className="inline-block text-blue-600 dark:text-blue-400 font-extrabold text-[11px] hover:underline" href="#">
-              Öğrenci İşleri Destek Masası →
-            </a>
+          </div>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed font-semibold mb-3">
+            Talep ettiğiniz belge listede yoksa veya bir sorun yaşıyorsanız öğrenci işleri ile iletişime geçebilirsiniz.
+          </p>
+          <div className="text-[11px] text-slate-700 dark:text-slate-300 font-bold bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/50 flex flex-col gap-1 mt-auto">
+            <div className="flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-xs text-blue-600 dark:text-blue-400">call</span>
+              <span>+90 (212) 444 5060</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-xs text-blue-600 dark:text-blue-400">mail</span>
+              <span>oidb@softito.edu.tr</span>
+            </div>
           </div>
         </div>
 

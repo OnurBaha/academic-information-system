@@ -633,6 +633,18 @@ body {
   @apply absolute right-14 bg-blue-900 text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap;
 }
 
+.student-page-title {
+  @apply text-xl font-extrabold text-slate-800 dark:text-white tracking-tight;
+}
+
+.student-page-subtitle {
+  @apply text-xs text-slate-400 dark:text-slate-500 mt-1 font-semibold;
+}
+
+.student-hero-banner {
+  @apply bg-gradient-to-r from-blue-900 via-slate-800 to-slate-900 rounded-2xl p-6 md:p-8 text-white shadow-md border border-slate-700/30 relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4;
+}
+
 .grades-page-canvas {
   @apply p-6 max-w-[1440px] mx-auto w-full flex flex-col gap-6;
 }
@@ -642,11 +654,11 @@ body {
 }
 
 .grades-page-title {
-  @apply text-2xl font-bold text-slate-800;
+  @apply text-xl font-extrabold text-slate-800 dark:text-white tracking-tight;
 }
 
 .grades-page-subtitle {
-  @apply text-slate-400 text-sm mt-1;
+  @apply text-xs text-slate-400 dark:text-slate-500 mt-1 font-semibold;
 }
 
 .grades-select-container {
@@ -710,11 +722,11 @@ body {
 }
 
 .grades-card-label {
-  @apply text-xs font-semibold text-slate-400 uppercase tracking-wider;
+  @apply text-[10px] font-bold text-slate-400 uppercase tracking-wider;
 }
 
 .grades-card-value {
-  @apply text-2xl font-bold text-slate-800 mt-1;
+  @apply text-xl font-bold text-slate-800 mt-1;
 }
 
 .grades-main-layout {
@@ -734,7 +746,7 @@ body {
 }
 
 .grades-table-title {
-  @apply text-base font-bold text-slate-800;
+  @apply text-sm font-bold text-slate-800;
 }
 
 .grades-btn-download {
@@ -746,7 +758,7 @@ body {
 }
 
 .grades-data-table {
-  @apply w-full border-collapse text-left;
+  @apply w-full border-collapse text-left text-xs;
 }
 
 .grades-th-left {
@@ -766,15 +778,15 @@ body {
 }
 
 .grades-course-code {
-  @apply text-sm font-bold text-slate-800;
+  @apply text-xs font-bold text-slate-800;
 }
 
 .grades-course-inst {
-  @apply text-xs text-slate-400 mt-0.5;
+  @apply text-[10px] text-slate-400 mt-0.5;
 }
 
 .grades-td-score {
-  @apply px-4 py-4 text-sm font-medium text-slate-600 text-center;
+  @apply px-4 py-4 text-xs font-medium text-slate-600 text-center;
 }
 
 .grades-td-badge {
@@ -833,11 +845,11 @@ body {
 }
 
 .grades-details-title {
-  @apply text-base font-bold text-slate-800;
+  @apply text-sm font-bold text-slate-800;
 }
 
 .grades-details-desc {
-  @apply text-slate-400 text-sm mt-1;
+  @apply text-slate-400 text-xs mt-1 leading-relaxed;
 }
 
 .grades-details-chips {
@@ -845,11 +857,11 @@ body {
 }
 
 .grades-chip-green {
-  @apply flex items-center gap-1.5 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full;
+  @apply flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full;
 }
 
 .grades-chip-gray {
-  @apply flex items-center gap-1.5 text-xs font-semibold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full;
+  @apply flex items-center gap-1.5 text-[10px] font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-full;
 }
 
 .grades-chip-dot {
@@ -973,11 +985,11 @@ body {
 }
 
 .reg-page-title {
-  @apply text-2xl font-bold text-slate-800;
+  @apply text-xl font-extrabold text-slate-800 dark:text-white tracking-tight;
 }
 
 .reg-page-subtitle {
-  @apply text-slate-400 text-sm mt-1;
+  @apply text-xs text-slate-400 dark:text-slate-500 mt-1 font-semibold;
 }
 
 .reg-header-actions {
@@ -997,7 +1009,7 @@ body {
 }
 
 .reg-section-title {
-  @apply text-base font-bold text-slate-800 mb-1;
+  @apply text-sm font-bold text-slate-800 mb-1;
 }
 
 .reg-courses-list {
@@ -1017,7 +1029,7 @@ body {
 }
 
 .reg-course-name {
-  @apply text-sm font-bold text-slate-800;
+  @apply text-xs font-bold text-slate-800;
 }
 
 .reg-course-tag {
@@ -1045,7 +1057,7 @@ body {
 }
 
 .reg-cart-title {
-  @apply text-base font-bold text-slate-800;
+  @apply text-sm font-bold text-slate-800;
 }
 
 .reg-cart-progress-box {

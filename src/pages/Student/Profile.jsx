@@ -2,59 +2,11 @@ import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchStudentDocumentsAsync } from '../../store/student/studentSlice'
 import { toast } from 'react-hot-toast'
+import { jsPDF } from 'jspdf'
+import autoTable from 'jspdf-autotable'
+import { academicBadges, fallbackCertificates } from '../../store/student/studentData'
 
-// Statik Rozetler
-const academicBadges = [
-  {
-    title: "Üstün Başarı",
-    description: "Dönem Ortalaması 3.90+",
-    icon: "auto_awesome",
-    colorClass: "bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400"
-  },
-  {
-    title: "Aktif Katılımcı",
-    description: "15+ Kulüp Etkinliği",
-    icon: "groups",
-    colorClass: "bg-indigo-500/10 border-indigo-500/20 text-indigo-600 dark:text-indigo-400"
-  },
-  {
-    title: "Kod Ustası",
-    description: "GitHub Final Projesi",
-    icon: "code",
-    colorClass: "bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-  }
-]
-
-// Fallback Sertifikalar
-const fallbackCertificates = [
-  {
-    id: 1,
-    name: "Full-Stack Developer Başarı Sertifikası",
-    issuer: "SoftIto Akademi",
-    date: "12 Eylül 2023",
-    licenseId: "SO-2023-9941-XF",
-    icon: "workspace_premium",
-    bgColor: "bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400"
-  },
-  {
-    id: 2,
-    name: "Veri Yapıları ve Algoritmalar",
-    issuer: "SoftIto Akademi",
-    date: "05 Haziran 2023",
-    licenseId: "SO-2023-8822-DS",
-    icon: "terminal",
-    bgColor: "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400"
-  },
-  {
-    id: 3,
-    name: "Siber Güvenlik Temelleri",
-    issuer: "SoftIto Akademi",
-    date: "18 Mart 2023",
-    licenseId: "SO-2023-1120-SC",
-    icon: "security",
-    bgColor: "bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400"
-  }
-]
+// academicBadges ve fallbackCertificates → src/data/studentData.js'ten import edilir
 
 export default function Profile() {
   const dispatch = useDispatch()
@@ -173,6 +125,63 @@ export default function Profile() {
   const handleRemoveCert = (certId) => {
     setCertificatesList(prev => prev.filter(c => c.id !== certId))
     toast.success('Sertifika kaldırıldı.')
+  }
+
+  const downloadCertificatesPDF = () => {
+    try {
+      const doc = new jsPDF()
+      
+      doc.setFont('Helvetica', 'bold')
+      doc.setFontSize(16)
+      doc.setTextColor(30, 41, 59)
+      doc.text('KAZANILAN SERTIFIKALAR RAPORU', 14, 18)
+      
+      doc.setFont('Helvetica', 'normal')
+      doc.setFontSize(10)
+      doc.setTextColor(100, 116, 139)
+      doc.text(`Ogrenci Ad Soyad: ${currentUser?.name || 'Ogrenci'}`, 14, 26)
+      doc.text(`Ogrenci No: ${currentUser?.id || '20211024007'}`, 14, 32)
+      doc.text(`Tarih: ${new Date().toLocaleDateString('tr-TR')}`, 14, 38)
+      
+      const bodyData = certificatesList.map(c => [
+        c.name,
+        c.issuer || 'SoftIto Akademi',
+        c.date,
+        c.licenseId
+      ])
+
+      autoTable(doc, {
+        startY: 44,
+        head: [['Sertifika Adi', 'Veren Kurum', 'Verilis Tarihi', 'Lisans / Belge ID']],
+        body: bodyData,
+        styles: {
+          fontSize: 9,
+          cellPadding: 4,
+          lineColor: [226, 232, 240],
+          lineWidth: 0.3,
+          font: 'Helvetica'
+        },
+        headStyles: {
+          fillColor: [30, 58, 138],
+          textColor: 255,
+          fontStyle: 'bold'
+        },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        columnStyles: {
+          0: { cellWidth: 70 },
+          1: { cellWidth: 40 },
+          2: { cellWidth: 35 },
+          3: { cellWidth: 40 }
+        },
+        margin: { left: 14, right: 14 }
+      })
+
+      doc.save(`Sertifikalar_${currentUser?.id || 'Ogrenci'}.pdf`)
+      toast.success('Sertifikalar listesi başarıyla indirildi!')
+    } catch (err) {
+      console.error(err)
+      toast.error('Sertifikalar PDF oluşturulurken bir hata oluştu!')
+    }
   }
 
   return (
@@ -345,7 +354,7 @@ export default function Profile() {
               <h3 className="text-base font-extrabold text-blue-900 dark:text-blue-400">Kazanılan Sertifikalar</h3>
               
               <button
-                onClick={() => toast.success('Tüm sertifikalarınız PDF olarak indiriliyor...')}
+                onClick={downloadCertificatesPDF}
                 className="px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-bold text-[10px] rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
               >
                 <span className="material-symbols-outlined text-sm">download</span>

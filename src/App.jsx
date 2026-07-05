@@ -7,7 +7,8 @@ import Login from './pages/Auth/Login'
 
 import StudentDashboard from './pages/Student/Dashboard'
 import CourseReg        from './pages/Student/Courses'
-import StudentGrades    from './pages/Student/Schedule'
+import StudentGrades    from './pages/Student/Grades'
+import StudentAttendance from './pages/Student/Attendance'
 import HomeworkSubmit    from './pages/Student/HomeworkSubmit'
 import Documents        from './pages/Student/Documents'
 import Profile          from './pages/Student/Profile'
@@ -41,7 +42,7 @@ export default function App() {
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/courses"   element={<CourseReg />} />
           <Route path="/student/grades"    element={<StudentGrades />} />
-          <Route path="/student/schedule"  element={<StudentGrades />} />
+          <Route path="/student/schedule"  element={<StudentAttendance />} />
           <Route path="/student/homework"  element={<HomeworkSubmit />} />
           <Route path="/student/documents" element={<Documents />} />
           <Route path="/student/profile"   element={<Profile />} />

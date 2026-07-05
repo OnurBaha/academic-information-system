@@ -75,7 +75,7 @@
       "departmentId": "d1",
       "studentNumber": "20211024100",
       "classLevel": 3,
-      "gpa": 3.52,
+      "gpa": 3.42,
       "completedEcts": 180,
       "totalEcts": 240,
       "attendanceRate": 92,
@@ -163,7 +163,7 @@
       "departmentId": "d1",
       "studentNumber": "20211024006",
       "classLevel": 3,
-      "gpa": 3.20,
+      "gpa": 3.2,
       "phone": "+90 555 444 7788",
       "address": "Avcılar, İstanbul"
     },
@@ -180,6 +180,45 @@
       "gpa": 2.45,
       "phone": "+90 555 555 8899",
       "address": "Beylikdüzü, İstanbul"
+    },
+    {
+      "id": "u20",
+      "username": "teacher.selcuk",
+      "email": "s.yilmaz@university.edu.tr",
+      "password": "password123",
+      "name": "Prof. Dr. Selçuk Yılmaz",
+      "role": "teacher",
+      "departmentId": "d1",
+      "phone": "+90 555 888 9911",
+      "address": "Bebek, İstanbul",
+      "room": "Mühendislik Fakültesi, A-Blok, A-302",
+      "advisorSlots": [
+        {
+          "id": "slot-1",
+          "time": "Pazartesi 10:00 - 10:30",
+          "isBooked": true
+        },
+        {
+          "id": "slot-2",
+          "time": "Pazartesi 10:30 - 11:00",
+          "isBooked": false
+        },
+        {
+          "id": "slot-3",
+          "time": "Çarşamba 14:00 - 14:30",
+          "isBooked": false
+        },
+        {
+          "id": "slot-4",
+          "time": "Çarşamba 14:30 - 15:00",
+          "isBooked": true
+        },
+        {
+          "id": "slot-5",
+          "time": "Cuma 15:00 - 15:30",
+          "isBooked": false
+        }
+      ]
     }
   ],
   "faculties": [
@@ -210,77 +249,108 @@
   ],
   "courses": [
     {
-      "id": "SOFT-302",
-      "name": "React Redux Advanced",
+      "id": "SE-306",
+      "code": "SE 306",
+      "name": "Software Engineering II",
       "category": "Yazılım",
-      "instructor": "Dr. Elif Soylu",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
       "akts": 5,
       "capacity": 40,
-      "enrolled": 24,
-      "type": "Zorunlu",
-      "isFailed": false
-    },
-    {
-      "id": "SOFT-304",
-      "name": "Web Frameworks & APIs",
-      "category": "Yazılım",
-      "instructor": "Dr. Elif Soylu",
-      "akts": 4,
-      "capacity": 30,
-      "enrolled": 15,
-      "type": "Zorunlu",
-      "isFailed": false
-    },
-    {
-      "id": "DATA-204",
-      "name": "Big Data Analytics",
-      "category": "Veri Bilimi",
-      "instructor": "Doç. Dr. Mert Akın",
-      "akts": 4,
-      "capacity": 35,
       "enrolled": 12,
       "type": "Zorunlu",
       "isFailed": false
     },
     {
-      "id": "ENG-401",
-      "name": "Academic English III",
-      "category": "Dil",
-      "instructor": "Lektör Canan Kaya",
-      "akts": 2,
-      "capacity": 50,
-      "enrolled": 41,
+      "id": "SE-308",
+      "code": "SE 308",
+      "name": "Web Programming II",
+      "category": "Yazılım",
+      "instructor": "Dr. Elif Soylu",
+      "akts": 4,
+      "capacity": 35,
+      "enrolled": 18,
       "type": "Zorunlu",
       "isFailed": false
     },
     {
-      "id": "MATH-102",
+      "id": "CSE-304",
+      "code": "CSE 304",
+      "name": "Database Management Systems II",
+      "category": "Veri Bilimi",
+      "instructor": "Doç. Dr. Mert Akın",
+      "akts": 4,
+      "capacity": 40,
+      "enrolled": 15,
+      "type": "Zorunlu",
+      "isFailed": false
+    },
+    {
+      "id": "CSE-306",
+      "code": "CSE 306",
+      "name": "Computer Networks II",
+      "category": "Bilgisayar",
+      "instructor": "Dr. Cem Akın",
+      "akts": 3,
+      "capacity": 30,
+      "enrolled": 8,
+      "type": "Zorunlu",
+      "isFailed": false
+    },
+    {
+      "id": "ML-306",
+      "code": "ML 306",
+      "name": "Machine Learning II",
+      "category": "Matematik",
+      "instructor": "Prof. Dr. Kerem Soylu",
+      "akts": 3,
+      "capacity": 25,
+      "enrolled": 10,
+      "type": "Zorunlu",
+      "isFailed": false
+    },
+    {
+      "id": "CSE-211",
+      "code": "CSE 211",
       "name": "Discrete Mathematics",
       "category": "Matematik",
-      "instructor": "Prof. Mert Can",
-      "akts": 4,
-      "capacity": 45,
-      "enrolled": 39,
+      "instructor": "Doç. Dr. Mert Akın",
+      "akts": 2,
+      "capacity": 50,
+      "enrolled": 45,
       "type": "Zorunlu",
       "isFailed": true
     },
     {
-      "id": "PHY-102",
+      "id": "PHYS-102",
+      "code": "PHYS 102",
       "name": "General Physics II",
       "category": "Mühendislik",
-      "instructor": "Dr. Öğr. Üyesi Cem Akın",
-      "akts": 4,
-      "capacity": 40,
-      "enrolled": 36,
+      "instructor": "Dr. Cem Akın",
+      "akts": 2,
+      "capacity": 50,
+      "enrolled": 48,
       "type": "Zorunlu",
       "isFailed": true
+    },
+    {
+      "id": "ENG-302",
+      "code": "ENG 302",
+      "name": "Academic English II",
+      "category": "Dil",
+      "instructor": "Lektör Canan Kaya",
+      "akts": 2,
+      "capacity": 60,
+      "enrolled": 42,
+      "type": "Zorunlu",
+      "isFailed": false
     },
     {
       "id": "SEC-101",
+      "code": "SEC 101",
       "name": "Fotoğrafçılık",
       "category": "Sosyal",
       "instructor": "Uzm. Can Yılmaz",
-      "akts": 2,
+      "akts": 3,
       "capacity": 30,
       "enrolled": 13,
       "type": "Seçmeli",
@@ -288,6 +358,7 @@
     },
     {
       "id": "SEC-102",
+      "code": "SEC 102",
       "name": "Satranç",
       "category": "Sosyal",
       "instructor": "Doç. Hakan Demir",
@@ -299,10 +370,11 @@
     },
     {
       "id": "SEC-103",
+      "code": "SEC 103",
       "name": "Diksiyon ve Hitabet",
       "category": "Sosyal",
       "instructor": "Öğr. Gör. Meltem Aydın",
-      "akts": 2,
+      "akts": 3,
       "capacity": 25,
       "enrolled": 15,
       "type": "Seçmeli",
@@ -310,23 +382,13 @@
     },
     {
       "id": "SEC-104",
+      "code": "SEC 104",
       "name": "Yaratıcı Yazarlık",
       "category": "Sosyal",
       "instructor": "Uzm. Deniz Aslan",
-      "akts": 2,
+      "akts": 4,
       "capacity": 20,
       "enrolled": 6,
-      "type": "Seçmeli",
-      "isFailed": false
-    },
-    {
-      "id": "SEC-105",
-      "name": "Sunum Teknikleri",
-      "category": "Sosyal",
-      "instructor": "Öğr. Gör. Canan Bulut",
-      "akts": 2,
-      "capacity": 30,
-      "enrolled": 14,
       "type": "Seçmeli",
       "isFailed": false
     }
@@ -379,7 +441,7 @@
       "studentId": "u7",
       "title": "Öğrenci Belgesi",
       "desc": "E-imzalı resmi öğrenci belgesi",
-      "requestDate": "02.07.2024",
+      "requestDate": "02.06.2026",
       "status": "ready",
       "verificationCode": "QR-942851"
     },
@@ -388,7 +450,7 @@
       "studentId": "u7",
       "title": "Transkript",
       "desc": "Güncel dönem transkripti",
-      "requestDate": "28.06.2024",
+      "requestDate": "28.05.2026",
       "status": "pending",
       "verificationCode": "QR-710385"
     },
@@ -397,18 +459,31 @@
       "studentId": "u7",
       "title": "Staj Belgesi",
       "desc": "Yaz stajı onay belgesi",
-      "requestDate": "15.06.2024",
+      "requestDate": "15.05.2026",
       "status": "ready",
       "verificationCode": "QR-638210"
     },
     {
-      "id": "doc-req-4",
+      "id": "EtQ0n-yPcYM",
       "studentId": "u7",
-      "title": "Askerlik Tecil Belgesi",
-      "desc": "Askerlik tecil işlemleri için belge",
-      "requestDate": "10.06.2024",
+      "title": "Transkript",
+      "description": "E-İmzalı, Türkçe",
+      "type": "document",
+      "requestDate": "05.07.2026",
       "status": "pending",
-      "verificationCode": "QR-104958"
+      "verificationCode": "QR-742694"
+    },
+    {
+      "id": "vKmJCrRvw0c",
+      "studentId": "u7",
+      "title": "Özel İzin Dilekçesi",
+      "description": "s",
+      "type": "document",
+      "status": "pending",
+      "fileName": "Transkript_Belgesi.pdf",
+      "studentName": "Ahmet Yılmaz",
+      "requestDate": "05.07.2026",
+      "verificationCode": "QR-265122"
     }
   ],
   "facultyWorkloads": [
@@ -460,15 +535,15 @@
       "title": "Kampüs Giriş Güvenlik Güncellemesi",
       "content": "Yeni kartlı geçiş sistemi yarından itibaren devreye alınacaktır.",
       "target": "Sistem",
-      "date": "12.10.2023"
+      "date": "15.02.2026"
     },
     {
       "id": "b-2",
       "priority": "Normal",
-      "title": "Güz Dönemi Akademik Takvim Revizyonu",
+      "title": "Bahar Dönemi Akademik Takvim Revizyonu",
       "content": "Final sınav tarihleri 1 hafta öne çekilmiştir, detaylı takvim ekte yer almaktadır.",
       "target": "Öğrenci, Eğitmen",
-      "date": "08.10.2023"
+      "date": "18.02.2026"
     }
   ],
   "announcements": [
@@ -476,16 +551,16 @@
       "id": "ann-1",
       "pinned": true,
       "title": "Vize Sınavı Tarihleri Açıklandı",
-      "body": "Vize sınavları 15-22 Kasım tarihleri arasında yapılacaktır. Öğrencilerin derse devamını kontrol ediniz.",
-      "date": "01.07.2024",
+      "body": "Vize sınavları 13-19 Nisan tarihleri arasında yapılacaktır. Öğrencilerin derse devamını kontrol ediniz.",
+      "date": "01.04.2026",
       "target": "global"
     },
     {
       "id": "ann-2",
       "pinned": false,
       "title": "Ödev 4 Teslim Tarihi Uzatıldı",
-      "body": "React Redux ödevinin teslim tarihi 10 Temmuz olarak güncellenmiştir.",
-      "date": "30.06.2024",
+      "body": "React Redux ödevinin teslim tarihi 15 Haziran olarak güncellenmiştir.",
+      "date": "25.05.2026",
       "target": "class",
       "courseId": "c1"
     },
@@ -493,8 +568,8 @@
       "id": "ann-3",
       "pinned": false,
       "title": "Staj Başvuruları Başladı",
-      "body": "Yaz stajı başvuruları için kariyer portalını ziyaret ediniz.",
-      "date": "25.06.2024",
+      "body": "Bahar dönemi staj başvuruları için kariyer portalını ziyaret ediniz.",
+      "date": "01.06.2026",
       "target": "global"
     }
   ],
@@ -502,81 +577,207 @@
     {
       "id": "g1",
       "studentId": "u7",
-      "courseCode": "MAT101",
-      "courseName": "Kalkülüs I",
-      "instructor": "Prof. Dr. Ahmet Yılmaz",
+      "courseCode": "DBM 301",
+      "courseName": "Database Management Systems",
+      "instructor": "Doç. Dr. Mert Akın",
       "midterm": 85,
       "final": 90,
-      "project": null,
+      "project": 85,
       "letterGrade": "AA",
-      "ects": 6
+      "ects": 6,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "02/03/2026",
+        "09/03/2026",
+        "16/03/2026"
+      ],
+      "absencePercentage": 21
     },
     {
       "id": "g2",
       "studentId": "u7",
-      "courseCode": "BIL203",
-      "courseName": "Veri Yapıları",
-      "instructor": "Doç. Dr. Elif Soylu",
+      "courseCode": "OPS 302",
+      "courseName": "Operating Systems",
+      "instructor": "Dr. Elif Soylu",
       "midterm": 72,
-      "final": 68,
+      "final": null,
       "project": 80,
-      "letterGrade": "BA",
-      "ects": 7
+      "letterGrade": null,
+      "ects": 6,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "03/03/2026",
+        "10/03/2026",
+        "24/03/2026",
+        "07/04/2026",
+        "28/04/2026"
+      ],
+      "absencePercentage": 35
     },
     {
       "id": "g3",
       "studentId": "u7",
-      "courseCode": "FIZ102",
-      "courseName": "Genel Fizik II",
-      "instructor": "Dr. Öğr. Üyesi Cem Akın",
+      "courseCode": "SE 305",
+      "courseName": "Software Engineering",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
       "midterm": 55,
-      "final": 60,
-      "project": null,
+      "final": 65,
+      "project": 75,
       "letterGrade": "CB",
-      "ects": 5
+      "ects": 6,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [],
+      "absencePercentage": 0
     },
     {
       "id": "g4",
       "studentId": "u7",
-      "courseCode": "ING101",
-      "courseName": "Akademik İngilizce",
-      "instructor": "Lektör Canan Kaya",
+      "courseCode": "WEB 307",
+      "courseName": "Web Programming",
+      "instructor": "Dr. Elif Soylu",
       "midterm": 95,
-      "final": 100,
-      "project": null,
-      "letterGrade": "AA",
-      "ects": 3
+      "final": 85,
+      "project": 92,
+      "letterGrade": "BA",
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "10/04/2026"
+      ],
+      "absencePercentage": 8
     },
     {
       "id": "g5",
       "studentId": "u7",
-      "courseCode": "TAR101",
-      "courseName": "Devrim Tarihi",
-      "instructor": "Uzm. Mert Bulut",
+      "courseCode": "NET 305",
+      "courseName": "Computer Networks",
+      "instructor": "Dr. Cem Akın",
       "midterm": 80,
-      "final": 85,
-      "project": null,
+      "final": null,
+      "project": 88,
+      "letterGrade": null,
+      "ects": 5,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "14/04/2026",
+        "21/04/2026"
+      ],
+      "absencePercentage": 15
+    },
+    {
+      "id": "g6",
+      "studentId": "u7",
+      "courseCode": "ML 307",
+      "courseName": "Machine Learning",
+      "instructor": "Prof. Dr. Kerem Soylu",
+      "midterm": 88,
+      "final": 90,
+      "project": 90,
       "letterGrade": "AA",
-      "ects": 2
+      "ects": 4,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "04/05/2026",
+        "11/05/2026"
+      ],
+      "absencePercentage": 16
+    },
+    {
+      "id": "g7",
+      "studentId": "u7",
+      "courseCode": "HC 309",
+      "courseName": "Human-Computer Interaction",
+      "instructor": "Lektör Canan Kaya",
+      "midterm": 65,
+      "final": null,
+      "project": null,
+      "letterGrade": null,
+      "ects": 3,
+      "semester": "2025-2026 Bahar",
+      "absentDates": [
+        "18/05/2026"
+      ],
+      "absencePercentage": 10
     }
   ],
   "studentDashboard": {
     "registeredCourses": [
       {
         "id": "rc1",
-        "name": "Full-Stack .NET & React",
-        "instructor": "Dr. Elif Soylu",
-        "category": "Mühendislik",
-        "progress": 75,
-        "styleClass": "dotnet"
-      },
-      {
-        "id": "rc2",
-        "name": "SQL & Database Design",
+        "name": "Database Management Systems",
         "instructor": "Doç. Dr. Mert Akın",
         "category": "Veri Bilimi",
         "progress": 40,
-        "styleClass": "sql"
+        "styleClass": "sql",
+        "type": "Fakülte",
+        "classroom": "LAB-B2",
+        "code": "DBM 301"
+      },
+      {
+        "id": "rc2",
+        "name": "Operating Systems",
+        "instructor": "Dr. Elif Soylu",
+        "category": "Bilgisayar",
+        "progress": 65,
+        "styleClass": "cs",
+        "type": "Fakülte",
+        "classroom": "LAB-B3",
+        "code": "OPS 302"
+      },
+      {
+        "id": "rc3",
+        "name": "Software Engineering",
+        "instructor": "Prof. Dr. Selçuk Yılmaz",
+        "category": "Mühendislik",
+        "progress": 75,
+        "styleClass": "dotnet",
+        "type": "Fakülte",
+        "classroom": "Amfi-1",
+        "code": "SE 305"
+      },
+      {
+        "id": "rc4",
+        "name": "Web Programming",
+        "instructor": "Dr. Elif Soylu",
+        "category": "Mühendislik",
+        "progress": 80,
+        "styleClass": "dotnet",
+        "type": "Online",
+        "classroom": "Online / Zoom",
+        "code": "WEB 307"
+      },
+      {
+        "id": "rc5",
+        "name": "Computer Networks",
+        "instructor": "Dr. Cem Akın",
+        "category": "Fizik",
+        "progress": 50,
+        "styleClass": "physics",
+        "type": "Fakülte",
+        "classroom": "Amfi-2",
+        "code": "NET 305"
+      },
+      {
+        "id": "rc6",
+        "name": "Machine Learning",
+        "instructor": "Prof. Dr. Kerem Soylu",
+        "category": "Matematik",
+        "progress": 85,
+        "styleClass": "math",
+        "type": "Fakülte",
+        "classroom": "D-101",
+        "code": "ML 307"
+      },
+      {
+        "id": "rc7",
+        "name": "Human-Computer Interaction",
+        "instructor": "Lektör Canan Kaya",
+        "category": "Yabancı Dil",
+        "progress": 90,
+        "styleClass": "english",
+        "type": "Fakülte",
+        "classroom": "D-204",
+        "code": "HC 309"
       }
     ],
     "upcomingLessons": [
@@ -604,10 +805,10 @@
     ]
   },
   "videoLectures": {
-    "courseName": "Full-Stack .NET & React",
+    "courseName": "Web Programming",
     "instructor": "Dr. Elif Soylu",
     "currentLesson": {
-      "title": "Ders 1 — React Hooks Temelleri",
+      "title": "Ders 1 — Web Protocols & Architecture",
       "duration": "45:00",
       "currentTime": "15:42"
     },
@@ -634,25 +835,25 @@
     "playlist": [
       {
         "id": "v1",
-        "title": "Ders 1 — React Hooks Temelleri",
+        "title": "Ders 1 — Web Protocols & Architecture",
         "duration": "45 dk",
         "active": true
       },
       {
         "id": "v2",
-        "title": "Ders 2 — useEffect & useContext",
+        "title": "Ders 2 — HTTP Request & Response Model",
         "duration": "52 dk",
         "active": false
       },
       {
         "id": "v3",
-        "title": "Ders 3 — Redux Advanced Patterns",
+        "title": "Ders 3 — RESTful API Design & Integration",
         "duration": "60 dk",
         "active": false
       },
       {
         "id": "v4",
-        "title": "Ders 4 — Testing with Jest",
+        "title": "Ders 4 — Client-Side Rendering vs Server-Side",
         "duration": "38 dk",
         "active": false
       }
@@ -1110,57 +1311,279 @@
   },
   "academicEvents": [
     {
-      "id": 1,
-      "title": "Güz Dönemi Ders Kayıtları",
-      "date": "15.09.2025",
-      "semester": "guz"
-    },
-    {
-      "id": 2,
-      "title": "Güz Dönemi Derslerinin Başlaması",
+      "id": "1",
+      "title": "Güz Dönemi Kayıt Yenileme ve Ders Seçimlerinin Başlaması",
       "date": "22.09.2025",
       "semester": "guz"
     },
     {
-      "id": 3,
-      "title": "Güz Dönemi Ara Sınav (Vize) Haftası",
-      "date": "10.11.2025",
+      "id": "2",
+      "title": "Güz Dönemi Kayıt Yenileme ve Ders Seçimlerinin Sona Ermesi",
+      "date": "26.09.2025",
       "semester": "guz"
     },
     {
-      "id": 4,
+      "id": "3",
+      "title": "Güz Dönemi Derslerinin Başlaması",
+      "date": "29.09.2025",
+      "semester": "guz"
+    },
+    {
+      "id": "4",
+      "title": "Güz Dönemi Ders Ekleme-Bırakma (Ekle-Sil) Dönemi Başlangıcı",
+      "date": "06.10.2025",
+      "semester": "guz"
+    },
+    {
+      "id": "5",
+      "title": "Güz Dönemi Ders Ekleme-Bırakma (Ekle-Sil) Dönemi Bitişi",
+      "date": "10.10.2025",
+      "semester": "guz"
+    },
+    {
+      "id": "6",
+      "title": "Cumhuriyet Bayramı Resmi Tatili",
+      "date": "29.10.2025",
+      "semester": "tatil"
+    },
+    {
+      "id": "7",
+      "title": "Atatürk'ü Anma Günü (Dersler Devam Eder)",
+      "date": "10.11.2025",
+      "semester": "tatil"
+    },
+    {
+      "id": "8",
+      "title": "Güz Dönemi Ara Sınav (Vize) Haftası Başlangıcı",
+      "date": "17.11.2025",
+      "semester": "guz"
+    },
+    {
+      "id": "9",
+      "title": "Güz Dönemi Ara Sınav (Vize) Haftası Bitişi",
+      "date": "23.11.2025",
+      "semester": "guz"
+    },
+    {
+      "id": "10",
       "title": "Yılbaşı Resmi Tatili",
       "date": "01.01.2026",
+      "semester": "tatil"
+    },
+    {
+      "id": "11",
+      "title": "Güz Dönemi Derslerinin Sona Ermesi",
+      "date": "02.01.2026",
       "semester": "guz"
     },
     {
-      "id": 5,
-      "title": "Güz Dönemi Dönem Sonu (Final) Sınavları",
+      "id": "12",
+      "title": "Güz Dönemi Dönem Sonu (Final) Sınavları Başlangıcı",
       "date": "05.01.2026",
       "semester": "guz"
     },
     {
-      "id": 6,
-      "title": "Bahar Dönemi Ders Kayıtları",
+      "id": "13",
+      "title": "Güz Dönemi Dönem Sonu (Final) Sınavları Bitişi",
+      "date": "11.01.2026",
+      "semester": "guz"
+    },
+    {
+      "id": "14",
+      "title": "Güz Dönemi Bütünleme Sınavları Başlangıcı",
+      "date": "26.01.2026",
+      "semester": "guz"
+    },
+    {
+      "id": "15",
+      "title": "Güz Dönemi Bütünleme Sınavları Bitişi",
+      "date": "30.01.2026",
+      "semester": "guz"
+    },
+    {
+      "id": "16",
+      "title": "Bahar Dönemi Kayıt Yenileme ve Ders Seçimlerinin Başlaması",
       "date": "09.02.2026",
       "semester": "bahar"
     },
     {
-      "id": 7,
+      "id": "17",
+      "title": "Bahar Dönemi Kayıt Yenileme ve Ders Seçimlerinin Sona Ermesi",
+      "date": "13.02.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "18",
       "title": "Bahar Dönemi Derslerinin Başlaması",
       "date": "16.02.2026",
       "semester": "bahar"
     },
     {
-      "id": 8,
-      "title": "Bahar Dönemi Ara Sınav (Vize) Haftası",
-      "date": "13.04.2026",
+      "id": "19",
+      "title": "Bahar Dönemi Ders Ekleme-Bırakma (Ekle-Sil) Dönemi Başlangıcı",
+      "date": "23.02.2026",
       "semester": "bahar"
     },
     {
-      "id": 9,
-      "title": "Bahar Dönemi Dönem Sonu (Final) Sınavları",
-      "date": "08.06.2026",
+      "id": "20",
+      "title": "Bahar Dönemi Ders Ekleme-Bırakma (Ekle-Sil) Dönemi Bitişi",
+      "date": "27.02.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "21",
+      "title": "Danışman Onaylı Muafiyet Dilekçesi Son Teslim Tarihi",
+      "date": "12.03.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "22",
+      "title": "Resmi Tatil (Çanakkale Zaferi Anma Günü - Dersler Devam Eder)",
+      "date": "18.03.2026",
+      "semester": "tatil"
+    },
+    {
+      "id": "23",
+      "title": "Mazeret Sınavı Başvurularının Başlaması",
+      "date": "06.04.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "24",
+      "title": "Mazeret Sınavı Başvurularının Bitişi",
+      "date": "10.04.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "25",
+      "title": "Bahar Tatili ve Ramazan Bayramı Arefesi Resmi Tatili",
+      "date": "20.04.2026",
+      "semester": "tatil"
+    },
+    {
+      "id": "26",
+      "title": "Ramazan Bayramı 1. Gün Resmi Tatili",
+      "date": "21.04.2026",
+      "semester": "tatil"
+    },
+    {
+      "id": "27",
+      "title": "Ramazan Bayramı 2. Gün Resmi Tatili",
+      "date": "22.04.2026",
+      "semester": "tatil"
+    },
+    {
+      "id": "28",
+      "title": "Ulusal Egemenlik ve Çocuk Bayramı Resmi Tatili",
+      "date": "23.04.2026",
+      "semester": "tatil"
+    },
+    {
+      "id": "29",
+      "title": "Emek ve Dayanışma Günü Resmi Tatili",
+      "date": "01.05.2026",
+      "semester": "tatil"
+    },
+    {
+      "id": "32",
+      "title": "Bahar Dönemi Ara Sınav (Vize) Haftası Başlangıcı",
+      "date": "06.04.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "34",
+      "title": "Bahar Dönemi Ara Sınav (Vize) Haftası Bitişi",
+      "date": "11.04.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "37",
+      "title": "Bahar Dönemi Ara Sınav (Vize) Notlarının İlan Edilmesi Son Günü",
+      "date": "18.04.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "30",
+      "title": "Geleneksel Bahar Şenlikleri Başlangıcı",
+      "date": "14.05.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "31",
+      "title": "Geleneksel Bahar Şenlikleri Bitişi",
+      "date": "16.05.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "33",
+      "title": "Atatürk'ü Anma, Gençlik ve Spor Bayramı Resmi Tatili",
+      "date": "19.05.2026",
+      "semester": "tatil"
+    },
+    {
+      "id": "35",
+      "title": "Bahar Yarıyılı Derslerinin Sona Ermesi",
+      "date": "29.05.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "39",
+      "title": "Dönem Sonu Ödev/Proje Son Teslim Tarihleri",
+      "date": "30.05.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "36",
+      "title": "Bahar Dönemi Dönem Sonu (Final) Sınavları Başlangıcı",
+      "date": "01.06.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "38",
+      "title": "Bahar Dönemi Dönem Sonu (Final) Sınavları Bitişi",
+      "date": "07.06.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "42",
+      "title": "Bahar Dönemi Dönem Sonu (Final) Sınav Notlarının İlan Edilmesi",
+      "date": "12.06.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "40",
+      "title": "Bütünleme Sınavı Başvurularının Başlaması",
+      "date": "13.06.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "41",
+      "title": "Bütünleme Sınavı Başvurularının Bitişi",
+      "date": "18.06.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "43",
+      "title": "Bahar Dönemi Bütünleme Sınavları Başlangıcı",
+      "date": "20.06.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "44",
+      "title": "Bahar Dönemi Bütünleme Sınavları Bitişi",
+      "date": "28.06.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "45",
+      "title": "Bahar Dönemi Bütünleme Sınav Notlarının İlan Edilmesi",
+      "date": "30.06.2026",
+      "semester": "bahar"
+    },
+    {
+      "id": "46",
+      "title": "2025-2026 Mezuniyet Töreni ve Diploma Teslimi",
+      "date": "03.07.2026",
       "semester": "bahar"
     }
   ],
@@ -1168,52 +1591,228 @@
     "guz": [
       {
         "id": 101,
-        "date": "15.11.2025",
+        "date": "17.11.2025",
         "time": "10:00",
-        "code": "MAT101",
-        "name": "Kalkülüs I",
-        "room": "LAB-B1",
+        "type": "Ara Sınav",
+        "code": "DTS 201",
+        "name": "Data Structures",
+        "room": "Amfi-1",
         "instructor": "Prof. Dr. Ahmet Yılmaz"
       },
       {
         "id": 102,
-        "date": "17.11.2025",
-        "time": "13:30",
-        "code": "BIL203",
-        "name": "Veri Yapıları",
-        "room": "Amfi-1",
-        "instructor": "Doç. Dr. Elif Soylu"
+        "date": "18.11.2025",
+        "time": "14:00",
+        "type": "Ara Sınav",
+        "code": "DMS 203",
+        "name": "Discrete Mathematics",
+        "room": "LAB-B2",
+        "instructor": "Doç. Dr. Mert Akın"
       },
       {
         "id": 103,
+        "date": "19.11.2025",
+        "time": "10:00",
+        "type": "Ara Sınav",
+        "code": "ECT 201",
+        "name": "Circuit Theory",
+        "room": "Amfi-2",
+        "instructor": "Dr. Cem Kaya"
+      },
+      {
+        "id": 104,
         "date": "20.11.2025",
-        "time": "11:00",
-        "code": "FIZ102",
-        "name": "Genel Fizik II",
-        "room": "LAB-C2",
-        "instructor": "Dr. Öğr. Üyesi Cem Akın"
+        "time": "14:00",
+        "type": "Ara Sınav",
+        "code": "ENG 201",
+        "name": "Academic English I",
+        "room": "D-204",
+        "instructor": "Lektör Canan Kaya"
+      },
+      {
+        "id": 105,
+        "date": "05.01.2026",
+        "time": "10:00",
+        "type": "Final Sınavı",
+        "code": "DTS 201",
+        "name": "Data Structures",
+        "room": "Amfi-1",
+        "instructor": "Prof. Dr. Ahmet Yılmaz"
+      },
+      {
+        "id": 106,
+        "date": "06.01.2026",
+        "time": "14:00",
+        "type": "Final Sınavı",
+        "code": "DMS 203",
+        "name": "Discrete Mathematics",
+        "room": "LAB-B2",
+        "instructor": "Doç. Dr. Mert Akın"
+      },
+      {
+        "id": 107,
+        "date": "07.01.2026",
+        "time": "10:00",
+        "type": "Final Sınavı",
+        "code": "ECT 201",
+        "name": "Circuit Theory",
+        "room": "Amfi-2",
+        "instructor": "Dr. Cem Kaya"
+      },
+      {
+        "id": 108,
+        "date": "08.01.2026",
+        "time": "14:00",
+        "type": "Final Sınavı",
+        "code": "ENG 201",
+        "name": "Academic English I",
+        "room": "D-204",
+        "instructor": "Lektör Canan Kaya"
       }
     ],
     "bahar": [
       {
         "id": 201,
-        "date": "18.04.2026",
+        "date": "06.04.2026",
         "time": "10:00",
-        "code": "MAT102",
-        "name": "Kalkülüs II",
-        "room": "LAB-B1",
-        "instructor": "Prof. Dr. Ahmet Yılmaz"
+        "type": "Ara Sınav",
+        "code": "DBM 301",
+        "name": "Database Management Systems",
+        "room": "LAB-B2",
+        "instructor": "Doç. Dr. Mert Akın"
       },
       {
         "id": 202,
-        "date": "22.04.2026",
+        "date": "07.04.2026",
         "time": "14:00",
-        "code": "BIL204",
-        "name": "Algoritmalar",
+        "type": "Ara Sınav",
+        "code": "OPS 302",
+        "name": "Operating Systems",
+        "room": "LAB-B3",
+        "instructor": "Dr. Elif Soylu"
+      },
+      {
+        "id": 203,
+        "date": "08.04.2026",
+        "time": "10:00",
+        "type": "Ara Sınav",
+        "code": "SE 305",
+        "name": "Software Engineering",
+        "room": "Amfi-1",
+        "instructor": "Prof. Dr. Selçuk Yılmaz"
+      },
+      {
+        "id": 204,
+        "date": "09.04.2026",
+        "time": "14:00",
+        "type": "Ara Sınav",
+        "code": "WEB 307",
+        "name": "Web Programming",
+        "room": "Online / Zoom",
+        "instructor": "Dr. Elif Soylu"
+      },
+      {
+        "id": 205,
+        "date": "10.04.2026",
+        "time": "10:00",
+        "type": "Ara Sınav",
+        "code": "NET 305",
+        "name": "Computer Networks",
         "room": "Amfi-2",
-        "instructor": "Doç. Dr. Elif Soylu"
+        "instructor": "Dr. Cem Akın"
+      },
+      {
+        "id": 206,
+        "date": "11.04.2026",
+        "time": "14:00",
+        "type": "Ara Sınav",
+        "code": "ML 307",
+        "name": "Machine Learning",
+        "room": "D-101",
+        "instructor": "Prof. Dr. Kerem Soylu"
+      },
+      {
+        "id": 207,
+        "date": "06.04.2026",
+        "time": "14:00",
+        "type": "Ara Sınav",
+        "code": "HC 309",
+        "name": "Human-Computer Interaction",
+        "room": "D-204",
+        "instructor": "Lektör Canan Kaya"
+      },
+      {
+        "id": 208,
+        "date": "01.06.2026",
+        "time": "10:00",
+        "type": "Final Sınavı",
+        "code": "DBM 301",
+        "name": "Database Management Systems",
+        "room": "LAB-B2",
+        "instructor": "Doç. Dr. Mert Akın"
+      },
+      {
+        "id": 209,
+        "date": "02.06.2026",
+        "time": "14:00",
+        "type": "Final Sınavı",
+        "code": "OPS 302",
+        "name": "Operating Systems",
+        "room": "LAB-B3",
+        "instructor": "Dr. Elif Soylu"
+      },
+      {
+        "id": 210,
+        "date": "03.06.2026",
+        "time": "10:00",
+        "type": "Final Sınavı",
+        "code": "SE 305",
+        "name": "Software Engineering",
+        "room": "Amfi-1",
+        "instructor": "Prof. Dr. Selçuk Yılmaz"
+      },
+      {
+        "id": 211,
+        "date": "04.06.2026",
+        "time": "14:00",
+        "type": "Final Sınavı",
+        "code": "WEB 307",
+        "name": "Web Programming",
+        "room": "Online / Zoom",
+        "instructor": "Dr. Elif Soylu"
+      },
+      {
+        "id": 212,
+        "date": "05.06.2026",
+        "time": "10:00",
+        "type": "Final Sınavı",
+        "code": "NET 305",
+        "name": "Computer Networks",
+        "room": "Amfi-2",
+        "instructor": "Dr. Cem Akın"
+      },
+      {
+        "id": 213,
+        "date": "06.06.2026",
+        "time": "14:00",
+        "type": "Final Sınavı",
+        "code": "ML 307",
+        "name": "Machine Learning",
+        "room": "D-101",
+        "instructor": "Prof. Dr. Kerem Soylu"
+      },
+      {
+        "id": 214,
+        "date": "01.06.2026",
+        "time": "14:00",
+        "type": "Final Sınavı",
+        "code": "HC 309",
+        "name": "Human-Computer Interaction",
+        "room": "D-204",
+        "instructor": "Lektör Canan Kaya"
       }
-    ]
+    ],
+    "yaz": []
   },
   "studentCourses": [
     {
@@ -1224,7 +1823,7 @@
       "category": "Mühendislik",
       "akts": 6,
       "progress": 75,
-      "code": "NET401"
+      "code": "NET 401"
     },
     {
       "id": "2",
@@ -1234,27 +1833,91 @@
       "category": "Veri Bilimi",
       "akts": 5,
       "progress": 40,
-      "code": "SQL301"
+      "code": "SQL 301"
     },
     {
       "id": "3",
       "studentId": "u7",
-      "courseName": "Full-Stack .NET & React",
-      "instructor": "Dr. Elif Soylu",
-      "category": "Mühendislik",
+      "courseName": "Database Management Systems",
+      "instructor": "Doç. Dr. Mert Akın",
+      "category": "Veri Bilimi",
       "akts": 6,
-      "progress": 75,
-      "code": "NET401"
+      "progress": 40,
+      "code": "DBM 301",
+      "type": "Fakülte",
+      "classroom": "LAB-B2"
     },
     {
       "id": "4",
       "studentId": "u7",
-      "courseName": "SQL & Database Design",
-      "instructor": "Doç. Dr. Mert Akın",
-      "category": "Veri Bilimi",
+      "courseName": "Operating Systems",
+      "instructor": "Dr. Elif Soylu",
+      "category": "Bilgisayar",
+      "akts": 6,
+      "progress": 65,
+      "code": "OPS 302",
+      "type": "Fakülte",
+      "classroom": "LAB-B3"
+    },
+    {
+      "id": "5",
+      "studentId": "u7",
+      "courseName": "Software Engineering",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
+      "category": "Mühendislik",
+      "akts": 6,
+      "progress": 75,
+      "code": "SE 305",
+      "type": "Fakülte",
+      "classroom": "Amfi-1"
+    },
+    {
+      "id": "6",
+      "studentId": "u7",
+      "courseName": "Web Programming",
+      "instructor": "Dr. Elif Soylu",
+      "category": "Mühendislik",
       "akts": 5,
-      "progress": 40,
-      "code": "SQL301"
+      "progress": 80,
+      "code": "WEB 307",
+      "type": "Online",
+      "classroom": "Online / Zoom"
+    },
+    {
+      "id": "7",
+      "studentId": "u7",
+      "courseName": "Computer Networks",
+      "instructor": "Dr. Cem Akın",
+      "category": "Fizik",
+      "akts": 5,
+      "progress": 50,
+      "code": "NET 305",
+      "type": "Fakülte",
+      "classroom": "Amfi-2"
+    },
+    {
+      "id": "8",
+      "studentId": "u7",
+      "courseName": "Machine Learning",
+      "instructor": "Prof. Dr. Kerem Soylu",
+      "category": "Matematik",
+      "akts": 4,
+      "progress": 85,
+      "code": "ML 307",
+      "type": "Fakülte",
+      "classroom": "D-101"
+    },
+    {
+      "id": "9",
+      "studentId": "u7",
+      "courseName": "Human-Computer Interaction",
+      "instructor": "Lektör Canan Kaya",
+      "category": "Yabancı Dil",
+      "akts": 3,
+      "progress": 90,
+      "code": "HC 309",
+      "type": "Fakülte",
+      "classroom": "D-204"
     }
   ],
   "attendance": [
@@ -1301,8 +1964,8 @@
   "lectures": [
     {
       "id": "1",
-      "title": "Ders 1 — React Hooks Temelleri",
-      "courseName": "Full-Stack .NET & React",
+      "title": "Ders 1 — Web Protocols & Architecture",
+      "courseName": "Web Programming",
       "instructor": "Dr. Elif Soylu",
       "duration": "45 dk",
       "url": "https://www.w3schools.com/html/mov_bbb.mp4",
@@ -1321,5 +1984,486 @@
         }
       ]
     }
-  ]
+  ],
+  "weeklyLessonsByWeek": {
+    "1": {
+      "monday": [
+        {
+          "top": 0,
+          "height": 200,
+          "color": "primary",
+          "type": "Teorik",
+          "name": "Database Management Systems",
+          "instructor": "Doç. Dr. Mert Akın",
+          "room": "LAB-B2",
+          "time": "09:00 - 11:30"
+        },
+        {
+          "top": 400,
+          "height": 200,
+          "color": "secondary",
+          "type": "Laboratuvar",
+          "name": "Operating Systems",
+          "instructor": "Dr. Elif Soylu",
+          "room": "LAB-B3",
+          "time": "14:00 - 16:30"
+        }
+      ],
+      "tuesday": [
+        {
+          "top": 80,
+          "height": 200,
+          "color": "warning-amber",
+          "type": "Teorik",
+          "name": "Web Programming",
+          "instructor": "Dr. Elif Soylu",
+          "room": "Online / Zoom",
+          "time": "10:00 - 12:30"
+        }
+      ],
+      "wednesday": [
+        {
+          "top": 320,
+          "height": 200,
+          "color": "success-emerald",
+          "type": "Teorik",
+          "name": "Computer Networks",
+          "instructor": "Dr. Cem Akın",
+          "room": "Amfi-2",
+          "time": "13:00 - 15:30"
+        }
+      ],
+      "thursday": [
+        {
+          "top": 0,
+          "height": 200,
+          "color": "error",
+          "type": "Teorik",
+          "name": "Human-Computer Interaction",
+          "instructor": "Lektör Canan Kaya",
+          "room": "D-204",
+          "time": "09:00 - 11:30"
+        },
+        {
+          "top": 320,
+          "height": 200,
+          "color": "primary",
+          "type": "Uygulama",
+          "name": "Software Engineering",
+          "instructor": "Prof. Dr. Selçuk Yılmaz",
+          "room": "Amfi-1",
+          "time": "13:00 - 15:30"
+        }
+      ],
+      "friday": [
+        {
+          "top": 400,
+          "height": 200,
+          "color": "secondary",
+          "type": "Teorik",
+          "name": "Machine Learning",
+          "instructor": "Prof. Dr. Kerem Soylu",
+          "room": "D-101",
+          "time": "14:00 - 16:30"
+        }
+      ]
+    },
+    "2": {
+      "monday": [
+        {
+          "top": 80,
+          "height": 200,
+          "color": "success-emerald",
+          "type": "Teorik",
+          "name": "Computer Networks",
+          "instructor": "Dr. Cem Akın",
+          "room": "Amfi-2",
+          "time": "10:00 - 12:30"
+        }
+      ],
+      "tuesday": [
+        {
+          "top": 0,
+          "height": 200,
+          "color": "primary",
+          "type": "Teorik",
+          "name": "Database Management Systems",
+          "instructor": "Doç. Dr. Mert Akın",
+          "room": "LAB-B2",
+          "time": "09:00 - 11:30"
+        },
+        {
+          "top": 400,
+          "height": 200,
+          "color": "primary",
+          "type": "Uygulama",
+          "name": "Software Engineering",
+          "instructor": "Prof. Dr. Selçuk Yılmaz",
+          "room": "Amfi-1",
+          "time": "14:00 - 16:30"
+        }
+      ],
+      "wednesday": [
+        {
+          "top": 0,
+          "height": 200,
+          "color": "secondary",
+          "type": "Laboratuvar",
+          "name": "Operating Systems",
+          "instructor": "Dr. Elif Soylu",
+          "room": "LAB-B3",
+          "time": "09:00 - 11:30"
+        },
+        {
+          "top": 320,
+          "height": 200,
+          "color": "error",
+          "type": "Teorik",
+          "name": "Human-Computer Interaction",
+          "instructor": "Lektör Canan Kaya",
+          "room": "D-204",
+          "time": "13:00 - 15:30"
+        }
+      ],
+      "thursday": [
+        {
+          "top": 80,
+          "height": 200,
+          "color": "secondary",
+          "type": "Teorik",
+          "name": "Machine Learning",
+          "instructor": "Prof. Dr. Kerem Soylu",
+          "room": "D-101",
+          "time": "10:00 - 12:30"
+        }
+      ],
+      "friday": [
+        {
+          "top": 320,
+          "height": 200,
+          "color": "warning-amber",
+          "type": "Teorik",
+          "name": "Web Programming",
+          "instructor": "Dr. Elif Soylu",
+          "room": "Online / Zoom",
+          "time": "13:00 - 15:30"
+        }
+      ]
+    },
+    "3": {
+      "monday": [
+        {
+          "top": 400,
+          "height": 200,
+          "color": "warning-amber",
+          "type": "Teorik",
+          "name": "Web Programming",
+          "instructor": "Dr. Elif Soylu",
+          "room": "Online / Zoom",
+          "time": "14:00 - 16:30"
+        }
+      ],
+      "tuesday": [
+        {
+          "top": 0,
+          "height": 200,
+          "color": "success-emerald",
+          "type": "Teorik",
+          "name": "Computer Networks",
+          "instructor": "Dr. Cem Akın",
+          "room": "Amfi-2",
+          "time": "09:00 - 11:30"
+        },
+        {
+          "top": 320,
+          "height": 200,
+          "color": "secondary",
+          "type": "Teorik",
+          "name": "Machine Learning",
+          "instructor": "Prof. Dr. Kerem Soylu",
+          "room": "D-101",
+          "time": "13:00 - 15:30"
+        }
+      ],
+      "wednesday": [
+        {
+          "top": 80,
+          "height": 200,
+          "color": "primary",
+          "type": "Teorik",
+          "name": "Database Management Systems",
+          "instructor": "Doç. Dr. Mert Akın",
+          "room": "LAB-B2",
+          "time": "10:00 - 12:30"
+        }
+      ],
+      "thursday": [
+        {
+          "top": 400,
+          "height": 200,
+          "color": "secondary",
+          "type": "Laboratuvar",
+          "name": "Operating Systems",
+          "instructor": "Dr. Elif Soylu",
+          "room": "LAB-B3",
+          "time": "14:00 - 16:30"
+        }
+      ],
+      "friday": [
+        {
+          "top": 0,
+          "height": 200,
+          "color": "primary",
+          "type": "Uygulama",
+          "name": "Software Engineering",
+          "instructor": "Prof. Dr. Selçuk Yılmaz",
+          "room": "Amfi-1",
+          "time": "09:00 - 11:30"
+        },
+        {
+          "top": 320,
+          "height": 200,
+          "color": "error",
+          "type": "Teorik",
+          "name": "Human-Computer Interaction",
+          "instructor": "Lektör Canan Kaya",
+          "room": "D-204",
+          "time": "13:00 - 15:30"
+        }
+      ]
+    },
+    "4": {
+      "monday": [
+        {
+          "top": 0,
+          "height": 200,
+          "color": "primary",
+          "type": "Teorik",
+          "name": "Database Management Systems",
+          "instructor": "Doç. Dr. Mert Akın",
+          "room": "LAB-B2",
+          "time": "09:00 - 11:30"
+        }
+      ],
+      "tuesday": [
+        {
+          "top": 0,
+          "height": 200,
+          "color": "warning-amber",
+          "type": "Teorik",
+          "name": "Web Programming",
+          "instructor": "Dr. Elif Soylu",
+          "room": "Online / Zoom",
+          "time": "09:00 - 11:30"
+        },
+        {
+          "top": 320,
+          "height": 200,
+          "color": "primary",
+          "type": "Uygulama",
+          "name": "Software Engineering",
+          "instructor": "Prof. Dr. Selçuk Yılmaz",
+          "room": "Amfi-1",
+          "time": "13:00 - 15:30"
+        }
+      ],
+      "wednesday": [
+        {
+          "top": 80,
+          "height": 200,
+          "color": "success-emerald",
+          "type": "Teorik",
+          "name": "Computer Networks",
+          "instructor": "Dr. Cem Akın",
+          "room": "Amfi-2",
+          "time": "10:00 - 12:30"
+        }
+      ],
+      "thursday": [
+        {
+          "top": 0,
+          "height": 200,
+          "color": "secondary",
+          "type": "Laboratuvar",
+          "name": "Operating Systems",
+          "instructor": "Dr. Elif Soylu",
+          "room": "LAB-B3",
+          "time": "09:00 - 11:30"
+        },
+        {
+          "top": 400,
+          "height": 200,
+          "color": "error",
+          "type": "Teorik",
+          "name": "Human-Computer Interaction",
+          "instructor": "Lektör Canan Kaya",
+          "room": "D-204",
+          "time": "14:00 - 16:30"
+        }
+      ],
+      "friday": [
+        {
+          "top": 80,
+          "height": 200,
+          "color": "secondary",
+          "type": "Teorik",
+          "name": "Machine Learning",
+          "instructor": "Prof. Dr. Kerem Soylu",
+          "room": "D-101",
+          "time": "10:00 - 12:30"
+        }
+      ]
+    },
+    "5": {
+      "monday": [
+        {
+          "top": 0,
+          "height": 160,
+          "color": "error",
+          "type": "Final Sınavı",
+          "name": "Database Management Systems",
+          "instructor": "Doç. Dr. Mert Akın",
+          "room": "B-Blok, LAB-B2",
+          "time": "09:00 - 11:00"
+        },
+        {
+          "top": 400,
+          "height": 160,
+          "color": "error",
+          "type": "Final Sınavı",
+          "name": "Operating Systems",
+          "instructor": "Dr. Elif Soylu",
+          "room": "B-Blok, LAB-B3",
+          "time": "14:00 - 16:00"
+        }
+      ],
+      "tuesday": [
+        {
+          "top": 80,
+          "height": 160,
+          "color": "error",
+          "type": "Final Sınavı",
+          "name": "Web Programming",
+          "instructor": "Dr. Elif Soylu",
+          "room": "A-Blok, A-202",
+          "time": "10:00 - 12:00"
+        }
+      ],
+      "wednesday": [
+        {
+          "top": 320,
+          "height": 160,
+          "color": "error",
+          "type": "Final Sınavı",
+          "name": "Computer Networks",
+          "instructor": "Dr. Cem Akın",
+          "room": "A-Blok, Amfi-2",
+          "time": "13:00 - 15:00"
+        }
+      ],
+      "thursday": [
+        {
+          "top": 0,
+          "height": 160,
+          "color": "error",
+          "type": "Final Sınavı",
+          "name": "Human-Computer Interaction",
+          "instructor": "Lektör Canan Kaya",
+          "room": "C-Blok, D-204",
+          "time": "09:00 - 11:00"
+        },
+        {
+          "top": 320,
+          "height": 160,
+          "color": "error",
+          "type": "Final Sınavı",
+          "name": "Software Engineering",
+          "instructor": "Prof. Dr. Selçuk Yılmaz",
+          "room": "C-Blok, Amfi-1",
+          "time": "13:00 - 15:00"
+        }
+      ],
+      "friday": [
+        {
+          "top": 400,
+          "height": 160,
+          "color": "error",
+          "type": "Final Sınavı",
+          "name": "Machine Learning",
+          "instructor": "Prof. Dr. Kerem Soylu",
+          "room": "B-Blok, D-101",
+          "time": "14:00 - 16:00"
+        }
+      ]
+    },
+    "8": {
+      "monday": [
+        {
+          "top": 0,
+          "height": 160,
+          "color": "error",
+          "type": "Bütünleme Sınavı",
+          "name": "Operating Systems",
+          "instructor": "Dr. Elif Soylu",
+          "room": "B-Blok, LAB-B3",
+          "time": "09:00 - 11:00"
+        }
+      ],
+      "wednesday": [
+        {
+          "top": 320,
+          "height": 160,
+          "color": "error",
+          "type": "Bütünleme Sınavı",
+          "name": "Computer Networks",
+          "instructor": "Dr. Cem Akın",
+          "room": "A-Blok, Amfi-2",
+          "time": "13:00 - 15:00"
+        }
+      ],
+      "friday": [
+        {
+          "top": 400,
+          "height": 160,
+          "color": "error",
+          "type": "Bütünleme Sınavı",
+          "name": "Human-Computer Interaction",
+          "instructor": "Lektör Canan Kaya",
+          "room": "C-Blok, D-204",
+          "time": "14:00 - 16:00"
+        }
+      ]
+    }
+  },
+  "appointments": [
+    {
+      "id": "apt-1",
+      "studentId": "u7",
+      "studentName": "Ahmet Yılmaz",
+      "studentNumber": "20211024100",
+      "advisorId": "u20",
+      "advisorName": "Prof. Dr. Selçuk Yılmaz",
+      "timeSlotId": "slot-4",
+      "timeSlotText": "Çarşamba 14:30 - 15:00",
+      "subject": "Ders Seçimi Danışmanlığı",
+      "note": "Ders seçimi ve AKTS sınırları hakkında görüşme.",
+      "status": "Onaylandı",
+      "followUpCode": "APT-739201"
+    },
+    {
+      "id": "lVGpiU6CbhM",
+      "studentId": "u7",
+      "studentName": "Ahmet Yılmaz",
+      "studentNumber": "20211024100",
+      "advisorId": "u20",
+      "advisorName": "Prof. Dr. Selçuk Yılmaz",
+      "timeSlotId": "slot-1",
+      "timeSlotText": "Pazartesi 10:00 - 10:30",
+      "subject": "Ders Kaydı Sorunu",
+      "note": "",
+      "status": "pending",
+      "followUpCode": "APT-804473"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

@@ -23,8 +23,9 @@ export default function CourseRegistration() {
   const [selectedInstallment, setSelectedInstallment] = useState(1) // 1, 3, 6, 12
   const [cardName, setCardName] = useState('')
   const [cardNumber, setCardNumber] = useState('')
-  const [cardExpiryMonth, setCardExpiryMonth] = useState('')
-  const [cardExpiryYear, setCardExpiryYear] = useState('')
+  const [cardExpiry, setCardExpiry] = useState('')
+  const cardExpiryMonth = cardExpiry.split('/')[0] || ''
+  const cardExpiryYear = cardExpiry.split('/')[1] || ''
   const [cardCvv, setCardCvv] = useState('')
   const [smsCode, setSmsCode] = useState('')
   const [smsError, setSmsError] = useState('')
@@ -121,7 +122,7 @@ export default function CourseRegistration() {
     const updated = [...selectedCourses, course]
     setSelectedCourses(updated)
     saveState(updated, statusState)
-    toast.success(`${course.id} ders sepetine eklendi.`)
+    toast.success(`${course.code || course.id} dersi eklendi.`)
   }
 
   const handleRemoveCourse = (courseId) => {
@@ -133,7 +134,7 @@ export default function CourseRegistration() {
     const updated = selectedCourses.filter((c) => c.id !== courseId)
     setSelectedCourses(updated)
     saveState(updated, statusState)
-    toast.success('Ders sepetten çıkarıldı.')
+    toast.success('Ders silindi.')
   }
 
   // İşlem: Taslak kaydetme
@@ -306,400 +307,396 @@ export default function CourseRegistration() {
   const isLoading = coursesStatus === 'loading'
 
   return (
-    <section className="flex-1 p-4 md:p-6 bg-[#f6f9ff] dark:bg-slate-900 transition-colors duration-200 overflow-y-auto pb-36 relative min-h-screen text-slate-800 dark:text-white">
+    <section className={`flex-1 p-4 md:p-6 bg-[#f6f9ff] dark:bg-slate-900 transition-colors duration-200 pb-12 relative text-slate-800 dark:text-white ${!isTuitionPaid ? 'h-[calc(100vh-80px)] overflow-hidden' : 'overflow-y-auto min-h-screen'}`}>
 
       {/* Harç ödeme katmanı */}
       {!isTuitionPaid && (
-        <div className="absolute inset-0 bg-[#f6f9ff] dark:bg-slate-900 z-50 overflow-y-auto flex flex-col justify-start p-4 md:p-8">
-          <div className="max-w-4xl w-full mx-auto my-auto flex flex-col justify-center min-h-full">
+        <div className="absolute inset-0 bg-[#f6f9ff] dark:bg-slate-900 z-50 overflow-y-auto animate-fade-in">
+          <div className="w-full min-h-full flex justify-center items-start p-4 md:p-8 pt-16 md:pt-32">
+            <div className="max-w-4xl w-full">
 
-            {/* Aşama 1: Harç Bilgileri */}
-            {paymentStep === 'overview' && (
-              <div className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
-                <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-700/60 pb-5">
-                  <div className="w-12 h-12 bg-amber-50 dark:bg-amber-950/40 rounded-full flex items-center justify-center text-amber-500 shrink-0">
-                    <span className="material-symbols-outlined text-2xl font-bold">account_balance_wallet</span>
+              {/* Aşama 1: Harç Bilgileri */}
+              {paymentStep === 'overview' && (
+                <div className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
+                  <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-700/60 pb-5">
+                    <div className="w-12 h-12 bg-amber-50 dark:bg-amber-950/40 rounded-full flex items-center justify-center text-amber-500 shrink-0">
+                      <span className="material-symbols-outlined text-2xl font-bold">account_balance_wallet</span>
+                    </div>
+                    <div>
+                      <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">Okul Ücreti Ödemesi</h2>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 uppercase font-bold tracking-wider">T.C. AKADEMİK BİLGİ SİSTEMİ</p>
+                    </div>
                   </div>
-                  <div>
-                    <h2 className="text-xl md:text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">Okul Ücreti Ödemesi</h2>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 uppercase font-bold tracking-wider">T.C. AKADEMİK BİLGİ SİSTEMİ</p>
+
+                  <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-start gap-3">
+                    <span className="material-symbols-outlined text-amber-500 mt-0.5 shrink-0">warning</span>
+                    <div className="space-y-1">
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                        2026-2027 Güz Dönemi Kayıtları Başlamıştır.
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-semibold">
+                        Okul Ücreti Henüz Ödenmemiştir. Ders kayıtlarına başlayabilmek için öncelikle okul ücretinizi ödemeniz gerekmektedir.
+                      </p>
+                    </div>
                   </div>
+
+                  <div className="bg-slate-50 dark:bg-slate-900/40 rounded-2xl p-6 border border-slate-100 dark:border-slate-700/50 space-y-3.5">
+                    <div className="flex justify-between items-center text-sm font-semibold text-slate-500 dark:text-slate-400">
+                      <span>Akademik Yıl</span>
+                      <span className="text-slate-800 dark:text-slate-200 font-bold">2026-2027</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm font-semibold text-slate-500 dark:text-slate-400">
+                      <span>Dönem</span>
+                      <span className="text-slate-800 dark:text-slate-200 font-bold">Güz Dönemi</span>
+                    </div>
+                    <div className="border-t border-dashed border-slate-200 dark:border-slate-700 my-2"></div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-bold text-slate-800 dark:text-slate-200">Yıllık Okul Ücreti</span>
+                      <span className="text-xl font-black text-blue-600 dark:text-blue-400">120.000 TL</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleStartPayment}
+                    className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-sm">payment</span>
+                    <span>Okul Ücretini Öde</span>
+                  </button>
                 </div>
+              )}
 
-                <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-start gap-3">
-                  <span className="material-symbols-outlined text-amber-500 mt-0.5 shrink-0">warning</span>
-                  <div className="space-y-1">
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                      2026-2027 Güz Dönemi Kayıtları Başlamıştır.
-                    </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-semibold">
-                      Okul Ücreti Henüz Ödenmemiştir. Ders kayıtlarına başlayabilmek için öncelikle okul ücretinizi ödemeniz gerekmektedir.
-                    </p>
+              {/* Aşama 2: Taksit Seçenekleri */}
+              {paymentStep === 'installments' && (
+                <div className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
+                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
+                    <h2 className="text-xl font-extrabold tracking-tight">Taksit Seçenekleri</h2>
+                    <span className="text-xs font-bold text-slate-400 uppercase">Aşama 2 / 5</span>
                   </div>
-                </div>
 
-                <div className="bg-slate-50 dark:bg-slate-900/40 rounded-2xl p-6 border border-slate-100 dark:border-slate-700/50 space-y-3.5">
-                  <div className="flex justify-between items-center text-sm font-semibold text-slate-500 dark:text-slate-400">
-                    <span>Akademik Yıl</span>
-                    <span className="text-slate-800 dark:text-slate-200 font-bold">2026-2027</span>
+                  <div className="flex flex-col space-y-3">
+                    {[1, 3, 6, 12].map((inst) => (
+                      <label
+                        key={inst}
+                        onClick={() => setSelectedInstallment(inst)}
+                        className={`flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${selectedInstallment === inst
+                          ? 'border-blue-600 bg-blue-50/30 dark:bg-blue-950/20 shadow-sm'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
+                          }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="installment"
+                            checked={selectedInstallment === inst}
+                            onChange={() => setSelectedInstallment(inst)}
+                            className="text-blue-600 focus:ring-blue-500 h-4 w-4"
+                          />
+                          <span className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                            {inst === 1 ? 'Tek Çekim (Peşin)' : `${inst} Taksit`}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-black text-blue-600 dark:text-blue-400">
+                            {getMonthlyAmount(inst)} TL <span className="text-[10px] font-semibold text-slate-400">/ ay</span>
+                          </p>
+                          <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold">Toplam: 120.000 TL</p>
+                        </div>
+                      </label>
+                    ))}
                   </div>
-                  <div className="flex justify-between items-center text-sm font-semibold text-slate-500 dark:text-slate-400">
-                    <span>Dönem</span>
-                    <span className="text-slate-800 dark:text-slate-200 font-bold">Güz Dönemi</span>
-                  </div>
-                  <div className="border-t border-dashed border-slate-200 dark:border-slate-700 my-2"></div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-slate-800 dark:text-slate-200">Yıllık Okul Ücreti</span>
-                    <span className="text-xl font-black text-blue-600 dark:text-blue-400">120.000 TL</span>
-                  </div>
-                </div>
 
-                <button
-                  onClick={handleStartPayment}
-                  className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-sm">payment</span>
-                  <span>Okul Ücretini Öde</span>
-                </button>
-              </div>
-            )}
-
-            {/* Aşama 2: Taksit Seçenekleri */}
-            {paymentStep === 'installments' && (
-              <div className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
-                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
-                  <h2 className="text-xl font-extrabold tracking-tight">Taksit Seçenekleri</h2>
-                  <span className="text-xs font-bold text-slate-400 uppercase">Aşama 2 / 5</span>
-                </div>
-
-                <div className="flex flex-col space-y-3">
-                  {[1, 3, 6, 12].map((inst) => (
-                    <label
-                      key={inst}
-                      onClick={() => setSelectedInstallment(inst)}
-                      className={`flex items-center justify-between p-4 border rounded-2xl cursor-pointer transition-all ${selectedInstallment === inst
-                        ? 'border-blue-600 bg-blue-50/30 dark:bg-blue-950/20 shadow-sm'
-                        : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
-                        }`}
+                  <div className="flex items-center gap-3 pt-2">
+                    <button
+                      onClick={() => setPaymentStep('overview')}
+                      className="flex-1 py-3.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm rounded-xl transition-all cursor-pointer text-center"
                     >
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="installment"
-                          checked={selectedInstallment === inst}
-                          onChange={() => setSelectedInstallment(inst)}
-                          className="text-blue-600 focus:ring-blue-500 h-4 w-4"
-                        />
-                        <span className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                          {inst === 1 ? 'Tek Çekim (Peşin)' : `${inst} Taksit`}
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-black text-blue-600 dark:text-blue-400">
-                          {getMonthlyAmount(inst)} TL <span className="text-[10px] font-semibold text-slate-400">/ ay</span>
-                        </p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold">Toplam: 120.000 TL</p>
-                      </div>
-                    </label>
-                  ))}
+                      Geri Dön
+                    </button>
+                    <button
+                      onClick={handleNextToCard}
+                      className="flex-[2] py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 active:scale-95 transition-all text-center cursor-pointer"
+                    >
+                      Kart Bilgilerine Geç
+                    </button>
+                  </div>
                 </div>
+              )}
 
-                <div className="flex items-center gap-3 pt-2">
-                  <button
-                    onClick={() => setPaymentStep('overview')}
-                    className="flex-1 py-3.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm rounded-xl transition-all cursor-pointer text-center"
-                  >
-                    Geri Dön
-                  </button>
-                  <button
-                    onClick={handleNextToCard}
-                    className="flex-[2] py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 active:scale-95 transition-all text-center cursor-pointer"
-                  >
-                    Kart Bilgilerine Geç
-                  </button>
-                </div>
-              </div>
-            )}
+              {/* Aşama 3: Kart Detayları */}
+              {paymentStep === 'card' && (
+                <form onSubmit={handleSendSms} className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
+                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
+                    <h2 className="text-xl font-extrabold tracking-tight text-slate-800 dark:text-white">Güvenli Kart Ödeme</h2>
+                    <span className="text-xs font-bold text-slate-400 uppercase">Aşama 3 / 5</span>
+                  </div>
 
-            {/* Aşama 3: Kart Detayları */}
-            {paymentStep === 'card' && (
-              <form onSubmit={handleSendSms} className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
-                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
-                  <h2 className="text-xl font-extrabold tracking-tight text-slate-800 dark:text-white">Güvenli Kart Ödeme</h2>
-                  <span className="text-xs font-bold text-slate-400 uppercase">Aşama 3 / 5</span>
-                </div>
+                  <div className="grid grid-cols-12 gap-6">
 
-                <div className="grid grid-cols-12 gap-6">
+                    {/* Sol Sütun: Simülasyon */}
+                    <div className="col-span-12 md:col-span-5 flex flex-col justify-between space-y-6">
+                      <div className="w-full h-48 [perspective:1000px] shrink-0">
+                        <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${isCvvFocused ? '[transform:rotateY(180deg)]' : ''}`}>
 
-                  {/* Sol Sütun: Simülasyon */}
-                  <div className="col-span-12 md:col-span-5 flex flex-col justify-between space-y-6">
-                    <div className="w-full h-48 [perspective:1000px] shrink-0">
-                      <div className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${isCvvFocused ? '[transform:rotateY(180deg)]' : ''}`}>
+                          <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-indigo-950 via-blue-900 to-slate-900 rounded-2xl p-5 text-white shadow-2xl flex flex-col justify-between overflow-hidden border border-white/10 [backface-visibility:hidden]">
+                            <div className="flex justify-between items-center">
+                              <div className="w-11 h-8 bg-gradient-to-r from-yellow-400 via-amber-200 to-yellow-500 rounded-md relative border border-yellow-600/30 overflow-hidden shadow-[inset_0_1px_3px_rgba(255,255,255,0.4)] shrink-0">
+                                <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-0 opacity-40">
+                                  <div className="border-r border-b border-yellow-800/40"></div>
+                                  <div className="border-r border-b border-yellow-800/40"></div>
+                                  <div className="border-b border-yellow-800/40"></div>
+                                  <div className="border-r border-b border-yellow-800/40"></div>
+                                  <div className="border-r border-b border-yellow-800/40"></div>
+                                  <div className="border-b border-yellow-800/40"></div>
+                                  <div className="border-r border-yellow-800/40"></div>
+                                  <div className="border-r border-yellow-800/40"></div>
+                                  <div></div>
+                                </div>
+                              </div>
+                              <div className="text-xl font-bold tracking-tight text-white/80 font-mono">VISA</div>
+                            </div>
 
-                        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-indigo-950 via-blue-900 to-slate-900 rounded-2xl p-5 text-white shadow-2xl flex flex-col justify-between overflow-hidden border border-white/10 [backface-visibility:hidden]">
-                          <div className="flex justify-between items-center">
-                            <div className="w-11 h-8 bg-gradient-to-r from-yellow-400 via-amber-200 to-yellow-500 rounded-md relative border border-yellow-600/30 overflow-hidden shadow-[inset_0_1px_3px_rgba(255,255,255,0.4)] shrink-0">
-                              <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-0 opacity-40">
-                                <div className="border-r border-b border-yellow-800/40"></div>
-                                <div className="border-r border-b border-yellow-800/40"></div>
-                                <div className="border-b border-yellow-800/40"></div>
-                                <div className="border-r border-b border-yellow-800/40"></div>
-                                <div className="border-r border-b border-yellow-800/40"></div>
-                                <div className="border-b border-yellow-800/40"></div>
-                                <div className="border-r border-yellow-800/40"></div>
-                                <div className="border-r border-yellow-800/40"></div>
-                                <div></div>
+                            <div className="text-lg font-mono tracking-widest my-4 text-center">
+                              {formatCardNumberDisplay(cardNumber)}
+                            </div>
+
+                            <div className="flex justify-between items-end">
+                              <div className="min-w-0 flex-1 mr-2">
+                                <p className="text-[8px] text-white/40 uppercase tracking-widest mb-0.5">KART SAHİBİ</p>
+                                <p className="text-xs font-bold font-mono tracking-wide uppercase truncate">
+                                  {cardName || 'AD SOYAD'}
+                                </p>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <p className="text-[8px] text-white/40 uppercase tracking-widest mb-0.5">S.K.T</p>
+                                <p className="text-xs font-bold font-mono tracking-wide">
+                                  {formatExpiryDisplay()}
+                                </p>
                               </div>
                             </div>
-                            <div className="text-xl font-bold tracking-tight text-white/80 font-mono">VISA</div>
                           </div>
 
-                          <div className="text-lg font-mono tracking-widest my-4 text-center">
-                            {formatCardNumberDisplay(cardNumber)}
+                          <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-indigo-950 via-blue-900 to-slate-900 rounded-2xl text-white shadow-2xl flex flex-col justify-between overflow-hidden border border-white/10 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                            <div className="w-full h-10 bg-slate-950 mt-4"></div>
+
+                            <div className="px-5 flex items-center justify-between">
+                              <div className="flex-1 h-8 bg-slate-200/20 rounded-md mr-3 flex items-center px-2 text-white/40 text-[9px] italic font-semibold">
+                                Yetkili İmza
+                              </div>
+                              <div className="bg-white text-slate-800 font-mono font-bold px-3 py-1.5 rounded-md text-sm shrink-0 shadow-inner">
+                                {cardCvv || '***'}
+                              </div>
+                            </div>
+
+                            <div className="px-5 pb-4 flex justify-between items-center text-[8px] text-white/40 font-mono">
+                              <span>T.C. AKADEMİK BİLGİ SİSTEMİ</span>
+                              <span className="font-bold text-xs">VISA</span>
+                            </div>
                           </div>
 
-                          <div className="flex justify-between items-end">
-                            <div className="min-w-0 flex-1 mr-2">
-                              <p className="text-[8px] text-white/40 uppercase tracking-widest mb-0.5">KART SAHİBİ</p>
-                              <p className="text-xs font-bold font-mono tracking-wide uppercase truncate">
-                                {cardName || 'AD SOYAD'}
-                              </p>
-                            </div>
-                            <div className="text-right shrink-0">
-                              <p className="text-[8px] text-white/40 uppercase tracking-widest mb-0.5">S.K.T</p>
-                              <p className="text-xs font-bold font-mono tracking-wide">
-                                {formatExpiryDisplay()}
-                              </p>
-                            </div>
-                          </div>
                         </div>
+                      </div>
 
-                        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-indigo-950 via-blue-900 to-slate-900 rounded-2xl text-white shadow-2xl flex flex-col justify-between overflow-hidden border border-white/10 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-                          <div className="w-full h-10 bg-slate-950 mt-4"></div>
-
-                          <div className="px-5 flex items-center justify-between">
-                            <div className="flex-1 h-8 bg-slate-200/20 rounded-md mr-3 flex items-center px-2 text-white/40 text-[9px] italic font-semibold">
-                              Yetkili İmza
-                            </div>
-                            <div className="bg-white text-slate-800 font-mono font-bold px-3 py-1.5 rounded-md text-sm shrink-0 shadow-inner">
-                              {cardCvv || '***'}
-                            </div>
-                          </div>
-
-                          <div className="px-5 pb-4 flex justify-between items-center text-[8px] text-white/40 font-mono">
-                            <span>T.C. AKADEMİK BİLGİ SİSTEMİ</span>
-                            <span className="font-bold text-xs">VISA</span>
-                          </div>
+                      <div className="bg-slate-50 dark:bg-slate-900/40 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50 space-y-2.5">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Ödeme Özeti</p>
+                        <div className="flex justify-between text-xs font-semibold text-slate-500">
+                          <span>Hizmet</span>
+                          <span className="text-slate-800 dark:text-slate-200">Okul Ücreti Ödemesi</span>
                         </div>
-
+                        <div className="flex justify-between text-xs font-semibold text-slate-500">
+                          <span>Plan</span>
+                          <span className="text-slate-800 dark:text-slate-200">
+                            {selectedInstallment === 1 ? 'Tek Çekim' : `${selectedInstallment} Taksit`}
+                          </span>
+                        </div>
+                        <div className="border-t border-dashed border-slate-200 dark:border-slate-700 my-1"></div>
+                        <div className="flex justify-between items-baseline">
+                          <span className="text-xs font-bold">Aylık Tutar</span>
+                          <span className="text-base font-extrabold text-blue-600 dark:text-blue-400">
+                            {getMonthlyAmount(selectedInstallment)} TL <span className="text-[9px] text-slate-400 font-normal">/ ay</span>
+                          </span>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="bg-slate-50 dark:bg-slate-900/40 rounded-2xl p-4 border border-slate-100 dark:border-slate-700/50 space-y-2.5">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Ödeme Özeti</p>
-                      <div className="flex justify-between text-xs font-semibold text-slate-500">
-                        <span>Hizmet</span>
-                        <span className="text-slate-800 dark:text-slate-200">Okul Ücreti Ödemesi</span>
-                      </div>
-                      <div className="flex justify-between text-xs font-semibold text-slate-500">
-                        <span>Plan</span>
-                        <span className="text-slate-800 dark:text-slate-200">
-                          {selectedInstallment === 1 ? 'Tek Çekim' : `${selectedInstallment} Taksit`}
-                        </span>
-                      </div>
-                      <div className="border-t border-dashed border-slate-200 dark:border-slate-700 my-1"></div>
-                      <div className="flex justify-between items-baseline">
-                        <span className="text-xs font-bold">Aylık Tutar</span>
-                        <span className="text-base font-extrabold text-blue-600 dark:text-blue-400">
-                          {getMonthlyAmount(selectedInstallment)} TL <span className="text-[9px] text-slate-400 font-normal">/ ay</span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Sağ Sütun: Form */}
-                  <div className="col-span-12 md:col-span-7 space-y-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Kart Sahibi</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Kart üzerindeki isim"
-                        value={cardName}
-                        onChange={(e) => setCardName(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm"
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Kart Numarası</label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="XXXX XXXX XXXX XXXX"
-                        maxLength={16}
-                        value={cardNumber}
-                        onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, ''))}
-                        className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm tracking-widest"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-12 gap-4">
-                      <div className="col-span-4 space-y-1">
-                        <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Ay (AA)</label>
+                    {/* Sağ Sütun: Form */}
+                    <div className="col-span-12 md:col-span-7 space-y-4">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Kart Sahibi</label>
                         <input
                           type="text"
                           required
-                          placeholder="Ay"
-                          maxLength={2}
-                          value={cardExpiryMonth}
-                          onChange={(e) => setCardExpiryMonth(e.target.value.replace(/\D/g, ''))}
-                          className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm text-center font-mono"
+                          placeholder="Kart üzerindeki isim"
+                          value={cardName}
+                          onChange={(e) => setCardName(e.target.value)}
+                          className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm"
                         />
                       </div>
 
-                      <div className="col-span-4 space-y-1">
-                        <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Yıl (YY)</label>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Kart Numarası</label>
                         <input
                           type="text"
                           required
-                          placeholder="Yıl"
-                          maxLength={2}
-                          value={cardExpiryYear}
-                          onChange={(e) => setCardExpiryYear(e.target.value.replace(/\D/g, ''))}
-                          className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm text-center font-mono"
+                          placeholder="XXXX XXXX XXXX XXXX"
+                          maxLength={16}
+                          value={cardNumber}
+                          onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, ''))}
+                          className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm tracking-widest"
                         />
                       </div>
 
-                      <div className="col-span-4 space-y-1">
-                        <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">CVC/CVV</label>
-                        <input
-                          type="password"
-                          required
-                          placeholder="***"
-                          maxLength={3}
-                          value={cardCvv}
-                          onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, ''))}
-                          onFocus={() => setIsCvvFocused(true)}
-                          onBlur={() => setIsCvvFocused(false)}
-                          className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm text-center font-mono"
-                        />
+                      <div className="grid grid-cols-12 gap-4">
+                        <div className="col-span-8 space-y-1">
+                          <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Son Kullanma Tarihi (AA/YY)</label>
+                          <input
+                            type="text"
+                            required
+                            placeholder="AA/YY"
+                            maxLength={5}
+                            value={cardExpiry}
+                            onChange={(e) => {
+                              const cleaned = e.target.value.replace(/[^\d]/g, '')
+                              let formatted = cleaned
+                              if (cleaned.length > 2) {
+                                formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}`
+                              }
+                              setCardExpiry(formatted)
+                            }}
+                            className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm text-center font-mono"
+                          />
+                        </div>
+
+                        <div className="col-span-4 space-y-1">
+                          <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">CVC/CVV</label>
+                          <input
+                            type="password"
+                            required
+                            placeholder="***"
+                            maxLength={3}
+                            value={cardCvv}
+                            onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, ''))}
+                            onFocus={() => setIsCvvFocused(true)}
+                            onBlur={() => setIsCvvFocused(false)}
+                            className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-sm text-center font-mono"
+                          />
+                        </div>
                       </div>
                     </div>
+
                   </div>
 
-                </div>
+                  <div className="flex items-center gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentStep('installments')}
+                      className="flex-1 py-3 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm rounded-xl transition-all cursor-pointer text-center"
+                    >
+                      Geri Dön
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-[2] py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 active:scale-95 transition-all text-center cursor-pointer"
+                    >
+                      Güvenli Ödeme Kodu Gönder
+                    </button>
+                  </div>
+                </form>
+              )}
 
-                <div className="flex items-center gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setPaymentStep('installments')}
-                    className="flex-1 py-3 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm rounded-xl transition-all cursor-pointer text-center"
-                  >
-                    Geri Dön
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-[2] py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/25 active:scale-95 transition-all text-center cursor-pointer"
-                  >
-                    Güvenli Ödeme Kodu Gönder
-                  </button>
-                </div>
-              </form>
-            )}
+              {/* Aşama 4: SMS */}
+              {paymentStep === 'sms' && (
+                <form onSubmit={handleVerifySms} className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
+                  <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
+                    <h2 className="text-xl font-extrabold tracking-tight">SMS Onay Kodu</h2>
+                    <span className="text-xs font-bold text-slate-400 uppercase">Aşama 4 / 5</span>
+                  </div>
 
-            {/* Aşama 4: SMS */}
-            {paymentStep === 'sms' && (
-              <form onSubmit={handleVerifySms} className="space-y-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
-                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-4">
-                  <h2 className="text-xl font-extrabold tracking-tight">SMS Onay Kodu</h2>
-                  <span className="text-xs font-bold text-slate-400 uppercase">Aşama 4 / 5</span>
-                </div>
+                  <div className="p-4 bg-blue-500/10 rounded-2xl text-xs leading-relaxed text-slate-600 dark:text-slate-300 font-medium">
+                    Telefonunuza gönderilen 3D Secure doğrulama kodunu giriniz. (Onay kodu alanına rastgele bir şeyler girmeniz yeterlidir)
+                  </div>
 
-                <div className="p-4 bg-blue-500/10 rounded-2xl text-xs leading-relaxed text-slate-600 dark:text-slate-300 font-medium">
-                  Telefonunuza gönderilen 3D Secure doğrulama kodunu giriniz. (Onay kodu alanına rastgele bir şeyler girmeniz yeterlidir)
-                </div>
+                  <div className="flex flex-col items-center justify-center space-y-1">
+                    <span className="text-2xl font-black text-blue-600 dark:text-blue-400 tracking-wider font-mono">
+                      {formatTimer(timerSeconds)}
+                    </span>
+                    <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Kalan Onay Süresi</span>
+                  </div>
 
-                <div className="flex flex-col items-center justify-center space-y-1">
-                  <span className="text-2xl font-black text-blue-600 dark:text-blue-400 tracking-wider font-mono">
-                    {formatTimer(timerSeconds)}
-                  </span>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Kalan Onay Süresi</span>
-                </div>
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      required
+                      placeholder="Onay Kodu"
+                      value={smsCode}
+                      onChange={(e) => {
+                        setSmsCode(e.target.value)
+                        setSmsError('')
+                      }}
+                      className="w-full px-4 py-3 bg-[#f6f9ff] dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-base tracking-widest text-center font-bold"
+                    />
+                    {smsError && (
+                      <p className="text-xs font-semibold text-red-500 text-center animate-pulse">{smsError}</p>
+                    )}
+                    {timerSeconds === 0 && (
+                      <p className="text-xs text-red-500 text-center">
+                        Onay kodu süresi doldu! Lütfen tekrar kod talep edin.
+                      </p>
+                    )}
+                  </div>
 
-                <div className="space-y-2">
-                  <input
-                    type="text"
-                    required
-                    placeholder="Onay Kodu"
-                    value={smsCode}
-                    onChange={(e) => {
-                      setSmsCode(e.target.value)
-                      setSmsError('')
-                    }}
-                    className="w-full px-4 py-3 bg-[#f6f9ff] dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-1 focus:ring-blue-500 focus:outline-none text-base tracking-widest text-center font-bold"
-                  />
-                  {smsError && (
-                    <p className="text-xs font-semibold text-red-500 text-center animate-pulse">{smsError}</p>
-                  )}
-                  {timerSeconds === 0 && (
-                    <p className="text-xs text-red-500 text-center">
-                      Onay kodu süresi doldu! Lütfen tekrar kod talep edin.
+                  <div className="flex items-center gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPaymentStep('card')
+                        setSmsCode('')
+                        setSmsError('')
+                      }}
+                      className="flex-1 py-3 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm rounded-xl transition-all cursor-pointer text-center"
+                    >
+                      Kart Düzenle
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={timerSeconds === 0}
+                      className={`flex-[2] py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/25 active:scale-95 transition-all text-center cursor-pointer ${timerSeconds === 0 ? 'bg-slate-300 text-slate-500 cursor-not-allowed pointer-events-none' : ''
+                        }`}
+                    >
+                      Doğrula ve Öde
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* Aşama 5: Ödeme Başarılı */}
+              {paymentStep === 'success' && (
+                <div className="flex flex-col items-center text-center space-y-6 py-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
+                  <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-950/40 rounded-full flex items-center justify-center text-emerald-500 animate-success-bounce shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                    <svg className="w-12 h-12 stroke-emerald-500 fill-none" viewBox="0 0 52 52">
+                      <circle className="animate-draw-circle" cx="26" cy="26" r="25" strokeWidth="3" />
+                      <path className="animate-draw-check" d="M14.1 27.2l7.1 7.2 16.7-16.8" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Ödeme Başarılı!</h2>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-semibold">
+                      Yıllık okul ücreti tahsilatınız başarıyla gerçekleştirilmiştir. Ders kayıt işlemleriniz açılmıştır.
                     </p>
-                  )}
-                </div>
+                  </div>
 
-                <div className="flex items-center gap-3 pt-2">
                   <button
-                    type="button"
-                    onClick={() => {
-                      setPaymentStep('card')
-                      setSmsCode('')
-                      setSmsError('')
-                    }}
-                    className="flex-1 py-3 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm rounded-xl transition-all cursor-pointer text-center"
+                    onClick={handleUnlockRegistration}
+                    className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    Kart Düzenle
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={timerSeconds === 0}
-                    className={`flex-[2] py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/25 active:scale-95 transition-all text-center cursor-pointer ${timerSeconds === 0 ? 'bg-slate-300 text-slate-500 cursor-not-allowed pointer-events-none' : ''
-                      }`}
-                  >
-                    Doğrula ve Öde
+                    <span>Ders Seçimine Başla</span>
+                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
                   </button>
                 </div>
-              </form>
-            )}
+              )}
 
-            {/* Aşama 5: Ödeme Başarılı */}
-            {paymentStep === 'success' && (
-              <div className="flex flex-col items-center text-center space-y-6 py-6 bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-10 shadow-xl border border-slate-100 dark:border-slate-700/50">
-                <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-950/40 rounded-full flex items-center justify-center text-emerald-500 animate-success-bounce shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                  <svg className="w-12 h-12 stroke-emerald-500 fill-none" viewBox="0 0 52 52">
-                    <circle className="animate-draw-circle" cx="26" cy="26" r="25" strokeWidth="3" />
-                    <path className="animate-draw-check" d="M14.1 27.2l7.1 7.2 16.7-16.8" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Ödeme Başarılı!</h2>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-semibold">
-                    Yıllık okul ücreti tahsilatınız başarıyla gerçekleştirilmiştir. Ders kayıt işlemleriniz açılmıştır.
-                  </p>
-                </div>
-
-                <button
-                  onClick={handleUnlockRegistration}
-                  className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-emerald-500/25 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <span>Ders Seçimine Başla</span>
-                  <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                </button>
-              </div>
-            )}
-
+            </div>
           </div>
         </div>
       )}
@@ -891,7 +888,7 @@ export default function CourseRegistration() {
                       return (
                         <tr key={course.id} className={`hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors ${course.isFailed ? 'bg-red-50/10 dark:bg-red-950/5' : ''}`}>
                           <td className="px-4 py-3 text-xs font-bold text-blue-600 dark:text-blue-400">
-                            {course.id}
+                            {course.code || course.id}
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center flex-wrap gap-1.5">
@@ -929,7 +926,7 @@ export default function CourseRegistration() {
                                   ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed'
                                   : 'bg-blue-600 hover:bg-blue-700 text-white hover:shadow-md hover:shadow-blue-500/20 active:scale-95'
                                 }`}
-                              title={isAdded ? 'Sepete Eklendi' : 'Ekle'}
+                              title={isAdded ? 'Eklendi' : 'Ekle'}
                             >
                               <span className="material-symbols-outlined text-base">
                                 {isAdded ? 'check' : 'add'}
@@ -951,7 +948,7 @@ export default function CourseRegistration() {
             {/* Başlık */}
             <div className="p-4 border-b border-slate-100 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-between">
               <h3 className="font-bold text-sm text-slate-800 dark:text-white flex items-center gap-2">
-                <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">shopping_cart</span>
+                <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">checklist</span>
                 {statusState === 'Taslak' ? 'Seçilen Dersler' : 'Seçtiğim Dersler'}
               </h3>
               <span className="bg-blue-600 dark:bg-blue-500/20 text-white dark:text-blue-400 px-2.5 py-0.5 rounded-full text-[10px] font-bold">
@@ -963,7 +960,7 @@ export default function CourseRegistration() {
             <div className="flex-grow overflow-y-auto p-4 space-y-3 max-h-[500px] lg:max-h-[700px]">
               {selectedCourses.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-slate-400 dark:text-slate-500 text-center p-6">
-                  <span className="material-symbols-outlined text-4xl mb-2">add_shopping_cart</span>
+                  <span className="material-symbols-outlined text-4xl mb-2">assignment</span>
                   <p className="text-sm font-medium">Henüz ders seçmediniz.</p>
                   <p className="text-xs mt-1 text-slate-400">Soldaki havuzdan ders ekleyebilirsiniz.</p>
                 </div>
@@ -979,7 +976,7 @@ export default function CourseRegistration() {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400">{course.id}</span>
+                          <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400">{course.code || course.id}</span>
                           <span className={`text-[8px] font-bold px-1 rounded ${course.type === 'Zorunlu'
                             ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400'
                             : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400'
@@ -1038,8 +1035,8 @@ export default function CourseRegistration() {
 
       </div>
 
-      {/* Yapışkan Aksiyon Altlığı */}
-      <footer className={`fixed bottom-0 left-0 md:left-[280px] right-0 h-16 md:h-20 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800/80 flex items-center px-4 md:px-6 z-40 transition-all duration-1000 ease-in-out shadow-xl ${isTuitionPaid ? 'blur-none' : 'blur-[6px] pointer-events-none select-none'}`}>
+      {/* Aksiyon Altlığı */}
+      <div className={`mt-8 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 md:p-6 flex items-center transition-all duration-1000 ease-in-out shadow-sm ${isTuitionPaid ? 'blur-none' : 'blur-[6px] pointer-events-none select-none'}`}>
         <div className="max-w-7xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-3">
 
           {/* İstatistik Bilgileri (Sol) */}
@@ -1175,7 +1172,7 @@ export default function CourseRegistration() {
           </div>
 
         </div>
-      </footer>
+      </div>
     </section>
   )
 }

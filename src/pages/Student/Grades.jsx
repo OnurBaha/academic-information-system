@@ -1,23 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchStudentGradesAsync } from '../../store/student/studentSlice'
-import { calculateScore, getLetterGrade, simulateGano, calculateAttendancePercent } from '../../utils/studentCalc'
+import { calculateScore, getLetterGrade, simulateGano, calculateGano, getLetterBadgeStyle } from '../../utils/studentCalc'
 import { toast } from 'react-hot-toast'
+import { jsPDF } from 'jspdf'
+import autoTable from 'jspdf-autotable'
 
-// Mock Devamsızlık Detayları
-const absenceDetails = [
-  { id: 1, date: "12.05.2026", hours: 2, courseName: "Yapay Zeka ve Veri Analitiği" },
-  { id: 2, date: "28.05.2026", hours: 3, courseName: "Modern Web Teknolojileri" },
-  { id: 3, date: "03.06.2026", hours: 2, courseName: "Siber Güvenlik Temelleri" }
-]
 
 export default function StudentGrades() {
   const dispatch = useDispatch()
   const { currentUser } = useSelector((state) => state.auth || {})
   const { grades, status } = useSelector((state) => state.student || {})
-  
+
   const [selectedSemester, setSelectedSemester] = useState('current')
-  
+
   // GANO Robotu simülasyon state'leri
   const [simCourseCode, setSimCourseCode] = useState('')
   const [simTargetScore, setSimTargetScore] = useState('')
@@ -37,20 +33,207 @@ export default function StudentGrades() {
     if (studentGrades.length > 0) {
       const firstCourse = studentGrades[0]
       setSimCourseCode(firstCourse.courseCode)
-      setSimTargetAkts(firstCourse.akts)
-      
+      setSimTargetAkts(firstCourse.ects || firstCourse.akts)
+
       // Varsayılan kümülatif GANO'yu hesapla
       const defaultGano = simulateGano(studentGrades, null, 0)
       setEstimatedGano(defaultGano)
     }
   }, [studentGrades])
 
+  const downloadGradeListPDF = () => {
+    try {
+      const doc = new jsPDF()
+      const semesterLabel = selectedSemester === 'current' ? '2025-2026 Guz Donemi' : 'Tum Donemler'
+
+      doc.setFont('Helvetica', 'bold')
+      doc.setFontSize(16)
+      doc.setTextColor(30, 41, 59)
+      doc.text('AKADEMIK BILGI SISTEMI', 14, 18)
+
+      doc.setFont('Helvetica', 'normal')
+      doc.setFontSize(10)
+      doc.setTextColor(100, 116, 139)
+      doc.text(`Donem Not Cizelgesi - ${semesterLabel}`, 14, 25)
+      doc.text(`Ogrenci: ${currentUser?.name || 'Ogrenci'} | GANO: ${grades.length ? calculateGano(filteredGrades).toFixed(2) : '3.42'}`, 14, 30)
+      doc.text(`Tarih: ${new Date().toLocaleDateString('tr-TR')}`, 14, 35)
+
+      const bodyData = filteredGrades.map(g => {
+        const hasFinal = g.final !== null && g.final !== undefined
+        const score = hasFinal ? calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project) : null
+        const letter = hasFinal ? getLetterGrade(score) : 'Aciklanmadi'
+        return [
+          g.courseCode,
+          g.courseName,
+          g.midterm ?? g.vize ?? '-',
+          g.final ?? 'Aciklanmadi',
+          g.proje ?? g.project ?? '-',
+          letter,
+          `${g.ects || g.akts} AKTS`
+        ]
+      })
+
+      autoTable(doc, {
+        startY: 42,
+        head: [['Kod', 'Ders Adi', 'Vize', 'Final', 'Proje', 'Harf', 'Kredi']],
+        body: bodyData,
+        styles: {
+          fontSize: 8.5,
+          cellPadding: 4,
+          lineColor: [226, 232, 240],
+          lineWidth: 0.3,
+          font: 'Helvetica',
+          textColor: [51, 65, 85]
+        },
+        headStyles: {
+          fillColor: [30, 58, 138], // Dark navy
+          textColor: 255,
+          fontStyle: 'bold'
+        },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        columnStyles: {
+          0: { cellWidth: 20 },
+          1: { cellWidth: 65 },
+          2: { cellWidth: 15, halign: 'center' },
+          3: { cellWidth: 25, halign: 'center' },
+          4: { cellWidth: 15, halign: 'center' },
+          5: { cellWidth: 20, halign: 'center' },
+          6: { cellWidth: 20, halign: 'center' }
+        },
+        margin: { left: 14, right: 14 }
+      })
+
+      doc.save(`Not_Cizelgesi_${selectedSemester}_2025_2026.pdf`)
+      toast.success('Resmi not çizelgesi başarıyla indirildi!')
+    } catch (err) {
+      console.error(err)
+      toast.error('PDF oluşturulurken bir hata oluştu!')
+    }
+  }
+
+  const downloadDisputeFormPDF = () => {
+    try {
+      const doc = new jsPDF()
+
+      doc.setFont('Helvetica', 'bold')
+      doc.setFontSize(16)
+      doc.text('NOT ITIRAZ DILEKCESI', 70, 20)
+
+      doc.setFont('Helvetica', 'bold')
+      doc.setFontSize(11)
+      doc.text('MUDURLUGUNE,', 14, 40)
+
+      doc.setFont('Helvetica', 'normal')
+      doc.setFontSize(10)
+      const text = `Universiteniz ${currentUser?.department || 'Muhendislik Fakultesi'} ogrencisiyim. Asagida bilgileri verilen dersin sinav notunun yeniden maddi hata acisindan degerlendirilmesini talep ediyorum.\n\nGereginin yapilmasini arz ederim.`
+      const splitText = doc.splitTextToSize(text, 180)
+      doc.text(splitText, 14, 50)
+
+      // Form Fields Box
+      doc.rect(14, 70, 182, 60)
+      doc.setFont('Helvetica', 'bold')
+      doc.text('Ogrenci No:', 20, 80)
+      doc.text('Ad Soyad:', 20, 90)
+      doc.text('Ders Kodu / Adi:', 20, 100)
+      doc.text('Itiraz Edilen Sinav:', 20, 110)
+      doc.text('Telefon:', 20, 120)
+
+      doc.setFont('Helvetica', 'normal')
+      doc.text(currentUser?.id || '20211024007', 60, 80)
+      doc.text(currentUser?.name || 'Ogrenci', 60, 90)
+      doc.text('...........................................................................', 60, 100)
+      doc.text('[  ] Vize  /  [  ] Final  /  [  ] Proje', 60, 110)
+      doc.text('...........................................................................', 60, 120)
+
+      // Date and Signature
+      doc.text('Tarih: ...../...../2026', 130, 145)
+      doc.text('Imza: ....................', 130, 155)
+
+      doc.save('Not_Itiraz_Dilekcesi.pdf')
+      toast.success('Not itiraz formu PDF olarak indirildi!')
+    } catch (err) {
+      console.error(err)
+      toast.error('PDF oluşturulurken bir hata oluştu!')
+    }
+  }
+
+  const downloadTranscriptPDF = () => {
+    try {
+      const doc = new jsPDF()
+
+      doc.setFont('Helvetica', 'bold')
+      doc.setFontSize(16)
+      doc.setTextColor(30, 41, 59)
+      doc.text('RESMI TRANSKRIPT / NOT DOKUMU', 14, 18)
+
+      doc.setFont('Helvetica', 'normal')
+      doc.setFontSize(10)
+      doc.setTextColor(100, 116, 139)
+      doc.text(`Ogrenci Ad Soyad: ${currentUser?.name || 'Ogrenci'}`, 14, 26)
+      doc.text(`Ogrenci No: ${currentUser?.id || '20211024007'}`, 14, 32)
+      doc.text(`Program: Bilgisayar Muhendisligi`, 14, 38)
+      doc.text(`Akademik GANO: ${grades.length ? calculateGano(studentGrades).toFixed(2) : '3.42'} | Toplam AKTS: 215`, 14, 44)
+      doc.text(`Yazdirilma Tarihi: ${new Date().toLocaleDateString('tr-TR')}`, 14, 50)
+
+      // Render all student courses across all semesters
+      const allGradesBody = studentGrades.map(g => {
+        const hasFinal = g.final !== null && g.final !== undefined
+        const score = hasFinal ? calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project) : null
+        const letter = hasFinal ? getLetterGrade(score) : ''
+        return [
+          g.semester || '2025-2026 Guz',
+          g.courseCode,
+          g.courseName,
+          g.midterm ?? g.vize ?? '-',
+          g.final ?? 'Aciklanmadi',
+          letter,
+          `${g.ects || g.akts} AKTS`
+        ]
+      })
+
+      autoTable(doc, {
+        startY: 56,
+        head: [['Donem', 'Ders Kodu', 'Ders Adi', 'Vize', 'Final', 'Harf Notu', 'Kredi']],
+        body: allGradesBody,
+        styles: {
+          fontSize: 8,
+          cellPadding: 3,
+          lineColor: [226, 232, 240],
+          lineWidth: 0.2,
+          font: 'Helvetica'
+        },
+        headStyles: {
+          fillColor: [30, 58, 138],
+          textColor: 255,
+          fontStyle: 'bold'
+        },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        columnStyles: {
+          0: { cellWidth: 28 },
+          1: { cellWidth: 22 },
+          2: { cellWidth: 55 },
+          3: { cellWidth: 15, halign: 'center' },
+          4: { cellWidth: 25, halign: 'center' },
+          5: { cellWidth: 20, halign: 'center' },
+          6: { cellWidth: 15, halign: 'center' }
+        },
+        margin: { left: 14, right: 14 }
+      })
+
+      doc.save(`Transcript_${currentUser?.id || 'Ogrenci'}.pdf`)
+      toast.success('Resmi transkript başarıyla indirildi!')
+    } catch (err) {
+      console.error(err)
+      toast.error('PDF oluşturulurken bir hata oluştu!')
+    }
+  }
+
   // Ders seçildiğinde AKTS alanını güncelle
   const handleSimCourseChange = (code) => {
     setSimCourseCode(code)
     const selected = studentGrades.find(g => g.courseCode === code)
     if (selected) {
-      setSimTargetAkts(selected.akts)
+      setSimTargetAkts(selected.ects || selected.akts)
     }
   }
 
@@ -75,33 +258,23 @@ export default function StudentGrades() {
   // Not tablosu dönem filtresi
   const filteredGrades = studentGrades.filter(g => {
     let matchesSemester = true
-    if (selectedSemester === 'current') matchesSemester = g.semester === '2025-2026 Güz'
+    if (selectedSemester === 'current') matchesSemester = g.semester === '2025-2026 Bahar'
     else if (selectedSemester === 'spring') matchesSemester = g.semester === '2024-2025 Bahar'
     else if (selectedSemester === 'fall') matchesSemester = g.semester === '2024-2025 Güz'
-      
+
     return matchesSemester
   })
 
   // Mevcut kümülatif GANO hesabı
-  const currentGano = studentGrades.length > 0 
+  const currentGano = studentGrades.length > 0
     ? simulateGano(studentGrades, null, 0)
     : 0
-
-  // Devamsızlık hesabı
-  const attendancePercent = currentUser?.attendanceRate || 92
-  const totalHours = 180
-  const attendedHours = Math.round((totalHours * attendancePercent) / 100)
-  const absentHours = totalHours - attendedHours
-  
-  // Daire grafiği için çizgi hesabı (Çevre = 2 * PI * r = 2 * 3.14 * 58 = 364.24)
-  const strokeCircumference = 364
-  const strokeOffset = strokeCircumference - (strokeCircumference * attendancePercent) / 100
 
   const isLoading = status === 'loading'
 
   return (
     <section className="grades-page-canvas text-slate-850 dark:text-white">
-      
+
       <div className="grades-page-header">
         <div>
           <h2 className="grades-page-title">Notlarım ve Akademik Durum</h2>
@@ -110,12 +283,12 @@ export default function StudentGrades() {
         <div className="grades-select-container">
           <label className="grades-select-label">Dönem Seç:</label>
           <div className="grades-select-wrapper">
-            <select 
-              className="grades-semester-select text-slate-800 dark:text-white bg-white dark:bg-slate-800" 
+            <select
+              className="grades-semester-select text-slate-800 dark:text-white bg-white dark:bg-slate-800"
               value={selectedSemester}
               onChange={(e) => setSelectedSemester(e.target.value)}
             >
-              <option value="current">2025-2026 Güz</option>
+              <option value="current">2025-2026 Bahar</option>
               <option value="spring">2024-2025 Bahar</option>
               <option value="fall">2024-2025 Güz</option>
               <option value="all">Tüm Transkript</option>
@@ -181,12 +354,12 @@ export default function StudentGrades() {
 
       <div className="grades-main-layout">
         <div className="grades-left-column">
-          
+
           {/* Not Çizelgesi Tablosu */}
           <div className="grades-table-wrapper">
             <div className="grades-table-header">
               <h4 className="grades-table-title">Dönem Not Çizelgesi</h4>
-              <button className="grades-btn-download cursor-pointer" onClick={() => toast.success('Resmi not çizelgesi PDF olarak indiriliyor...')}>
+              <button className="grades-btn-download cursor-pointer" onClick={downloadGradeListPDF}>
                 <span className="material-symbols-outlined">download</span>
                 <span>PDF Olarak İndir</span>
               </button>
@@ -219,15 +392,8 @@ export default function StudentGrades() {
                   ) : (
                     filteredGrades.map((g) => {
                       const hasFinal = g.final !== null && g.final !== undefined
-                      const score = hasFinal ? calculateScore(g.vize, g.final, g.proje) : null
-                      const letter = hasFinal ? getLetterGrade(score) : 'Açıklanmadı'
-                      
-                      let badgeClass = ''
-                      if (hasFinal) {
-                        badgeClass = `grades-badge-${letter.toLowerCase()}`
-                      } else {
-                        badgeClass = 'bg-amber-50 text-amber-600 dark:bg-amber-950/20 dark:text-amber-400 border border-amber-100 dark:border-amber-900/30'
-                      }
+                      const score = hasFinal ? calculateScore(g.midterm || g.vize, g.final, g.proje ?? g.project) : null
+                      const letter = hasFinal ? getLetterGrade(score) : ''
 
                       return (
                         <tr className="grades-table-row" key={g.id}>
@@ -237,15 +403,41 @@ export default function StudentGrades() {
                             </p>
                             <p className="grades-course-inst">{g.instructor}</p>
                           </td>
-                          <td className="grades-td-score font-semibold">{g.vize}</td>
-                          <td className="grades-td-score font-semibold">{g.final !== null ? g.final : 'Açıklanmadı'}</td>
-                          <td className="grades-td-score font-semibold">{g.proje !== null ? g.proje : '-'}</td>
-                          <td className="grades-td-badge">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${badgeClass}`}>
-                              {letter === 'Açıklanmadı' ? 'Sınav Yapılmadı' : letter}
+                          <td className="grades-td-score">
+                            <span className="px-2.5 py-1 rounded-md bg-blue-50/50 dark:bg-blue-950/20 text-blue-750 dark:text-blue-400 border border-blue-100/50 dark:border-blue-900/30 text-xs font-bold">
+                              {g.midterm ?? g.vize ?? '-'}
                             </span>
                           </td>
-                          <td className="grades-td-score akts-light-dark text-sm">{g.akts}</td>
+                          <td className="grades-td-score">
+                            {g.final !== null && g.final !== undefined ? (
+                              <span className="px-2.5 py-1 rounded-md bg-indigo-50/50 dark:bg-indigo-950/20 text-indigo-750 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-900/30 text-xs font-bold">
+                                {g.final}
+                              </span>
+                            ) : (
+                              <span className="px-2.5 py-1 rounded-md bg-amber-50/60 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 border border-amber-100/60 dark:border-amber-900/30 text-xs font-bold">
+                                Açıklanmadı
+                              </span>
+                            )}
+                          </td>
+                          <td className="grades-td-score">
+                            {(g.proje ?? g.project) !== null && (g.proje ?? g.project) !== undefined ? (
+                              <span className="px-2.5 py-1 rounded-md bg-slate-100/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/50 dark:border-slate-700/60 text-xs font-bold">
+                                {g.proje ?? g.project}
+                              </span>
+                            ) : (
+                              <span className="text-slate-400 dark:text-slate-650 font-bold">-</span>
+                            )}
+                          </td>
+                          <td className="grades-td-badge">
+                            {letter ? (
+                              <span className={`px-2.5 py-1 rounded-md text-xs font-black uppercase ${getLetterBadgeStyle(letter)}`}>
+                                {letter}
+                              </span>
+                            ) : null}
+                          </td>
+                          <td className="grades-td-score text-slate-500 dark:text-slate-400 font-bold text-xs">
+                            {g.ects || g.akts} AKTS
+                          </td>
                         </tr>
                       )
                     })
@@ -253,80 +445,6 @@ export default function StudentGrades() {
                 </tbody>
               </table>
             </div>
-          </div>
-
-          {/* Devamsızlık ve Katılım Analizi */}
-          <div className="grades-attendance-card flex flex-col gap-6">
-            <div className="flex flex-col sm:flex-row items-center gap-6">
-              
-              <div className="grades-attendance-visual relative select-none filter drop-shadow-md">
-                <svg className="grades-attendance-svg w-32 h-32 transform -rotate-90">
-                  <defs>
-                    <linearGradient id="attendanceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#2563eb" />
-                      <stop offset="100%" stopColor="#10b981" />
-                    </linearGradient>
-                  </defs>
-                  <circle
-                    cx="64"
-                    cy="64"
-                    r="58"
-                    strokeWidth="8"
-                    className="grades-circle-bg stroke-slate-100 dark:stroke-slate-700/60 fill-none"
-                  />
-                  <circle 
-                    cx="64" 
-                    cy="64" 
-                    r="58"
-                    strokeWidth="8"
-                    className="grades-circle-fill-gradient fill-none" 
-                    style={{ strokeDasharray: strokeCircumference, strokeDashoffset: strokeOffset }}
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <span className="text-xl font-black text-slate-800 dark:text-white leading-none">{attendancePercent}%</span>
-                  <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1 font-bold">Katılım</span>
-                </div>
-              </div>
-
-              <div className="grades-attendance-details flex-1">
-                <h5 className="grades-details-title text-sm font-extrabold text-blue-900 dark:text-blue-400">Devamsızlık ve Katılım Analizi</h5>
-                <p className="grades-details-desc text-xs text-slate-500 mt-1 leading-relaxed">
-                  Bu dönem toplam {totalHours} ders saatinin {attendedHours} saatine katılım sağladınız. Kalan hakkınızı takip edebilirsiniz.
-                </p>
-                <div className="grades-details-chips flex gap-2 mt-3 text-[10px] font-bold">
-                  <span className="grades-chip-green bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-full border border-emerald-100 dark:border-emerald-900/30 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span>Güvenli Sınır</span>
-                  </span>
-                  <span className="grades-chip-gray bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-full border border-slate-100 dark:border-slate-700 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                    <span>{absentHours} Saat Devamsızlık</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-slate-50 dark:border-slate-800/60 pt-4 space-y-3">
-              <h6 className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-                Geçmiş Devamsızlık Detayları
-              </h6>
-              
-              <div className="divide-y divide-slate-50 dark:divide-slate-800/40">
-                {absenceDetails.map((detail) => (
-                  <div key={detail.id} className="py-2 flex items-center justify-between text-xs font-semibold">
-                    <div>
-                      <p className="text-slate-800 dark:text-white font-bold">{detail.courseName}</p>
-                      <p className="text-[9px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5">Tarih: {detail.date}</p>
-                    </div>
-                    <span className="bg-red-50 dark:bg-red-950/30 text-red-500 px-2.5 py-0.5 rounded font-extrabold text-[9px]">
-                      {detail.hours} Saat Devamsızlık
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
           </div>
 
         </div>
@@ -342,8 +460,8 @@ export default function StudentGrades() {
             <form className="grades-robot-form" onSubmit={handleSimulate}>
               <div className="grades-robot-group">
                 <label className="grades-robot-label">Simülasyon İçin Ders Seç</label>
-                <select 
-                  className="grades-robot-select text-slate-800 dark:text-white bg-white dark:bg-slate-800" 
+                <select
+                  className="grades-robot-select text-slate-800 dark:text-white bg-white dark:bg-slate-800"
                   value={simCourseCode}
                   onChange={(e) => handleSimCourseChange(e.target.value)}
                 >
@@ -354,31 +472,31 @@ export default function StudentGrades() {
                   ))}
                 </select>
               </div>
-              
+
               <div className="grades-robot-row">
                 <div className="grades-robot-col">
                   <label className="grades-robot-label">Hedef Not</label>
-                  <input 
-                    className="grades-robot-input bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white" 
-                    type="number" 
-                    placeholder="Örn: 85" 
+                  <input
+                    className="grades-robot-input bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white"
+                    type="number"
+                    placeholder="Örn: 85"
                     value={simTargetScore}
                     onChange={(e) => setSimTargetScore(e.target.value)}
                   />
                 </div>
                 <div className="grades-robot-col">
                   <label className="grades-robot-label">AKTS</label>
-                  <input 
-                    className="grades-robot-input" 
-                    type="number" 
-                    placeholder="AKTS" 
+                  <input
+                    className="grades-robot-input"
+                    type="number"
+                    placeholder="AKTS"
                     value={simTargetAkts}
                     readOnly
                     style={{ backgroundColor: 'rgba(0,0,0,0.03)', cursor: 'not-allowed' }}
                   />
                 </div>
               </div>
-              
+
               <div className="grades-robot-results">
                 <div className="grades-result-item">
                   <span>Mevcut GANO:</span>
@@ -392,7 +510,7 @@ export default function StudentGrades() {
                   <div className="grades-result-fill bg-gradient-to-r from-blue-600 to-emerald-500" style={{ width: `${(estimatedGano / 4.0) * 100}%` }} />
                 </div>
               </div>
-              
+
               <button type="submit" className="grades-btn-simulate bg-blue-900 hover:bg-blue-800 text-white font-bold cursor-pointer">
                 Hesapla ve Karşılaştır
               </button>
@@ -409,14 +527,14 @@ export default function StudentGrades() {
                 </div>
                 <span className="material-symbols-outlined">chevron_right</span>
               </button>
-              <button className="grades-action-row cursor-pointer" onClick={() => toast.success('Not itiraz formu PDF olarak indiriliyor...')}>
+              <button className="grades-action-row cursor-pointer" onClick={downloadDisputeFormPDF}>
                 <div className="grades-action-left">
                   <span className="material-symbols-outlined">grading</span>
                   <span>Not İtiraz Formu</span>
                 </div>
                 <span className="material-symbols-outlined">chevron_right</span>
               </button>
-              <button className="grades-action-row cursor-pointer" onClick={() => toast.success('Tüm dönemlerin not dökümü PDF olarak indiriliyor...')}>
+              <button className="grades-action-row cursor-pointer" onClick={downloadTranscriptPDF}>
                 <div className="grades-action-left">
                   <span className="material-symbols-outlined">download</span>
                   <span>Not Dökümü İndir</span>
