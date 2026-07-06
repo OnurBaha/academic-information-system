@@ -1,6 +1,6 @@
 # 🎓 Academic Information System
 
-A full-featured academic management platform built with **React**, **Redux Toolkit**, **TailwindCSS v4**, and **JSON Server**. The system supports three distinct user roles — **Student**, **Teacher**, and **Dean** — each with their own dedicated dashboard and feature set.
+A full-featured academic management platform built with **React**, **Redux Toolkit**, **TailwindCSS v4**, and a **custom REST API** backed by `db.json`. The system supports three distinct user roles — **Student**, **Teacher**, and **Dean** — each with their own dedicated dashboard and feature set.
 
 ---
 
@@ -51,21 +51,33 @@ npm run preview
 
 ## ☁️ Vercel'e Dağıtım
 
-Bu proje Vercel'e hazır hâle getirilmiştir. JSON Server, `api/server.js` dosyasıyla **Vercel Serverless Function** olarak çalışır.
+Bu proje Vercel'e tam hazırdır. API katmanı, **sıfır dış bağımlılık** gerektiren özel bir Node.js Serverless Function olarak çalışır (`api/server.js`).
+
+> **Neden json-server değil?** json-server v1, Vercel'in bundler'ının çözemediği internal path'ler kullanıyor. Bu yüzden `api/server.js` yalnızca Node.js'in built-in modüllerini (`fs`, `url`, `path`) kullanarak `db.json`'ı doğrudan okur ve aynı REST davranışını sunar.
 
 ### Nasıl Çalışır?
 
 ```
-Tarayıcı → /api/users
+Tarayıcı → GET /api/users
     ↓
-Vercel (vercel.json rewrites)
+Vercel (vercel.json rewrites: /api/:path* → /api/server)
     ↓
-api/server.js (Serverless Function)
+api/server.js — Serverless Function
+(Node.js built-ins: fs + url + path)
     ↓
-json-server v1 (db.json'dan veri okur)
+db.json doğrudan okunur
     ↓
 JSON yanıt döner
 ```
+
+### Lokal vs. Vercel Karşılaştırması
+
+| | Lokal Geliştirme | Vercel (Production) |
+|---|---|---|
+| API sunucusu | `npm run server` (json-server) | `api/server.js` (Serverless Function) |
+| Veri kaynağı | `db.json` (okuma + yazma) | `db.json` (okuma + geçici yazma) |
+| Frontend | `npm run dev` (Vite) | `dist/` (static build) |
+| Proxy | Vite `/api` → `localhost:3001` | vercel.json rewrites |
 
 ### Dağıtım Adımları
 
@@ -76,7 +88,7 @@ JSON yanıt döner
    **Install Command:** `npm install`
 4. **Deploy** butonuna bas — Vercel gerisini otomatik halleder.
 
-> ⚠️ **Önemli:** Vercel'in dosya sistemi salt okunurdur. `POST`, `PATCH`, `DELETE` gibi yazma işlemleri o oturum için geçerlidir; sunucu yeniden başladığında veriler `db.json`'daki orijinal haline döner. Demo/akademik projeler için bu normaldir.
+> ⚠️ **Önemli:** Vercel'in dosya sistemi salt okunurdur. `POST`, `PATCH`, `DELETE` gibi yazma işlemleri o serverless invocation için geçerlidir; fonksiyon soğukta başladığında veriler `db.json`'daki orijinal haline döner. Demo/akademik projeler için bu normaldir.
 
 ---
 
@@ -89,7 +101,8 @@ JSON yanıt döner
 | Routing | React Router DOM v7 |
 | Styling | TailwindCSS v4 |
 | HTTP Client | Axios |
-| Mock API | JSON Server |
+| Mock API (Lokal) | JSON Server (CLI) |
+| Mock API (Vercel) | Custom Node.js Serverless Handler |
 | PDF Üretimi | jsPDF + jsPDF-AutoTable |
 | Bildirimler | React Hot Toast |
 | Build Tool | Vite 8 |
@@ -129,7 +142,9 @@ academic-information-system/
 │   ├── utils/                  # Yardımcı fonksiyonlar
 │   ├── App.jsx                 # Ana Router bileşeni
 │   └── main.jsx                # Uygulama giriş noktası
-├── db.json                     # JSON Server mock veritabanı
+├── api/
+│   └── server.js               # Vercel Serverless Function (custom REST handler)
+├── db.json                     # Mock veritabanı (lokal: json-server okur, Vercel: api/server.js okur)
 ├── package.json
 └── vite.config.js
 ```
