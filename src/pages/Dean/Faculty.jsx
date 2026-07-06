@@ -1,30 +1,27 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { 
-  fetchDeanDashboardData, 
-  addInstructorAsync, 
-  updateInstructorAsync, 
+import {
+  fetchDeanDashboardData,
+  addInstructorAsync,
+  updateInstructorAsync,
   deleteInstructorAsync,
   writeSystemLog
 } from '../../store/dean/deanSlice';
 import { toast } from 'react-hot-toast';
+import ConfirmationModal from '../../components/UI/ConfirmationModal';
 
 export default function Faculty() {
   const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.auth || {});
   const { instructors = [], status } = useSelector((state) => state.dean);
   const [filter, setFilter] = useState('Tümü');
   const [searchQuery, setSearchQuery] = useState('');
-
-  // Pagination states
+  const [modalConfig, setModalConfig] = useState({ isOpen: false, title: '', message: '', onConfirm: null, confirmType: 'danger' });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
-  // Add/Edit Modals state
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
+  const [modalMode, setModalMode] = useState('add');
   const [selectedInstId, setSelectedInstId] = useState(null);
-
-  // Form fields
   const [name, setName] = useState('');
   const [dept, setDept] = useState('Yazılım Mühendisliği');
   const [rating, setRating] = useState(0);
@@ -36,22 +33,20 @@ export default function Faculty() {
     dispatch(fetchDeanDashboardData());
   }, [dispatch]);
 
-  // Calculate dynamic metrics
   const totalInstructors = instructors.length;
-  const avgRating = totalInstructors > 0 
+  const avgRating = totalInstructors > 0
     ? (instructors.reduce((acc, curr) => acc + (Number(curr.rating) || 0), 0) / totalInstructors).toFixed(2)
     : '0.00';
-    
-  const avgWorkload = totalInstructors > 0 
+
+  const avgWorkload = totalInstructors > 0
     ? (instructors.reduce((acc, curr) => acc + (Number(curr.workload) || 0), 0) / totalInstructors).toFixed(1)
     : '0';
 
-  const activeCoursesCount = totalInstructors * 2; // Dynamic estimate
+  const activeCoursesCount = totalInstructors * 2;
 
-  // Filter & Search
   const filteredInstructors = instructors.filter(inst => {
-    const matchesSearch = inst.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          inst.dept?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = inst.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      inst.dept?.toLowerCase().includes(searchQuery.toLowerCase());
     if (!matchesSearch) return false;
 
     if (filter === 'Tümü') return true;
@@ -60,7 +55,6 @@ export default function Faculty() {
     return true;
   });
 
-  // Pagination logic
   const totalItems = filteredInstructors.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -70,8 +64,8 @@ export default function Faculty() {
     setModalMode('add');
     setName('');
     setDept('Yazılım Mühendisliği');
-    setRating(0); // newly hired: no student rating
-    setWorkload(0); // newly hired: no attendance rate
+    setRating(0);
+    setWorkload(0);
     setStudentCount(0);
     setEmploymentType('Full-Time');
     setIsModalOpen(true);
@@ -100,11 +94,11 @@ export default function Faculty() {
       const newInst = {
         name,
         dept,
-        rating: 0, // Newly hired: no historical rating
-        workload: employmentType === 'Full-Time' ? 100 : 40, // Base default workload based on type
+        rating: 0,
+        workload: employmentType === 'Full-Time' ? 100 : 40,
         studentCount: 0,
         employmentType,
-        status: 'pending', // Hooked directly into administrative sign-off approvals
+        status: 'pending',
         avatar: `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 900000)}?w=150&q=80`
       };
       dispatch(addInstructorAsync(newInst)).then(() => {
@@ -118,9 +112,9 @@ export default function Faculty() {
         setIsModalOpen(false);
       });
     } else {
-      dispatch(updateInstructorAsync({ 
-        id: selectedInstId, 
-        rating: Number(rating), 
+      dispatch(updateInstructorAsync({
+        id: selectedInstId,
+        rating: Number(rating),
         workload: Number(workload),
         employmentType
       })).then(() => {
@@ -137,26 +131,32 @@ export default function Faculty() {
   };
 
   const handleDelete = (id, instName) => {
-    if (!window.confirm(`${instName} kadrodan tamamen çıkarılsın mı? Bu işlem geri alınamaz.`)) return;
+    const executeDelete = () => {
+      dispatch(deleteInstructorAsync(id)).then(() => {
+        dispatch(writeSystemLog({
+          operator: currentUser?.name || 'Prof. Dr. Mehmet Kaya',
+          action: 'Eğitmen Kadrodan Çıkarıldı',
+          details: `${instName} isimli öğretim görevlisi fakülte kadrosundan çıkarıldı.`
+        }));
+        dispatch(fetchDeanDashboardData());
+        toast.success('Eğitmen kadrodan çıkarıldı.');
+        if (paginatedInstructors.length === 1 && currentPage > 1) {
+          setCurrentPage(prev => prev - 1);
+        }
+      });
+    };
 
-    dispatch(deleteInstructorAsync(id)).then(() => {
-      dispatch(writeSystemLog({
-        operator: 'Prof. Dr. Kemal Arslan',
-        action: 'Eğitmen Kadrodan Çıkarıldı',
-        details: `${instName} isimli öğretim görevlisi fakülte kadrosundan çıkarıldı.`
-      }));
-      dispatch(fetchDeanDashboardData());
-      toast.success('Eğitmen kadrodan çıkarıldı.');
-      // Check if page needs correction
-      if (paginatedInstructors.length === 1 && currentPage > 1) {
-        setCurrentPage(prev => prev - 1);
-      }
+    setModalConfig({
+      isOpen: true,
+      title: 'Eğitmeni Çıkar?',
+      message: `${instName} kadrodan tamamen çıkarılsın mı? Bu işlem geri alınamaz.`,
+      confirmType: 'danger',
+      onConfirm: executeDelete
     });
   };
 
   return (
     <section className="fac-page-canvas">
-      {/* Breadcrumb & Header */}
       <div>
         <p className="fac-breadcrumb">
           YÖNETİM &gt; <span className="fac-breadcrumb-active">AKADEMİK KADRO</span>
@@ -175,9 +175,7 @@ export default function Faculty() {
         </div>
       </div>
 
-      {/* Metrics Cards */}
       <div className="fac-metrics-grid">
-        {/* Card 1: Toplam Eğitmen */}
         <div className="fac-metric-card">
           <div className="fac-card-top">
             <div className="fac-card-icon-wrap fac-icon-blue">
@@ -196,7 +194,6 @@ export default function Faculty() {
           </div>
         </div>
 
-        {/* Card 2: Öğrenci Değerlendirmesi */}
         <div className="fac-metric-card">
           <div className="fac-card-top">
             <div className="fac-card-icon-wrap fac-icon-gold">
@@ -213,7 +210,6 @@ export default function Faculty() {
           </div>
         </div>
 
-        {/* Card 3: Yoklama Katılım Oranı */}
         <div className="fac-metric-card">
           <div className="fac-card-top">
             <div className="fac-card-icon-wrap fac-icon-green">
@@ -229,7 +225,6 @@ export default function Faculty() {
           </div>
         </div>
 
-        {/* Card 4: Yayındaki Branş Sayısı */}
         <div className="fac-metric-card">
           <div className="fac-card-top">
             <div className="fac-card-icon-wrap fac-icon-purple">
@@ -252,9 +247,9 @@ export default function Faculty() {
           <h4 className="fac-list-title">Eğitmen Listesi</h4>
           <div className="fac-list-actions flex flex-wrap items-center gap-3">
             <div className="relative">
-              <input 
-                type="text" 
-                placeholder="Eğitmen veya bölüm ara..." 
+              <input
+                type="text"
+                placeholder="Eğitmen veya bölüm ara..."
                 className="py-1.5 px-3 bg-slate-50 border border-solid border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none w-52"
                 value={searchQuery}
                 onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
@@ -262,7 +257,7 @@ export default function Faculty() {
             </div>
             <div className="fac-segment-control">
               {['Tümü', 'Tam Zamanlı', 'Yarı Zamanlı'].map(lbl => (
-                <button 
+                <button
                   key={lbl}
                   className={`fac-segment-btn ${filter === lbl ? 'fac-segment-btn-active' : ''}`}
                   onClick={() => { setFilter(lbl); setCurrentPage(1); }}
@@ -292,10 +287,10 @@ export default function Faculty() {
                   <td className="fac-td">
                     <div className="fac-instructor-box">
                       {inst.avatar && inst.avatar.startsWith('http') ? (
-                        <img 
-                          className="w-10 h-10 rounded-xl object-cover" 
-                          src={inst.avatar} 
-                          alt={inst.name} 
+                        <img
+                          className="w-10 h-10 rounded-xl object-cover"
+                          src={inst.avatar}
+                          alt={inst.name}
                         />
                       ) : (
                         <div className="w-10 h-10 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center font-black text-sm uppercase">
@@ -335,14 +330,14 @@ export default function Faculty() {
                   </td>
                   <td className="fac-td text-right">
                     <div className="flex gap-2 justify-end">
-                      <button 
+                      <button
                         className="p-1.5 hover:bg-slate-100 rounded-lg border-none bg-transparent cursor-pointer text-blue-600 flex items-center justify-center"
                         onClick={() => handleOpenEditModal(inst)}
                         title="Düzenle"
                       >
                         <span className="material-symbols-outlined text-base">edit</span>
                       </button>
-                      <button 
+                      <button
                         className="p-1.5 hover:bg-rose-50 rounded-lg border-none bg-transparent cursor-pointer text-rose-600 flex items-center justify-center"
                         onClick={() => handleDelete(inst.id, inst.name)}
                         title="Sil"
@@ -368,27 +363,26 @@ export default function Faculty() {
             Toplam {totalItems} kayıttan {totalItems > 0 ? startIndex + 1 : 0}-{Math.min(startIndex + itemsPerPage, totalItems)} arası gösteriliyor
           </span>
           <div className="fac-pagination flex gap-2">
-            <button 
+            <button
               className="fac-page-btn border border-solid border-slate-200 bg-white p-1 rounded-lg flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(prev => prev - 1)}
             >
               <span className="material-symbols-outlined text-[16px]">chevron_left</span>
             </button>
-            
+
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
-              <button 
+              <button
                 key={pageNum}
-                className={`fac-page-btn w-8 h-8 rounded-lg font-bold text-xs border border-solid border-slate-250 cursor-pointer ${
-                  currentPage === pageNum ? 'bg-[#00236f] text-white' : 'bg-white text-slate-700 hover:bg-slate-50'
-                }`}
+                className={`fac-page-btn w-8 h-8 rounded-lg font-bold text-xs border border-solid border-slate-250 cursor-pointer ${currentPage === pageNum ? 'bg-[#00236f] text-white' : 'bg-white text-slate-700 hover:bg-slate-50'
+                  }`}
                 onClick={() => setCurrentPage(pageNum)}
               >
                 {pageNum}
               </button>
             ))}
 
-            <button 
+            <button
               className="fac-page-btn border border-solid border-slate-200 bg-white p-1 rounded-lg flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(prev => prev + 1)}
@@ -413,7 +407,7 @@ export default function Faculty() {
                 </h3>
                 <p className="text-[10px] text-slate-400 font-medium">Akademik kadro yetkinlik ve performans tanımlama formu</p>
               </div>
-              <button 
+              <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
                 className="w-8 h-8 rounded-full border border-solid border-slate-200 bg-white hover:bg-slate-50 cursor-pointer flex items-center justify-center text-slate-500 font-bold"
@@ -421,12 +415,12 @@ export default function Faculty() {
                 <span className="material-symbols-outlined text-sm">close</span>
               </button>
             </div>
-            
+
             <div className="p-6 space-y-4">
               <div className="curr-form-group">
                 <label className="curr-form-label">Adı Soyadı</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   disabled={modalMode === 'edit'}
                   className="curr-form-input w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none disabled:opacity-60"
                   value={name}
@@ -437,7 +431,7 @@ export default function Faculty() {
 
               <div className="curr-form-group">
                 <label className="curr-form-label">Fakülte / Bölüm</label>
-                <select 
+                <select
                   disabled={modalMode === 'edit'}
                   className="curr-form-select w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none disabled:opacity-60"
                   value={dept}
@@ -452,7 +446,7 @@ export default function Faculty() {
 
               <div className="curr-form-group">
                 <label className="curr-form-label">İstihdam Türü (Employment Type)</label>
-                <select 
+                <select
                   className="curr-form-select w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
                   value={employmentType}
                   onChange={(e) => setEmploymentType(e.target.value)}
@@ -466,8 +460,8 @@ export default function Faculty() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="curr-form-group">
                     <label className="curr-form-label">Öğrenci Puanı (5.0 üzerinden)</label>
-                    <input 
-                      type="number" 
+                    <input
+                      type="number"
                       step="0.1"
                       min="1"
                       max="5"
@@ -478,8 +472,8 @@ export default function Faculty() {
                   </div>
                   <div className="curr-form-group">
                     <label className="curr-form-label">Yoklama Katılım Oranı (%)</label>
-                    <input 
-                      type="number" 
+                    <input
+                      type="number"
                       min="10"
                       max="100"
                       className="curr-form-input w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
@@ -491,14 +485,14 @@ export default function Faculty() {
               )}
 
               <div className="flex gap-3 justify-end pt-2">
-                <button 
+                <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
                   className="px-4 py-2 border border-solid border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-bold text-xs rounded-xl cursor-pointer"
                 >
                   İptal Et
                 </button>
-                <button 
+                <button
                   type="submit"
                   className="px-4 py-2 bg-[#00236f] hover:bg-blue-900 text-white font-bold text-xs rounded-xl border-none cursor-pointer"
                 >
@@ -509,6 +503,15 @@ export default function Faculty() {
           </form>
         </div>
       )}
+
+      <ConfirmationModal
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={modalConfig.onConfirm}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmType={modalConfig.confirmType}
+      />
     </section>
   );
 }

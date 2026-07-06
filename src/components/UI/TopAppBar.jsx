@@ -148,11 +148,22 @@ export default function TopAppBar() {
   const filteredAnnouncements = useMemo(() => {
     return allAnnouncements.filter(ann => {
       if (role === 'student') {
-        return ann.target === 'global' || ann.target === 'Tüm Öğrenciler' || (ann.target === 'class' && ann.courseId);
+        return ann.target === 'global' || 
+               ann.target === 'Tüm Öğrenciler' || 
+               ann.target === 'Öğrenci' || 
+               ann.target === 'Sistem' || 
+               (ann.target === 'class' && ann.courseId);
+      }
+      if (role === 'teacher') {
+        return ann.target === 'global' || 
+               ann.target === 'Eğitmen' || 
+               ann.target === 'Sistem' || 
+               ann.target === 'teacher';
       }
       if (role === 'dean') {
-        // Öğretmenin sınıf duyuruları veya sadece öğrencilere özel duyurular dekanda görünmemeli
-        return ann.target !== 'class' && ann.target !== 'Tüm Öğrenciler';
+        return ann.target === 'global' || 
+               ann.target === 'Sistem' || 
+               ann.target === 'dean';
       }
       return true;
     })

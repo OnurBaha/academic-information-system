@@ -14,17 +14,14 @@ export default function SystemControl() {
   const dispatch = useDispatch();
   const { users, termStatus, courses } = useSelector((state) => state.dean);
 
-  // Form states for New Section
   const [newSecCourse, setNewSecCourse] = useState('SOFT-302');
   const [newSecName, setNewSecName] = useState('Sınıf-A');
   const [newSecCapacity, setNewSecCapacity] = useState(40);
   const [newSecTeacher, setNewSecTeacher] = useState('Dr. Elif Soylu');
 
-  // Interactive Tab for SystemControl: 'system' | 'academics'
   const [activeSubTab, setActiveSubTab] = useState('system');
   const [selectedFacultyId, setSelectedFacultyId] = useState('f1');
 
-  // Emergency Alert input states
   const { faculties = [], departments = [] } = useSelector((state) => state.dean);
   const [alertText, setAlertText] = useState(termStatus.emergencyAlertText || '');
 
@@ -32,14 +29,12 @@ export default function SystemControl() {
     dispatch(fetchDeanDashboardData());
   }, [dispatch]);
 
-  // Update alertText local input when store updates
   useEffect(() => {
     if (termStatus.emergencyAlertText) {
       setAlertText(termStatus.emergencyAlertText);
     }
   }, [termStatus.emergencyAlertText]);
 
-  // Filter students & teachers
   const studentsList = users.filter(u => u.role === 'student');
   const teachersList = users.filter(u => u.role === 'teacher');
 
@@ -82,7 +77,7 @@ export default function SystemControl() {
       name: `${newSecCourse} - ${newSecName}`,
       instructor: newSecTeacher,
       capacity: Number(newSecCapacity),
-      category: 'Mühendislik', // Mock category
+      category: 'Mühendislik',
       akts: 5
     })).then(() => {
       dispatch(writeSystemLog({
@@ -113,7 +108,6 @@ export default function SystemControl() {
 
   return (
     <section className="app-page-canvas">
-      {/* Breadcrumb & Header */}
       <div className="app-header-row mb-6">
         <div className="app-header-info">
           <p className="fac-breadcrumb mb-1">
@@ -129,7 +123,6 @@ export default function SystemControl() {
         </div>
       </div>
 
-      {/* Sub Tabs Menu Navigation */}
       <div className="flex gap-2 border-b border-slate-200 mb-6 pb-px">
         <button
           className={`px-4 py-2 font-bold text-xs rounded-t-lg transition-all border-none bg-transparent cursor-pointer ${activeSubTab === 'system' ? 'border-b-2 border-solid border-[#00236f] text-[#00236f]' : 'text-slate-500 hover:bg-slate-50'}`}
@@ -146,7 +139,6 @@ export default function SystemControl() {
       </div>
 
       {activeSubTab === 'academics' ? (
-        /* Akademik Yapı Matrisi */
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="bg-white border border-slate-200/60 rounded-2xl p-5 shadow-sm lg:col-span-1">
             <h3 className="text-sm font-black text-slate-800 mb-3 flex items-center gap-2">
@@ -192,7 +184,7 @@ export default function SystemControl() {
                           <span className="material-symbols-outlined text-sm text-blue-900">folder_open</span>
                           {dept.name} ({dept.code})
                         </h4>
-                        <span className="text-[10px] text-slate-500 font-bold">
+                        <span className="text-[10px] text-slate-550 font-bold">
                           {deptCourses.length} Ders · {deptTeachers.length} Eğitmen
                         </span>
                       </div>
@@ -247,13 +239,8 @@ export default function SystemControl() {
           </div>
         </div>
       ) : (
-        /* Ana Bento Düzeni - Sistem Denetimleri */
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left Column: Tuition Tracker & Account Manager */}
         <div className="lg:col-span-2 flex flex-col gap-6">
-          
-          {/* Tuition Tracker */}
           <div className="bg-white border border-slate-200/60 rounded-2xl p-5 shadow-sm">
             <h3 className="text-sm font-black text-slate-800 mb-3 flex items-center gap-2">
               <span className="material-symbols-outlined text-blue-900">payments</span>
@@ -263,7 +250,7 @@ export default function SystemControl() {
               Ödemesi geciken öğrencilerin listesini inceleyin. Ödemesi eksik olan öğrencilerin ders kayıtları askıya alınacaktır.
             </p>
             <div className="overflow-x-auto">
-              <table className="min-w-full text-left text-xs text-slate-600">
+              <table className="min-w-full text-left text-xs text-slate-650">
                 <thead>
                   <tr className="bg-slate-50 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
                     <th className="py-2.5 px-3">Öğrenci</th>
@@ -280,7 +267,7 @@ export default function SystemControl() {
                       <td className="py-3 px-3">{student.studentNumber}</td>
                       <td className="py-3 px-3">
                         <div className="flex flex-col gap-0.5">
-                          <span className="font-semibold text-slate-700">{student.phone || '—'}</span>
+                          <span className="font-semibold text-slate-705">{student.phone || '—'}</span>
                           <span className="text-[10px] text-slate-400 truncate max-w-[180px]">{student.address || '—'}</span>
                         </div>
                       </td>
@@ -304,17 +291,16 @@ export default function SystemControl() {
             </div>
           </div>
 
-          {/* Account Suspensions & Password Resets */}
           <div className="bg-white border border-slate-200/60 rounded-2xl p-5 shadow-sm">
             <h3 className="text-sm font-black text-slate-800 mb-3 flex items-center gap-2">
               <span className="material-symbols-outlined text-blue-900">manage_accounts</span>
               Hesap Yönetimi &amp; Güvenlik
             </h3>
-            <p className="text-[11px] text-slate-500 mb-4">
+            <p className="text-[11px] text-slate-550 mb-4">
               Akademik ve idari personelin sisteme giriş yetkisini dondurabilir (Suspend) veya şifrelerini sıfırlayabilirsiniz.
             </p>
             <div className="overflow-x-auto">
-              <table className="min-w-full text-left text-xs text-slate-600">
+              <table className="min-w-full text-left text-xs text-slate-650">
                 <thead>
                   <tr className="bg-slate-50 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
                     <th className="py-2.5 px-3">Kullanıcı</th>
@@ -353,19 +339,15 @@ export default function SystemControl() {
               </table>
             </div>
           </div>
-
         </div>
 
-        {/* Right Column: Emergency Alert Banner Trigger & Section Manager */}
         <div className="flex flex-col gap-6">
-          
-          {/* Emergency Alert Marquee Panel */}
           <div className="bg-white border border-slate-200/60 rounded-2xl p-5 shadow-sm">
             <h3 className="text-sm font-black text-slate-800 mb-3 flex items-center gap-2">
               <span className="material-symbols-outlined text-red-600">campaign</span>
               Acil Durum FAB Banner Duyurusu
             </h3>
-            <p className="text-[11px] text-slate-500 mb-4">
+            <p className="text-[11px] text-slate-550 mb-4">
               Kritik idari veya hava durumu duyurularını tüm sisteme anlık kırmızı kayan şerit (marquee) olarak yansıtın.
             </p>
             <div className="flex flex-col gap-3">
@@ -388,14 +370,13 @@ export default function SystemControl() {
             </div>
           </div>
 
-          {/* Section Branch Creator */}
           <div className="bg-white border border-slate-200/60 rounded-2xl p-5 shadow-sm">
             <h3 className="text-sm font-black text-slate-800 mb-3 flex items-center gap-2">
               <span className="material-symbols-outlined text-blue-900">add_card</span>
               Yeni Şube / Sınıf Açılışı
             </h3>
-            <p className="text-[11px] text-slate-500 mb-4">
-              Mevcut derslerin altına yeni şubeler (örn: A, B, C şubesi) oluşturarak kontenjan ve hoca atayın.
+            <p className="text-[11px] text-slate-550 mb-4">
+              Mevcut derslerin altına yeni şubeler oluşturarak kontenjan ve hoca atayın.
             </p>
             <div className="flex flex-col gap-3.5">
               <div className="flex flex-col gap-1">

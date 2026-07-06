@@ -18,7 +18,7 @@
       "password": "password123",
       "name": "Dr. Nazlı Başak",
       "role": "teacher",
-      "departmentId": "d1",
+      "departmentId": "d2",
       "phone": "+90 555 111 2233",
       "address": "Kadıköy, İstanbul",
       "photo": "/nazli_basak.png",
@@ -31,7 +31,7 @@
       "password": "password123",
       "name": "Dr. Elif Soylu",
       "role": "teacher",
-      "departmentId": "d1",
+      "departmentId": "d3",
       "phone": "+90 555 444 5566",
       "address": "Şişli, İstanbul",
       "status": "active"
@@ -43,7 +43,7 @@
       "password": "password123",
       "name": "Doç. Dr. Mert Akın",
       "role": "teacher",
-      "departmentId": "d1",
+      "departmentId": "d4",
       "phone": "+90 555 555 6677",
       "address": "Üsküdar, İstanbul",
       "status": "active"
@@ -55,7 +55,7 @@
       "password": "password123",
       "name": "Dr. Cem Kaya",
       "role": "teacher",
-      "departmentId": "d1",
+      "departmentId": "d5",
       "phone": "+90 555 666 7788",
       "address": "Ataşehir, İstanbul",
       "status": "active"
@@ -162,7 +162,7 @@
       "password": "password123",
       "name": "Dr. Ahmet Yılmaz",
       "role": "teacher",
-      "departmentId": "d1",
+      "departmentId": "d6",
       "phone": "+90 555 333 4455",
       "address": "Beşiktaş, İstanbul",
       "status": "active"
@@ -177,7 +177,7 @@
       "departmentId": "d1",
       "studentNumber": "20211024100",
       "classLevel": 3,
-      "gpa": 2.68,
+      "gpa": 2.34,
       "advisor": "Dr. Nazlı Başak",
       "advisorId": "u3",
       "status": "active"
@@ -237,7 +237,7 @@
       "departmentId": "d1",
       "studentNumber": "20211024104",
       "classLevel": 3,
-      "gpa": 2.62,
+      "gpa": 2.12,
       "advisor": "Dr. Nazlı Başak",
       "advisorId": "u3",
       "status": "active"
@@ -300,7 +300,9 @@
       "gpa": 2.87,
       "advisor": "Dr. Nazlı Başak",
       "advisorId": "u3",
-      "status": "active"
+      "status": "active",
+      "internshipStatus": "pending",
+      "internshipCompany": "TUSAŞ"
     },
     {
       "id": "u109",
@@ -604,87 +606,92 @@
       "code": "SE 306",
       "name": "Software Engineering II",
       "category": "Yazılım",
-      "instructor": "Prof. Dr. Selçuk Yılmaz",
+      "instructor": "Dr. Nazlı Başak",
       "akts": 6,
       "capacity": 40,
       "enrolled": 12,
       "type": "Zorunlu",
-      "isFailed": false
+      "isFailed": false,
+      "departmentId": "d2"
     },
     {
       "id": "SE-308",
       "code": "SE 308",
       "name": "Web Programming II",
       "category": "Yazılım",
-      "instructor": "Dr. Elif Soylu",
+      "instructor": "Dr. Nazlı Başak",
       "akts": 5,
       "capacity": 35,
       "enrolled": 18,
       "type": "Seçmeli",
       "isFailed": false,
-      "gradesApproved": true
+      "gradesApproved": true,
+      "departmentId": "d2"
     },
     {
       "id": "CSE-304",
       "code": "CSE 304",
       "name": "Database Management Systems II",
       "category": "Veri Bilimi",
-      "instructor": "Doç. Dr. Mert Akın",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
       "akts": 5,
       "capacity": 40,
       "enrolled": 15,
       "type": "Seçmeli",
-      "isFailed": false
+      "isFailed": false,
+      "departmentId": "d1"
     },
     {
       "id": "CSE-306",
       "code": "CSE 306",
       "name": "Computer Networks II",
       "category": "Bilgisayar",
-      "instructor": "Dr. Cem Akın",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
       "akts": 5,
       "capacity": 30,
       "enrolled": 8,
       "type": "Seçmeli",
-      "isFailed": false
+      "isFailed": false,
+      "departmentId": "d1"
     },
     {
       "id": "ML-306",
       "code": "ML 306",
       "name": "Machine Learning II",
       "category": "Matematik",
-      "instructor": "Prof. Dr. Kerem Soylu",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
       "akts": 3,
       "capacity": 25,
       "enrolled": 10,
       "type": "Seçmeli",
       "isFailed": false,
-      "departmentId": "d2"
+      "departmentId": "d1"
     },
     {
       "id": "CSE-211",
       "code": "CSE 211",
       "name": "Discrete Mathematics",
       "category": "Matematik",
-      "instructor": "Doç. Dr. Mert Akın",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
       "akts": 2,
       "capacity": 50,
       "enrolled": 45,
       "type": "Seçmeli",
       "isFailed": false,
-      "departmentId": "d2"
+      "departmentId": "d1"
     },
     {
       "id": "PHYS-102",
       "code": "PHYS 102",
       "name": "General Physics II",
       "category": "Mühendislik",
-      "instructor": "Dr. Cem Akın",
+      "instructor": "Dr. Ahmet Yılmaz",
       "akts": 4,
       "capacity": 50,
       "enrolled": 48,
       "type": "Zorunlu",
-      "isFailed": false
+      "isFailed": false,
+      "departmentId": "d6"
     },
     {
       "id": "ENG-302",
@@ -756,7 +763,7 @@
       "code": "SOFT 302",
       "name": "React Redux Advanced",
       "category": "Yazılım",
-      "instructor": "Dr. Elif Soylu",
+      "instructor": "Dr. Nazlı Başak",
       "akts": 5,
       "capacity": 50,
       "enrolled": 24,
@@ -769,7 +776,7 @@
       "code": "SE 305",
       "name": "Software Engineering",
       "category": "Yazılım",
-      "instructor": "Prof. Dr. Selçuk Yılmaz",
+      "instructor": "Dr. Nazlı Başak",
       "akts": 5,
       "capacity": 45,
       "enrolled": 30,
@@ -832,7 +839,7 @@
       "code": "CENG 301",
       "name": "Database Management Systems",
       "category": "Veri Bilimi",
-      "instructor": "Dr. Nazlı Başak",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
       "akts": 4,
       "capacity": 40,
       "enrolled": 15,
@@ -845,7 +852,7 @@
       "code": "CENG 306",
       "name": "Computer Networks",
       "category": "Bilgisayar",
-      "instructor": "Dr. Cem Kaya",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
       "akts": 4,
       "capacity": 30,
       "enrolled": 8,
@@ -858,7 +865,7 @@
       "code": "CENG 211",
       "name": "Discrete Mathematics",
       "category": "Matematik",
-      "instructor": "Doç. Dr. Mert Akın",
+      "instructor": "Prof. Dr. Selçuk Yılmaz",
       "akts": 4,
       "capacity": 50,
       "enrolled": 45,
@@ -871,7 +878,7 @@
       "code": "MIS 101",
       "name": "Introduction to Information Systems",
       "category": "Bilişim",
-      "instructor": "Dr. Ahmet Yılmaz",
+      "instructor": "Doç. Dr. Mert Akın",
       "akts": 4,
       "capacity": 60,
       "enrolled": 52,
@@ -884,7 +891,7 @@
       "code": "MIS 302",
       "name": "Systems Analysis and Design",
       "category": "Bilişim",
-      "instructor": "Dr. Ahmet Yılmaz",
+      "instructor": "Doç. Dr. Mert Akın",
       "akts": 5,
       "capacity": 45,
       "enrolled": 42,
@@ -897,7 +904,7 @@
       "code": "BUS 201",
       "name": "Principles of Marketing",
       "category": "Pazarlama",
-      "instructor": "Dr. Ahmet Yılmaz",
+      "instructor": "Dr. Elif Soylu",
       "akts": 4,
       "capacity": 70,
       "enrolled": 65,
@@ -910,7 +917,7 @@
       "code": "BUS 305",
       "name": "Strategic Management",
       "category": "Yönetim",
-      "instructor": "Prof. Dr. Mehmet Kaya",
+      "instructor": "Dr. Elif Soylu",
       "akts": 5,
       "capacity": 40,
       "enrolled": 38,
@@ -949,7 +956,7 @@
       "code": "MATH 101",
       "name": "Calculus I",
       "category": "Matematik",
-      "instructor": "Prof. Dr. Kerem Soylu",
+      "instructor": "Dr. Ahmet Yılmaz",
       "akts": 4,
       "capacity": 80,
       "enrolled": 78,
@@ -962,7 +969,7 @@
       "code": "MATH 102",
       "name": "Calculus II",
       "category": "Matematik",
-      "instructor": "Prof. Dr. Kerem Soylu",
+      "instructor": "Dr. Ahmet Yılmaz",
       "akts": 4,
       "capacity": 75,
       "enrolled": 72,
@@ -975,7 +982,7 @@
       "code": "MATH 203",
       "name": "Linear Algebra",
       "category": "Matematik",
-      "instructor": "Prof. Dr. Kerem Soylu",
+      "instructor": "Dr. Ahmet Yılmaz",
       "akts": 5,
       "capacity": 50,
       "enrolled": 48,
@@ -1063,17 +1070,6 @@
       "ects": 5,
       "semester": 1,
       "status": "Taslak"
-    },
-    {
-      "id": "1rODbMSs8fY",
-      "code": "TIP150",
-      "name": "aaaa",
-      "ects": 10,
-      "semester": 1,
-      "status": "Taslak",
-      "instructor": "Doç. Dr. Mert Akın",
-      "hours": 48,
-      "quota": 50
     }
   ],
   "documents": [
@@ -1452,9 +1448,9 @@
   "facultyWorkloads": [
     {
       "id": "fw-1",
-      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&q=80",
-      "name": "Dr. Elif Soylu",
-      "dept": "Tarih Bölümü",
+      "avatar": "/nazli_basak.png",
+      "name": "Dr. Nazlı Başak",
+      "dept": "Yazılım Mühendisliği",
       "coursesCount": 3,
       "studentCount": 96,
       "rating": 4.9,
@@ -1462,61 +1458,53 @@
     },
     {
       "id": "fw-2",
-      "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&q=80",
-      "name": "Doç. Dr. Mert Akın",
-      "dept": "Tıp Fakültesi (Genel Cerrahi)",
+      "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&q=80",
+      "name": "Dr. Elif Soylu",
+      "dept": "İşletme",
       "coursesCount": 2,
       "studentCount": 64,
-      "rating": 4.7,
+      "rating": 4.8,
       "workload": 65
     },
     {
       "id": "fw-3",
-      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&q=80",
-      "name": "Dr. Cem Kaya",
-      "dept": "Hukuk Fakültesi",
+      "avatar": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&q=80",
+      "name": "Doç. Dr. Mert Akın",
+      "dept": "Yönetim Bilişim Sistemleri",
       "coursesCount": 2,
       "studentCount": 48,
-      "rating": 4.6,
+      "rating": 4.7,
       "workload": 55
     },
     {
       "id": "fw-4",
-      "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&q=80",
-      "name": "Prof. Seda Demir",
-      "dept": "Türk Dili ve Edebiyatı",
-      "coursesCount": 1,
+      "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&q=80",
+      "name": "Dr. Cem Kaya",
+      "dept": "Moleküler Biyoloji ve Genetik",
+      "coursesCount": 2,
       "studentCount": 32,
-      "rating": 4.5,
+      "rating": 4.6,
       "workload": 40
     },
     {
       "id": "fw-5",
-      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80",
+      "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&q=80",
       "name": "Dr. Ahmet Yılmaz",
-      "dept": "Mühendislik Fakültesi",
+      "dept": "Matematik",
+      "coursesCount": 3,
+      "studentCount": 75,
+      "rating": 4.8,
+      "workload": 70
+    },
+    {
+      "id": "fw-6",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80",
+      "name": "Prof. Dr. Selçuk Yılmaz",
+      "dept": "Bilgisayar Mühendisliği",
       "coursesCount": 4,
-      "studentCount": 120,
-      "rating": 4.8,
+      "studentCount": 110,
+      "rating": 4.9,
       "workload": 90
-    },
-    {
-      "id": "Eev1flBGsrM",
-      "name": "Onur Baha",
-      "dept": "Moleküler Biyoloji",
-      "rating": 1,
-      "workload": 10,
-      "studentCount": 50,
-      "avatar": "https://images.unsplash.com/photo-1500000837436?w=150&q=80"
-    },
-    {
-      "id": "adtrwa9hU-E",
-      "name": "ssss",
-      "dept": "Yazılım Mühendisliği",
-      "rating": 4.8,
-      "workload": 80,
-      "studentCount": 90,
-      "avatar": "https://images.unsplash.com/photo-1500000518823?w=150&q=80"
     }
   ],
   "bulletins": [
@@ -1550,6 +1538,14 @@
       "priority": "Normal",
       "title": "YAZ PARTİSİ",
       "content": "WUHUUUUUUUUUU",
+      "target": "Sistem"
+    },
+    {
+      "id": "M-8X4XxvbWg",
+      "date": "06.07.2026",
+      "priority": "ACİL",
+      "title": "Test12",
+      "content": "SA",
       "target": "Sistem"
     }
   ],
@@ -4442,9 +4438,7 @@
   ],
   "termStatus": {
     "isTermClosed": false,
-    "isGradeLocksActive": true,
-    "emergencyAlertActive": false,
-    "emergencyAlertText": "Hava muhalefeti nedeniyle bugün tüm dersler online (Zoom) yapılacaktır."
+    "isGradeLocksActive": true
   },
   "systemLogs": [
     {
@@ -4999,6 +4993,62 @@
       "operator": "Prof. Dr. Mehmet Kaya",
       "action": "Öğrenci Talebi Onaylandı",
       "details": "Ahmet Yılmaz isimli öğrencinin Ders Kayıt Onayı talebi onaylandı."
+    },
+    {
+      "id": "S6wJuB7umXc",
+      "timestamp": "06.07.2026 06:27:08",
+      "operator": "Prof. Dr. Mehmet Kaya",
+      "action": "Not Giriş Kilitleri Kaldırıldı",
+      "details": "Tüm derslerin not giriş ekranları erişime açıldı."
+    },
+    {
+      "id": "-w7mfddkQ-w",
+      "timestamp": "06.07.2026 06:27:33",
+      "operator": "Prof. Dr. Mehmet Kaya",
+      "action": "Not Girişleri Kilitlendi",
+      "details": "Tüm derslerin not giriş ekranları kilitlendi."
+    },
+    {
+      "id": "8WyFPzPlqM4",
+      "timestamp": "06.07.2026 06:29:23",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Eğitmen Kaydı Onay Bekliyor",
+      "details": "Yeni öğretim görevlisi a (Yazılım Mühendisliği - Tam Zamanlı) için idari onay süreci başlatıldı."
+    },
+    {
+      "id": "46lGKYLdFtY",
+      "timestamp": "06.07.2026 06:29:34",
+      "operator": "Prof. Dr. Mehmet Kaya",
+      "action": "Eğitmen Girişi Onaylandı",
+      "details": "Yeni öğretim görevlisi a idari onaydan geçerek resmi kadroya alındı."
+    },
+    {
+      "id": "lPAyyIzyc6I",
+      "timestamp": "06.07.2026 06:29:49",
+      "operator": "Prof. Dr. Kemal Arslan",
+      "action": "Eğitmen Kaydı Onay Bekliyor",
+      "details": "Yeni öğretim görevlisi s (Yazılım Mühendisliği - Tam Zamanlı) için idari onay süreci başlatıldı."
+    },
+    {
+      "id": "LmCPqyop7wE",
+      "timestamp": "06.07.2026 06:29:56",
+      "operator": "Prof. Dr. Mehmet Kaya",
+      "action": "Eğitmen Kadrodan Çıkarıldı",
+      "details": "s isimli öğretim görevlisi fakülte kadrosundan çıkarıldı."
+    },
+    {
+      "id": "YeChyhkGkMc",
+      "timestamp": "06.07.2026 06:29:58",
+      "operator": "Prof. Dr. Mehmet Kaya",
+      "action": "Eğitmen Kadrodan Çıkarıldı",
+      "details": "a isimli öğretim görevlisi fakülte kadrosundan çıkarıldı."
+    },
+    {
+      "id": "Pp9scztDkEQ",
+      "timestamp": "06.07.2026 06:30:56",
+      "operator": "Prof. Dr. Mehmet Kaya",
+      "action": "Bülten Yayınlandı",
+      "details": "\"Test12\" başlıklı genel bülten yayınlandı."
     }
   ],
   "graduationApprovals": [
@@ -5016,6 +5066,14 @@
       "studentNumber": "20211024006",
       "gpa": 3.1,
       "ects": 242,
+      "status": "pending"
+    },
+    {
+      "id": "ga-3",
+      "studentName": "Zeynep Aslan",
+      "studentNumber": "20211024009",
+      "gpa": 3.52,
+      "ects": 240,
       "status": "pending"
     }
   ],

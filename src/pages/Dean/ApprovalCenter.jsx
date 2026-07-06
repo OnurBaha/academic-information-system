@@ -19,6 +19,7 @@ import {
 } from '../../store/course/courseSlice';
 import { toast } from 'react-hot-toast';
 import RequestTable from '../../components/approvals/RequestTable';
+import ConfirmationModal from '../../components/UI/ConfirmationModal';
 
 export default function ApprovalCenter() {
   const dispatch = useDispatch();
@@ -32,7 +33,8 @@ export default function ApprovalCenter() {
     graduationApprovals = [],
     instructors = [],
     users = [],
-    documents = []
+    documents = [],
+    activeSemester = '2026-2027 Güz Dönemi'
   } = useSelector((state) => state.dean);
 
   const { curriculum = [] } = useSelector((state) => state.course);
@@ -42,15 +44,23 @@ export default function ApprovalCenter() {
   const [audience, setAudience] = useState('Sistem');
   const [isUrgent, setIsUrgent] = useState(true);
   const [content, setContent] = useState('');
+  
+  const [modalConfig, setModalConfig] = useState({ isOpen: false, title: '', message: '', onConfirm: null, confirmType: 'danger' });
 
   useEffect(() => {
     dispatch(fetchDeanDashboardData());
     dispatch(fetchCurriculumAsync());
   }, [dispatch]);
 
-  // Publish global bültenler
   const handlePublish = () => {
-    if (!title.trim() || !content.trim()) return;
+    if (!title.trim()) {
+      toast.error('Lütfen bülten başlığı girin.');
+      return;
+    }
+    if (!content.trim()) {
+      toast.error('Lütfen bülten açıklaması girin.');
+      return;
+    }
 
     dispatch(publishGlobalBulletinAsync({
       priority: isUrgent ? 'ACİL' : 'Normal',
@@ -64,20 +74,18 @@ export default function ApprovalCenter() {
         details: `"${title}" başlıklı genel bülten yayınlandı.`
       }));
       dispatch(fetchDeanDashboardData());
+      toast.success('Bülten başarıyla yayınlandı!');
     });
 
     setTitle('');
     setContent('');
-    toast.success('Bülten başarıyla yayınlandı!');
   };
 
-  // Course Assignment Approvals
   const handleApproveAssignment = (id, name, course) => {
     const ca = courseAssignments.find(x => x.id === id);
     if (!ca) return;
 
     dispatch(updateCourseAssignmentStatus({ id, status: 'approved' })).then(() => {
-      // POST to /schedules
       fetch('http://localhost:3001/schedules', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -94,7 +102,6 @@ export default function ApprovalCenter() {
           status: 'approved'
         })
       }).then(() => {
-        // Also update the instructor in /courses
         fetch(`http://localhost:3001/courses?code=${ca.courseCode}`)
           .then(res => res.json())
           .then(cList => {
@@ -130,7 +137,6 @@ export default function ApprovalCenter() {
     });
   };
 
-  // Student Requests
   const handleApproveStudent = (id, name, type) => {
     dispatch(updateStudentRequestStatus({ id, status: 'approved' })).then(() => {
       dispatch(writeSystemLog({
@@ -155,7 +161,6 @@ export default function ApprovalCenter() {
     });
   };
 
-  // Official Document Request Approvals
   const handleApproveDocument = (id, name, type) => {
     dispatch(updateDocumentStatusAsync({ id, status: 'approved' })).then(() => {
       dispatch(writeSystemLog({
@@ -180,7 +185,6 @@ export default function ApprovalCenter() {
     });
   };
 
-  // Graduation
   const handleApproveGraduation = (id, name) => {
     dispatch(updateGraduationApprovalStatus({ id, status: 'approved' })).then(() => {
       dispatch(writeSystemLog({
@@ -193,7 +197,6 @@ export default function ApprovalCenter() {
     });
   };
 
-  // Curriculum Draft
   const handleApproveCurriculum = (id, name) => {
     dispatch(updateCurriculumCourseAsync({ id, status: 'Aktif' })).then(() => {
       dispatch(writeSystemLog({
@@ -233,7 +236,6 @@ export default function ApprovalCenter() {
     });
   };
 
-  // Faculty Onboarding
   const handleApproveFacultyOnboarding = (id, name) => {
     dispatch(updateInstructorAsync({ id, status: 'active' })).then(() => {
       dispatch(writeSystemLog({
@@ -258,7 +260,6 @@ export default function ApprovalCenter() {
     });
   };
 
-  // Student Internship
   const handleApproveInternship = (id, name, company) => {
     dispatch(updateUserStatus({ id, status: 'active', internshipStatus: 'approved' })).then(() => {
       dispatch(writeSystemLog({
@@ -283,30 +284,62 @@ export default function ApprovalCenter() {
     });
   };
 
-  // Lock status control
   const handleToggleLocks = () => {
     const nextLocksState = !termStatus.isGradeLocksActive;
     dispatch(updateTermLocks({
       isTermClosed: termStatus.isTermClosed,
       isGradeLocksActive: nextLocksState
     })).then(() => {
+      dispatch(writeSystemLog({
+        operator: currentUser?.name || 'Prof. Dr. Mehmet Kaya',
+        action: nextLocksState ? 'Not Girişleri Kilitlendi' : 'Not Giriş Kilitleri Kaldırıldı',
+        details: `Tüm derslerin not giriş ekranları ${nextLocksState ? 'kilitlendi' : 'erişime açıldı'}.`
+      }));
       dispatch(fetchDeanDashboardData());
       toast.success(nextLocksState ? 'Not girişleri kilitlendi!' : 'Not giriş ekranları açıldı!');
     });
   };
 
-  const handleCloseTerm = () => {
-    if (!window.confirm('Mevcut dönemi resmi olarak kapatmak istediğinize emin misiniz?')) return;
-    dispatch(updateTermLocks({
-      isTermClosed: true,
-      isGradeLocksActive: true
-    })).then(() => {
-      dispatch(fetchDeanDashboardData());
-      toast.success('Dönem resmi olarak kapatıldı!');
+  const handleToggleTermStatus = () => {
+    const nextTermClosedState = !termStatus.isTermClosed;
+    const nextLocksState = nextTermClosedState ? true : termStatus.isGradeLocksActive;
+
+    const executeToggle = () => {
+      dispatch(updateTermLocks({
+        isTermClosed: nextTermClosedState,
+        isGradeLocksActive: nextLocksState
+      })).then(() => {
+        dispatch(publishGlobalBulletinAsync({
+          priority: 'ACİL',
+          title: nextTermClosedState ? 'Akademik Dönem Resmi Olarak Kapatıldı' : 'Akademik Dönem Resmi Olarak Açıldı',
+          content: nextTermClosedState 
+            ? `${activeSemester} resmi olarak dekanlık kararıyla kapatılmıştır. Tüm akademik ve not girişi süreçleri dondurulmuştur.` 
+            : `${activeSemester} dekanlık kararıyla açılmıştır. Tüm akademik faaliyetler aktiftir.`,
+          target: 'Sistem'
+        }));
+
+        dispatch(writeSystemLog({
+          operator: currentUser?.name || 'Prof. Dr. Mehmet Kaya',
+          action: nextTermClosedState ? 'Dönem Kapatıldı' : 'Dönem Açıldı',
+          details: `${activeSemester} resmi olarak ${nextTermClosedState ? 'kapatıldı' : 'açıldı'}.`
+        }));
+
+        dispatch(fetchDeanDashboardData());
+        toast.success(nextTermClosedState ? 'Dönem resmi olarak kapatıldı!' : 'Dönem resmi olarak açıldı!');
+      });
+    };
+
+    setModalConfig({
+      isOpen: true,
+      title: nextTermClosedState ? 'Dönemi Kapat?' : 'Dönemi Tekrar Aç?',
+      message: nextTermClosedState 
+        ? `${activeSemester} cari dönemini resmi olarak kapatmak istediğinize emin misiniz? Bu işlem tüm not girişlerini kilitleyecektir.` 
+        : `${activeSemester} cari dönemini tekrar açarak akademik süreçleri aktif hale getirmek istediğinize emin misiniz?`,
+      confirmType: nextTermClosedState ? 'danger' : 'primary',
+      onConfirm: executeToggle
     });
   };
 
-  // Counts definition
   const pendingAssignments = courseAssignments.filter(x => x.status === 'pending');
   const pendingStudents = studentRequests.filter(x => x.status === 'pending');
   const pendingDocuments = (documents || []).filter(x => x.status === 'pending');
@@ -326,7 +359,6 @@ export default function ApprovalCenter() {
 
   return (
     <section className="app-page-canvas">
-      {/* Breadcrumb & Header */}
       <div className="app-header-row">
         <div className="app-header-info">
           <h2 className="app-title">Onay &amp; Bildirim Merkezi</h2>
@@ -344,7 +376,6 @@ export default function ApprovalCenter() {
         </div>
       </div>
 
-      {/* Tabs Menu Navigation */}
       <div className="flex gap-2 border-b border-slate-200 mb-6 pb-px overflow-x-auto">
         <button className={`px-4 py-2.5 font-bold text-xs rounded-t-lg transition-all ${activeTab === 'assignments' ? 'bg-[#00236f] text-white' : 'text-slate-600 hover:bg-slate-100'}`} onClick={() => setActiveTab('assignments')}>
           Görevlendirmeler ({pendingAssignments.length})
@@ -492,7 +523,6 @@ export default function ApprovalCenter() {
 
           {activeTab === 'students' && (
             <div className="flex flex-col gap-6">
-              {/* FYK Talepleri */}
               <div className="app-card">
                 <h4 className="text-sm font-black text-slate-800 mb-4">Öğrenci İstisnai Talepleri (FYK)</h4>
                 <RequestTable 
@@ -521,7 +551,6 @@ export default function ApprovalCenter() {
                 />
               </div>
 
-              {/* Resmi Evrak Talepleri */}
               <div className="app-card">
                 <h4 className="text-sm font-black text-slate-800 mb-4">Resmi Evrak Talepleri (Transkript / Belge)</h4>
                 <RequestTable 
@@ -567,13 +596,13 @@ export default function ApprovalCenter() {
                 </div>
               </div>
               <div className="p-4 bg-slate-50 border border-slate-200/60 rounded-xl">
-                <h5 className="font-bold text-slate-800 text-xs mb-1">2. Dönem Kapatma Onayı</h5>
+                <h5 className="font-bold text-slate-800 text-xs mb-1">2. Dönem Kapatma / Açma Onayı</h5>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-slate-700">
                     Dönem Resmi Durumu: {termStatus.isTermClosed ? '🟥 KAPATILDI' : '🟩 AKTİF'}
                   </span>
-                  <button className={`px-4 py-2 text-xs font-bold rounded-lg transition-all bg-[#00236f] text-white hover:bg-blue-900 ${termStatus.isTermClosed ? 'opacity-50 cursor-not-allowed' : ''}`} onClick={handleCloseTerm} disabled={termStatus.isTermClosed}>
-                    {termStatus.isTermClosed ? 'Dönem Kapatılmış' : 'Dönemi Resmi Olarak Kapat'}
+                  <button className={`px-4 py-2 text-xs font-bold rounded-lg transition-all text-white border-none cursor-pointer ${termStatus.isTermClosed ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'}`} onClick={handleToggleTermStatus}>
+                    {termStatus.isTermClosed ? 'Dönemi Resmi Olarak Aç' : 'Dönemi Resmi Olarak Kapat'}
                   </button>
                 </div>
               </div>
@@ -609,10 +638,10 @@ export default function ApprovalCenter() {
             <div className="app-card">
               <h4 className="text-sm font-black text-slate-800 mb-4">Fakülte İşlem Geçmişi (Logs Audit)</h4>
               <div className="flex flex-col gap-3">
-                {systemLogs.map((log, idx) => (
+                {[...systemLogs].reverse().map((log, idx) => (
                   <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl flex items-start justify-between text-xs" key={log.id || idx}>
                     <div>
-                      <span className="font-bold text-slate-800">{log.operator}</span> — <span className="px-2 py-0.5 bg-slate-200 text-slate-600 rounded text-[9px] font-bold uppercase">{log.action}</span>
+                      <span className="font-bold text-slate-800">{log.operator}</span> — <span className="px-2 py-0.5 bg-slate-200 text-slate-650 rounded text-[9px] font-bold uppercase">{log.action}</span>
                       <p className="text-[11px] text-slate-500 mt-1 m-0">{log.details}</p>
                     </div>
                     <span className="text-[10px] text-slate-400 font-bold">{log.timestamp}</span>
@@ -623,13 +652,21 @@ export default function ApprovalCenter() {
           )}
         </div>
 
-        {/* Sidebar Bulletin Form */}
         <div className="app-sidebar">
           <div className="app-sidebar-card">
             <h4 className="app-sidebar-title">Bülten Oluşturucu</h4>
             <div className="app-form-group">
               <label className="app-form-label">Başlık</label>
               <input type="text" className="app-form-input" placeholder="Duyuru başlığı..." value={title} onChange={(e) => setTitle(e.target.value)} />
+            </div>
+            <div className="app-form-group">
+              <label className="app-form-label">Açıklama</label>
+              <textarea 
+                className="app-form-input min-h-[90px] p-2.5 focus:outline-none" 
+                placeholder="Duyuru açıklaması..." 
+                value={content} 
+                onChange={(e) => setContent(e.target.value)} 
+              />
             </div>
             <div className="app-form-group">
               <label className="app-form-label">Hedef Kitle</label>
@@ -645,6 +682,15 @@ export default function ApprovalCenter() {
           </div>
         </div>
       </div>
+
+      <ConfirmationModal 
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={modalConfig.onConfirm}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmType={modalConfig.confirmType}
+      />
     </section>
   );
 }

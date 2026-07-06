@@ -1,28 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { 
-  fetchCurriculumAsync, 
+import {
+  fetchCurriculumAsync,
   createNewCurriculumCourseAsync,
   updateCurriculumCourseAsync,
-  deleteCurriculumCourseAsync 
+  deleteCurriculumCourseAsync
 } from '../../store/course/courseSlice';
 import { jsPDF } from 'jspdf';
 import { toast } from 'react-hot-toast';
 import CurriculumForm from '../../components/curriculum/CurriculumForm';
+import ConfirmationModal from '../../components/UI/ConfirmationModal';
 
 export default function Curriculum() {
   const dispatch = useDispatch();
   const { curriculum = [] } = useSelector((state) => state.course);
-
-  // Form states
+  const [modalConfig, setModalConfig] = useState({ isOpen: false, title: '', message: '', onConfirm: null, confirmType: 'danger' });
   const [courseName, setCourseName] = useState('');
   const [track, setTrack] = useState('Full-Stack Web');
   const [ects, setEcts] = useState(6);
   const [instructor, setInstructor] = useState('Dr. Arda Yılmaz');
   const [hours, setHours] = useState(48);
   const [quota, setQuota] = useState(50);
-
-  // Details/Actions state
   const [activeMenuId, setActiveMenuId] = useState(null);
   const [expandedCourseIds, setExpandedCourseIds] = useState({});
 
@@ -30,7 +28,6 @@ export default function Curriculum() {
     dispatch(fetchCurriculumAsync());
   }, [dispatch]);
 
-  // PDF Export Function
   const handleExportPDF = () => {
     try {
       const doc = new jsPDF();
@@ -80,7 +77,6 @@ export default function Curriculum() {
       setActiveMenuId(null);
       toast.success(`Ders durumu '${status}' olarak güncellendi.`);
 
-      // If approved (activated), inject template courses automatically
       if (status === 'Aktif') {
         const templates = [
           { name: 'Veri Güvenliği (Data Security)', code: 'SEC401', ects: 5, instructor: 'Doç. Dr. Mert Akın', hours: 42, quota: 40, status: 'Aktif' },
@@ -88,7 +84,7 @@ export default function Curriculum() {
           { name: 'Bulut Bilişim (Cloud Computing)', code: 'CLOUD408', ects: 6, instructor: 'Dr. Elif Soylu', hours: 48, quota: 30, status: 'Aktif' }
         ];
 
-        Promise.all(templates.map(t => 
+        Promise.all(templates.map(t =>
           dispatch(createNewCurriculumCourseAsync({ ...t, semester: 1 })).unwrap()
         )).then(() => {
           dispatch(fetchCurriculumAsync());
@@ -99,11 +95,20 @@ export default function Curriculum() {
   };
 
   const handleDeleteCourse = (id) => {
-    if (!window.confirm('Bu dersi müfredattan tamamen kaldırmak istediğinize emin misiniz?')) return;
-    dispatch(deleteCurriculumCourseAsync(id)).then(() => {
-      dispatch(fetchCurriculumAsync());
-      setActiveMenuId(null);
-      toast.success('Ders müfredattan silindi.');
+    const executeDelete = () => {
+      dispatch(deleteCurriculumCourseAsync(id)).then(() => {
+        dispatch(fetchCurriculumAsync());
+        setActiveMenuId(null);
+        toast.success('Ders müfredattan silindi.');
+      });
+    };
+
+    setModalConfig({
+      isOpen: true,
+      title: 'Dersi Sil?',
+      message: 'Bu dersi müfredattan tamamen kaldırmak istediğinize emin misiniz? Bu işlem geri alınamaz.',
+      confirmType: 'danger',
+      onConfirm: executeDelete
     });
   };
 
@@ -135,13 +140,11 @@ export default function Curriculum() {
     setCourseName('');
   };
 
-  // Group curriculum by status
   const activeCourses = curriculum.filter(c => c.status === 'Aktif');
   const draftCourses = curriculum.filter(c => c.status === 'Taslak' || c.status === 'Pasif');
 
   return (
     <section className="curr-page-canvas">
-      {/* Breadcrumb & Header */}
       <div>
         <p className="curr-breadcrumb">
           AKADEMİK PLANLAMA
@@ -159,11 +162,8 @@ export default function Curriculum() {
         </div>
       </div>
 
-      {/* Main Bento Grid */}
       <div className="curr-main-grid">
-        {/* Left Side: Programs Lists */}
         <div className="curr-programs-wrap">
-          {/* Active Curriculum Programs */}
           <div className="curr-program-card">
             <div className="curr-program-header">
               <div className="curr-program-header-info">
@@ -229,7 +229,6 @@ export default function Curriculum() {
             </div>
           </div>
 
-          {/* Draft/Passive Programs */}
           <div className="curr-program-card">
             <div className="curr-program-header">
               <div className="curr-program-header-info">
@@ -298,9 +297,8 @@ export default function Curriculum() {
           </div>
         </div>
 
-        {/* Right Side: Sidebar Form */}
         <div className="curr-sidebar-wrap">
-          <CurriculumForm 
+          <CurriculumForm
             courseName={courseName}
             setCourseName={setCourseName}
             track={track}
@@ -319,6 +317,15 @@ export default function Curriculum() {
           />
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={modalConfig.onConfirm}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmType={modalConfig.confirmType}
+      />
     </section>
   );
 }

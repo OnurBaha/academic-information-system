@@ -5,9 +5,9 @@ import { toast } from 'react-hot-toast';
 
 export default function StudentAnalytics() {
   const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state.auth || {});
   const { users = [], studentAnalytics, deanOverview, instructors = [] } = useSelector((state) => state.dean);
   
-  // Custom states for interactive features
   const [isStoriesModalOpen, setIsStoriesModalOpen] = useState(false);
   const [selectedStudentForAdvisor, setSelectedStudentForAdvisor] = useState(null);
 
@@ -16,13 +16,11 @@ export default function StudentAnalytics() {
   }, [dispatch]);
 
   const students = users.filter(u => u.role === 'student');
-  const studentCount = students.length; // Dynamic total student count
+  const studentCount = students.length;
 
-  // Filter students under academic risk (GPA < 2.5)
   const riskStudents = students.filter(s => (s.gpa || 0) < 2.5);
 
-  // Dynamic Career Funnel
-  const placedStudents = students.filter(s => s.status === 'graduated' || s.tuitionPaid === false); // Example categories
+  const placedStudents = students.filter(s => s.status === 'graduated' || s.tuitionPaid === false);
   const internStudents = students.filter(s => s.advisorId && s.status !== 'graduated');
   const interviewStudents = students.filter(s => s.gpa >= 3.5 && s.status !== 'graduated');
 
@@ -33,7 +31,6 @@ export default function StudentAnalytics() {
     { name: 'Yerleşti / Mezun', count: placedStudents.length, percentage: Math.round((placedStudents.length / (students.length || 1)) * 100), color: 'green' }
   ];
 
-  // Placed companies with real dynamic mapping
   const placementData = students
     .filter(s => s.internshipCompany)
     .map(s => ({
@@ -51,14 +48,12 @@ export default function StudentAnalytics() {
 
   const actualPlacementList = placementData.length > 0 ? placementData : fallbackPlacementData;
 
-  // Extended Success Stories Mock Data for Modal
   const successStories = studentAnalytics?.successStories || [
     { name: 'Merve Bulut', title: 'Yazılım Mühendisi @ Google', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&q=80', time: '2 gün önce', quote: 'Üniversite hayatım boyunca yaptığım projeler ve hocalarımın desteği Google kapılarını açtı.' },
     { name: 'Caner Şen', title: 'Veri Analisti @ Trendyol', avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&q=80', time: '1 hafta önce', quote: 'Müfredattaki uygulamalı dersler sayesinde Trendyol mülakat sürecinde hiç zorlanmadım.' },
     { name: 'Büşra Koç', title: 'Biyolog @ Pfizer', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&q=80', time: '2 hafta önce', quote: 'Lab çalışmalarının kalitesi ve hocalarımın yönlendirmesiyle global bir firmada staj imkanı buldum.' }
   ];
 
-  // Dynamic KPI Stats: 4 Cards
   const avgGpa = students.length > 0
     ? (students.reduce((acc, s) => acc + (s.gpa || 0), 0) / students.length).toFixed(2)
     : '0.00';
@@ -71,24 +66,44 @@ export default function StudentAnalytics() {
     ? Math.round((placedStudents.length / students.length) * 100)
     : 0;
 
-  // Advisor Allocation Criteria: Department Matching or Workload balance
-  const handleAssignAdvisorAutomatically = (student) => {
-    // Allocation criteria: Find instructors in the matching department, or select instructor with the lowest student workload
-    const matchingAdvisors = instructors.filter(inst => {
-      // Very simple department match logic
-      return student.departmentId === 'd2' ? inst.dept?.includes('Yazılım') : inst.dept?.includes('Bilgisayar');
-    });
+  const handleAssignAdvisor = (student, advisorId) => {
+    if (!advisorId) return;
+    const teachersList = users.filter(u => u.role === 'teacher');
+    const chosenAdvisor = teachersList.find(t => t.id === advisorId);
+    if (!chosenAdvisor) return;
 
-    const chosenAdvisor = matchingAdvisors.length > 0 ? matchingAdvisors[0] : instructors[0];
+    dispatch(updateStudentAdvisorAsync({ 
+      id: student.id, 
+      advisorId: chosenAdvisor.id,
+      advisor: chosenAdvisor.name
+    })).then(() => {
+      dispatch(writeSystemLog({
+        operator: currentUser?.name || 'Prof. Dr. Mehmet Kaya',
+        action: 'Akademik Danışman Atandı',
+        details: `${student.name} isimli risk grubundaki öğrenciye ${chosenAdvisor.name} akademik danışman olarak atandı.`
+      }));
+      dispatch(fetchDeanDashboardData());
+      toast.success(`${student.name} öğrencisine ${chosenAdvisor.name} danışman olarak atandı!`);
+    });
+  };
+
+  const handleAssignAdvisorAutomatically = (student) => {
+    const teachersList = users.filter(u => u.role === 'teacher');
+    const matchingAdvisors = teachersList.filter(t => t.departmentId === student.departmentId);
+    const chosenAdvisor = matchingAdvisors.length > 0 ? matchingAdvisors[0] : teachersList[0];
 
     if (!chosenAdvisor) {
       toast.error('Atama yapılacak uygun bir akademik danışman bulunamadı.');
       return;
     }
 
-    dispatch(updateStudentAdvisorAsync({ id: student.id, advisorId: chosenAdvisor.id })).then(() => {
+    dispatch(updateStudentAdvisorAsync({ 
+      id: student.id, 
+      advisorId: chosenAdvisor.id,
+      advisor: chosenAdvisor.name
+    })).then(() => {
       dispatch(writeSystemLog({
-        operator: 'Prof. Dr. Kemal Arslan',
+        operator: currentUser?.name || 'Prof. Dr. Mehmet Kaya',
         action: 'Akademik Danışman Atandı',
         details: `${student.name} isimli risk grubundaki öğrenciye ${chosenAdvisor.name} akademik danışman olarak atandı.`
       }));
@@ -99,7 +114,6 @@ export default function StudentAnalytics() {
 
   return (
     <section className="an-page-canvas">
-      {/* Breadcrumb & Header */}
       <div className="an-breadcrumb-wrap flex justify-between items-center bg-white p-6 rounded-3xl border border-solid border-slate-100 shadow-sm mb-6">
         <div className="an-breadcrumb-left">
           <h2 className="an-breadcrumb-title font-black text-slate-800 text-lg">Kariyer Hunisi &amp; Akademik Analitik</h2>
@@ -111,9 +125,7 @@ export default function StudentAnalytics() {
         </div>
       </div>
 
-      {/* KPI Stats Layout: Redesigned into 4 premium cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        {/* Card 1: Ortalama Başarı */}
         <div className="bg-white p-5 rounded-3xl border border-solid border-slate-100 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-blue-50 text-[#00236f] flex items-center justify-center">
             <span className="material-symbols-outlined">analytics</span>
@@ -124,7 +136,6 @@ export default function StudentAnalytics() {
           </div>
         </div>
 
-        {/* Card 2: Risk Oranı */}
         <div className="bg-white p-5 rounded-3xl border border-solid border-slate-100 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-650 flex items-center justify-center">
             <span className="material-symbols-outlined">warning</span>
@@ -135,7 +146,6 @@ export default function StudentAnalytics() {
           </div>
         </div>
 
-        {/* Card 3: Mezun İstihdamı */}
         <div className="bg-white p-5 rounded-3xl border border-solid border-slate-100 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
             <span className="material-symbols-outlined">work</span>
@@ -146,7 +156,6 @@ export default function StudentAnalytics() {
           </div>
         </div>
 
-        {/* Card 4: Aktif Stajyerler */}
         <div className="bg-white p-5 rounded-3xl border border-solid border-slate-100 shadow-sm flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-650 flex items-center justify-center">
             <span className="material-symbols-outlined">assignment_ind</span>
@@ -158,10 +167,9 @@ export default function StudentAnalytics() {
         </div>
       </div>
 
-      {/* Career Funnel Stage Row */}
       <div className="an-funnel-row flex gap-4 mb-6 overflow-x-auto pb-2">
         {funnelStages.map((stage, idx) => (
-          <div className={`flex-1 min-w-[200px] p-5 bg-white rounded-3xl border border-solid border-slate-100 shadow-sm flex flex-col justify-between relative overflow-hidden`} key={idx}>
+          <div className="flex-1 min-w-[200px] p-5 bg-white rounded-3xl border border-solid border-slate-100 shadow-sm flex flex-col justify-between relative overflow-hidden" key={idx}>
             <div>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{stage.name}</span>
               <h4 className="text-xl font-black text-slate-800 mt-2">{stage.count} Öğrenci</h4>
@@ -176,11 +184,8 @@ export default function StudentAnalytics() {
         ))}
       </div>
 
-      {/* Main Bento Grid */}
       <div className="an-main-grid grid grid-cols-12 gap-6">
-        {/* Left column */}
         <div className="col-span-12 lg:col-span-8 space-y-6">
-          {/* Risk Analizi Card */}
           <div className="bg-white p-6 rounded-3xl border border-solid border-slate-100 shadow-sm">
             <div className="flex justify-between items-center mb-4">
               <div>
@@ -205,7 +210,7 @@ export default function StudentAnalytics() {
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {riskStudents.map((student, idx) => {
-                    const currentAdvisor = instructors.find(i => i.id === student.advisorId);
+                    const currentAdvisor = users.find(u => u.role === 'teacher' && u.id === student.advisorId);
                     return (
                       <tr className="hover:bg-slate-50/50" key={student.id || idx}>
                         <td className="py-3 flex items-center gap-3">
@@ -222,7 +227,19 @@ export default function StudentAnalytics() {
                         </td>
                         <td className="py-3 font-black text-rose-600">{student.gpa || '1.80'}</td>
                         <td className="py-3 text-slate-500 font-medium">
-                          {currentAdvisor ? currentAdvisor.name : 'Atanmadı'}
+                          <div className="flex flex-col gap-1">
+                            <span className="font-semibold">{currentAdvisor ? currentAdvisor.name : (student.advisor || 'Atanmadı')}</span>
+                            <select
+                              value={student.advisorId || ''}
+                              onChange={(e) => handleAssignAdvisor(student, e.target.value)}
+                              className="px-2 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500 max-w-[155px] cursor-pointer"
+                            >
+                              <option value="">Danışman Değiştir...</option>
+                              {users.filter(u => u.role === 'teacher').map(t => (
+                                <option key={t.id} value={t.id}>{t.name}</option>
+                              ))}
+                            </select>
+                          </div>
                         </td>
                         <td className="py-3 text-right">
                           <button 
@@ -245,7 +262,6 @@ export default function StudentAnalytics() {
             </div>
           </div>
 
-          {/* Placement Section: Conversions into visually appealing scannable component */}
           <div className="bg-white p-6 rounded-3xl border border-solid border-slate-100 shadow-sm">
             <div className="mb-4">
               <h4 className="font-black text-slate-800 text-sm flex items-center gap-1.5">
@@ -264,7 +280,7 @@ export default function StudentAnalytics() {
                     </div>
                     <div>
                       <span className="font-black text-slate-800 text-xs block">{item.company}</span>
-                      <span className="text-[10px] text-slate-500 font-bold block mt-0.5">{item.studentName}</span>
+                      <span className="text-[10px] text-slate-550 font-bold block mt-0.5">{item.studentName}</span>
                     </div>
                   </div>
                   <span className="text-[9px] font-black text-blue-900 bg-blue-50 px-2.5 py-1 rounded-full">{item.department}</span>
@@ -274,7 +290,6 @@ export default function StudentAnalytics() {
           </div>
         </div>
 
-        {/* Right column: Success Stories */}
         <div className="col-span-12 lg:col-span-4">
           <div className="bg-white p-6 rounded-3xl border border-solid border-slate-100 shadow-sm h-full flex flex-col justify-between">
             <div>
@@ -316,7 +331,6 @@ export default function StudentAnalytics() {
         </div>
       </div>
 
-      {/* Success Stories Modal */}
       {isStoriesModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh] border border-solid border-slate-100 animate-fade-in">
@@ -326,7 +340,7 @@ export default function StudentAnalytics() {
                   <span className="material-symbols-outlined text-emerald-600 text-base">military_tech</span>
                   Mezun Başarı Hikayeleri
                 </h3>
-                <p className="text-[10px] text-slate-400 font-medium">Fakültemizden mezun olup kariyere adım atan parlak zihinler</p>
+                <p className="text-[10px] text-slate-450 font-medium">Fakültemizden mezun olup kariyere adım atan parlak zihinler</p>
               </div>
               <button 
                 onClick={() => setIsStoriesModalOpen(false)}

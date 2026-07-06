@@ -14,6 +14,8 @@ export default function GradeEntry() {
   const [activeTab, setActiveTab] = useState('exams')
   const [users, setUsers] = useState([])
   const [students, setStudents] = useState([])
+  const [termStatus, setTermStatus] = useState({ isGradeLocksActive: false, isTermClosed: false })
+  const [toast, setToast] = useState(null)
 
   // Load teacher dashboard data on mount to get courses list
   useEffect(() => {
@@ -21,6 +23,11 @@ export default function GradeEntry() {
     dispatch(fetchTeacherStudentsGradesAsync())
     apiFetch('/users')
       .then(data => setUsers(data))
+      .catch(err => console.error(err))
+    
+    // Fetch term status
+    apiFetch('/termStatus')
+      .then(data => setTermStatus(data))
       .catch(err => console.error(err))
   }, [dispatch])
 
@@ -58,7 +65,6 @@ export default function GradeEntry() {
     }
   }, [studentsGrades, users, status, selectedCourseCode])
 
-  const [toast, setToast] = useState(null)
   const showToast = (message, type) => {
     setToast({ message, type })
   }
@@ -233,7 +239,6 @@ export default function GradeEntry() {
   }, [toast])
 
   // Vize (%25 veya %40), Proje (%25), Ödev (%15) ve Final (%35 veya %60) notlarına göre harf notunu hesaplayan ortak fonksiyon
-  // calculateScore + getLetterGrade (studentCalc.js) kullanılır — iki taraf aynı sonucu görür
   const calculateLetterGrade = (midterm, final, project, homeworkAvg = 0) => {
     if (midterm === '' || final === '' || midterm === null || final === null) return '—'
     const score = calculateScore(midterm, final, project !== '' && project !== null ? project : undefined, homeworkAvg || 0)
@@ -242,7 +247,7 @@ export default function GradeEntry() {
 
   // Kullanıcı girdi alanlarındaki (vize, final, proje) not değişimlerini kontrol edip filtreleyen fonksiyon
   const handleGradeChange = (id, field, value) => {
-    // Sadece 0-100 arasındaki geçerli sayıları veya boş string'i kabul et
+    if (termStatus.isGradeLocksActive) return;
     if (value !== '' && (isNaN(value) || parseFloat(value) < 0 || parseFloat(value) > 100)) {
       return
     }
@@ -259,6 +264,10 @@ export default function GradeEntry() {
 
   // Excel'den not yüklenmesini simüle eden rastgele not doldurma fonksiyonu
   const handleExcelImport = () => {
+    if (termStatus.isGradeLocksActive) {
+      showToast('Not girişleri kilitli olduğu için içe aktarma yapılamaz.', 'error')
+      return
+    }
     setStudents(prev => prev.map(s => ({
       ...s,
       midterm: s.midterm === '' ? Math.floor(Math.random() * 41) + 60 : s.midterm,
@@ -270,6 +279,10 @@ export default function GradeEntry() {
 
   // Düzenlenen notları asenkron olarak Redux slice/sunucu üzerine kaydeden fonksiyon
   const handleSave = async () => {
+    if (termStatus.isGradeLocksActive) {
+      showToast('Not girişleri kilitli olduğu için kayıt yapılamaz.', 'error')
+      return
+    }
     try {
       await Promise.all(students.map(s => {
         const hwStats = calculateStudentHomeworkAverage(s.studentId, selectedCourseCode)
@@ -301,6 +314,14 @@ export default function GradeEntry() {
 
   return (
     <section className="grades-entry-canvas">
+      {termStatus.isGradeLocksActive && (
+        <div className="bg-amber-50 border border-solid border-amber-200 text-amber-800 px-4 py-3 rounded-xl mb-4 flex items-center gap-2.5 text-xs font-semibold shadow-sm">
+          <span className="material-symbols-outlined text-amber-600 text-base">lock</span>
+          <span>
+            Bu dönemin not girişleri dekanlık kararıyla resmi olarak kilitlenmiştir. Not güncellemeleri, kaydetme ve Excel işlemleri kapalıdır.
+          </span>
+        </div>
+      )}
       <div className="grades-entry-header">
         <div className="flex flex-col gap-1.5">
           <h2 className="grades-entry-title">Not Giriş Sistemi</h2>
@@ -319,11 +340,21 @@ export default function GradeEntry() {
         </div>
         {activeTab === 'exams' && (
           <div className="grades-entry-actions">
-            <button className="grades-entry-btn-excel" onClick={handleExcelImport}>
+            <button 
+              className="grades-entry-btn-excel" 
+              onClick={handleExcelImport}
+              disabled={termStatus.isGradeLocksActive}
+              style={{ opacity: termStatus.isGradeLocksActive ? 0.5 : 1, cursor: termStatus.isGradeLocksActive ? 'not-allowed' : 'pointer' }}
+            >
               <span className="material-symbols-outlined">upload</span>
               <span>Excel İçe Aktar</span>
             </button>
-            <button className="grades-entry-btn-save" onClick={handleSave}>
+            <button 
+              className="grades-entry-btn-save" 
+              onClick={handleSave}
+              disabled={termStatus.isGradeLocksActive}
+              style={{ opacity: termStatus.isGradeLocksActive ? 0.5 : 1, cursor: termStatus.isGradeLocksActive ? 'not-allowed' : 'pointer' }}
+            >
               <span className="material-symbols-outlined">save</span>
               <span>Kaydet</span>
             </button>
@@ -417,6 +448,7 @@ export default function GradeEntry() {
                           onChange={e => handleGradeChange(student.id, 'midterm', e.target.value)}
                           min={0}
                           max={100}
+                          disabled={termStatus.isGradeLocksActive}
                         />
                       </td>
                       <td className="grades-entry-td-center">
@@ -435,6 +467,7 @@ export default function GradeEntry() {
                           onChange={e => handleGradeChange(student.id, 'project', e.target.value)}
                           min={0}
                           max={100}
+                          disabled={termStatus.isGradeLocksActive}
                         />
                       </td>
                       <td className="grades-entry-td-center">
@@ -445,6 +478,7 @@ export default function GradeEntry() {
                           onChange={e => handleGradeChange(student.id, 'final', e.target.value)}
                           min={0}
                           max={100}
+                          disabled={termStatus.isGradeLocksActive}
                         />
                       </td>
                       <td className="grades-entry-td-center">
@@ -453,6 +487,8 @@ export default function GradeEntry() {
                       <td className="grades-entry-td-center">
                         <button
                           className="grades-entry-btn-edit"
+                          disabled={termStatus.isGradeLocksActive}
+                          style={{ opacity: termStatus.isGradeLocksActive ? 0.5 : 1, cursor: termStatus.isGradeLocksActive ? 'not-allowed' : 'pointer' }}
                           onClick={() => {
                             showToast(`${student.name} için not düzenleme hücresi odaklandı.`, 'info')
                           }}
@@ -471,7 +507,7 @@ export default function GradeEntry() {
         <div className="grades-entry-table-card">
           <div className="grades-entry-card-header bg-slate-50/50">
             <div>
-              <h4 className="grades-entry-card-title">Ödev Takip Çizelgesi</h4>
+              <h4 className="grades-entry-card-title">Ögev Takip Çizelgesi</h4>
               <p className="grades-entry-card-subtitle">
                 Ödev notları ve ağırlıklı ortalamalar Ödev Kontrol Merkezi'nden otomatik yansıtılır.
               </p>

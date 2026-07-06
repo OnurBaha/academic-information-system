@@ -47,7 +47,6 @@ export default function DeanOverview() {
 
   return (
     <section className="dean-page-canvas">
-      {/* Welcome Banner */}
       <div className="dean-welcome-banner">
         <div className="dean-welcome-content">
           <h2 className="dean-welcome-title">Hoş geldiniz, Dekan {currentUser?.name || 'Değerli Dekan'}.</h2>
@@ -59,7 +58,6 @@ export default function DeanOverview() {
         <span className="material-symbols-outlined dean-welcome-bg-icon">account_balance</span>
       </div>
 
-      {/* Extracted Metrics Cards Component */}
       <OverviewMetrics 
         studentCount={studentCount} 
         avgGpa={avgGpa} 
@@ -67,9 +65,7 @@ export default function DeanOverview() {
         totalPendingApprovals={totalPendingApprovals} 
       />
 
-      {/* Bento Grid Row 1: Academic Performance & System Logs */}
       <div className="dean-bento-grid">
-        {/* Academic Performance Chart */}
         <div className="dean-perf-card">
           <div className="dean-perf-header">
             <div className="dean-perf-title-wrap">
@@ -123,7 +119,6 @@ export default function DeanOverview() {
           </div>
         </div>
 
-        {/* System Logs (Timeline) */}
         <div className="dean-log-card">
           <div className="dean-log-header">
             <h4 className="dean-log-title">Kritik Sistem Günlüğü</h4>
@@ -164,10 +159,8 @@ export default function DeanOverview() {
         </div>
       </div>
 
-      {/* Extracted Featured Academicians */}
       <FeaturedAcademicians instructors={instructors} />
 
-      {/* Footer Area */}
       <footer className="dean-footer">
         <p className="dean-footer-text">© 2024 OBİS Akademik Bilgi Sistemi. Tüm hakları saklıdır.</p>
         <div className="dean-footer-links">
@@ -177,7 +170,6 @@ export default function DeanOverview() {
         </div>
       </footer>
 
-      {/* Tüm Geçmiş Sistem Günlükleri Modalı */}
       {isLogsModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[80vh] border border-solid border-slate-100">

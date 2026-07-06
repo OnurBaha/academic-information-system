@@ -8,24 +8,24 @@ export default function Login() {
   const [usernameInput, setUsernameInput] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { status } = useSelector((state) => state.auth || {})
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!usernameInput || !password) {
       toast.error('Lütfen kullanıcı adı ve şifrenizi girin')
       return
     }
-    
+
     const resultAction = await dispatch(loginUserAsync({ username: usernameInput, password }))
     if (loginUserAsync.fulfilled.match(resultAction)) {
       const loggedUser = resultAction.payload
       toast.success(`Hoş geldin, ${loggedUser.name}!`)
-      
+
       // Kullanıcı rolüne göre yönlendir
       if (loggedUser.role === 'student') {
         navigate('/student/dashboard')
@@ -67,22 +67,22 @@ export default function Login() {
         <div className="login-brand-shade" />
         <div className="login-brand-content">
           <div className="login-brand-logo">
-            <span className="material-symbols-outlined">school</span>
+            <span className="material-symbols-outlined">account_balance</span>
             <h1 className="login-brand-title">AIS</h1>
           </div>
-          <p className="login-brand-tagline">Geleceğin Yazılımcıları Burada Yetişiyor.</p>
+          <p className="login-brand-tagline">Öğrenci Bilgi ve Akademik Yönetim Sistemi</p>
           <div className="login-brand-features">
             <div className="login-feature-item">
-              <span className="material-symbols-outlined">verified_user</span>
-              <span className="login-feature-text">Güvenli Akademik Bilgi Sistemi</span>
+              <span className="material-symbols-outlined">menu_book</span>
+              <span className="login-feature-text">Ders Kaydı ve Dönem İşlemleri</span>
             </div>
             <div className="login-feature-item">
-              <span className="material-symbols-outlined">speed</span>
-              <span className="login-feature-text">Hızlı ve Kesintisiz Veri Erişimi</span>
+              <span className="material-symbols-outlined">analytics</span>
+              <span className="login-feature-text">Not Görüntüleme ve Transkript Takibi</span>
             </div>
             <div className="login-feature-item">
-              <span className="material-symbols-outlined">hub</span>
-              <span className="login-feature-text">Entegre Eğitim Teknolojileri</span>
+              <span className="material-symbols-outlined">campaign</span>
+              <span className="login-feature-text">Enstitü ve Fakülte Duyuruları</span>
             </div>
           </div>
         </div>
@@ -105,11 +105,11 @@ export default function Login() {
                 <label className="login-input-label" htmlFor="username">Kullanıcı Adı</label>
                 <div className="login-input-wrapper">
                   <span className="material-symbols-outlined">person</span>
-                  <input 
-                    className="login-form-input" 
-                    id="username" 
-                    type="text" 
-                    placeholder="Örn: student.ahmet" 
+                  <input
+                    className="login-form-input"
+                    id="username"
+                    type="text"
+                    placeholder="Örn: student.ahmet"
                     value={usernameInput}
                     onChange={(e) => setUsernameInput(e.target.value)}
                   />
@@ -123,16 +123,16 @@ export default function Login() {
                 </div>
                 <div className="login-input-wrapper">
                   <span className="material-symbols-outlined">lock</span>
-                  <input 
-                    className="login-form-input" 
-                    id="password" 
-                    type={showPassword ? "text" : "password"} 
-                    placeholder="••••••••" 
+                  <input
+                    className="login-form-input"
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="login-btn-visibility"
                     onClick={() => setShowPassword(!showPassword)}
                   >

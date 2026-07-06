@@ -254,11 +254,11 @@ export const terminateLiveStreamAsync = createAsyncThunk(
 
 export const updateStudentAdvisorAsync = createAsyncThunk(
     'dean/updateStudentAdvisorAsync',
-    async ({ id, advisorId }, { rejectWithValue }) => {
+    async ({ id, advisorId, advisor }, { rejectWithValue }) => {
         try {
             return await apiFetch(`/users/${id}`, {
                 method: 'PATCH',
-                body: JSON.stringify({ advisorId })
+                body: JSON.stringify({ advisorId, advisor })
             });
         } catch (error) {
             return rejectWithValue(error.message);
