@@ -8,6 +8,15 @@ export default defineConfig({
   server: {
     watch: {
       ignored: ['**/db.json']
+    },
+    // Yerel geliştirmede /api isteklerini JSON Server'a yönlendir
+    // Vercel ortamında bu proxy devreye girmez; Vercel'de vercel.json halleder
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
     }
   }
 })
