@@ -8,21 +8,39 @@ import { dirname, join } from 'node:path'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const dbPath = join(__dirname, '..', 'db.json')
 
-// Lowdb adapter + json-server v1 app
-const adapter = new JSONFile(dbPath)
-const normalizedAdapter = new NormalizedAdapter(adapter)
-const db = new Low(normalizedAdapter, {})
-await db.read()
+// Singleton: fonksiyon her çağrıldığında yeniden oluşturma
+let appInstance = null
 
-// json-server v1'in createApp fonksiyonu bir tinyhttp App döndürür.
-// Vercel, Node.js http.IncomingMessage ve http.ServerResponse ile çalışır,
-// bu yüzden tinyhttp app handler'ını doğrudan export ediyoruz.
-const app = createApp(db, { logger: false })
+async function getApp() {
+  if (appInstance) return appInstance
+  const adapter = new JSONFile(dbPath)
+  const normalizedAdapter = new NormalizedAdapter(adapter)
+  const db = new Low(normalizedAdapter, {})
+  await db.read()
+  appInstance = createApp(db, { logger: false })
+  return appInstance
+}
 
-// Vercel serverless function handler
-export default function handler(req, res) {
-  // /api prefix'ini soy: /api/users → /users
-  req.url = req.url.replace(/^\/api/, '') || '/'
-  // tinyhttp app'i express gibi (req, res, next) kabul eder
-  app.handler(req, res)
+export default async function handler(req, res) {
+  try {
+    const app = await getApp()
+
+    // Vercel, /api/users → /api/server?path=users şeklinde rewrite yapar.
+    // Bu yüzden path query param'ından gerçek resource path'ini yeniden kuruyoruz.
+    const pathValue = req.query?.path ?? ''
+    const pathStr = Array.isArray(pathValue) ? pathValue.join('/') : pathValue
+
+    // Diğer query param'larını koru (örn. ?role=student), sadece 'path'i sil
+    const url = new URL(req.url, 'http://localhost')
+    url.searchParams.delete('path')
+    const remainingQuery = url.searchParams.toString()
+
+    req.url = '/' + pathStr + (remainingQuery ? '?' + remainingQuery : '')
+
+    app.handler(req, res)
+  } catch (err) {
+    res.statusCode = 500
+    res.setHeader('Content-Type', 'application/json')
+    res.end(JSON.stringify({ error: err.message, stack: err.stack }))
+  }
 }
